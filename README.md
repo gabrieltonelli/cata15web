@@ -113,6 +113,193 @@ cata15web/
 
 ---
 
+## 📸 Guía de Assets Multimedia
+
+### 📊 Resumen General
+
+| Categoría | Cantidad | Formato | Directorio |
+|-----------|----------|---------|------------|
+| Videos | 1 | MP4/WebM | `public/assets/video/` |
+| Fotos principales | 1 | JPG/PNG | `public/assets/photos/` |
+| Fotos galería | 6 | JPG/PNG | `public/assets/photos/` |
+| Fotos previa | 8 | JPG/PNG | `public/assets/photos/` |
+| Mapa del lugar | 1 | JPG/PNG | `public/assets/photos/` |
+| Iconos SVG | 5 | SVG | `public/assets/icons/` |
+| **TOTAL** | **22 archivos** | | |
+
+### 🎬 Video Hero (1 archivo)
+
+| Campo | Valor |
+|-------|-------|
+| **Archivo** | `hero-bg.mp4` |
+| **Formato** | MP4 (H.264) + WebM (fallback) |
+| **Resolución** | 1920x1080 (Full HD) |
+| **Duración** | 10-30 segundos (loop) |
+| **Tamaño máx** | 5-10 MB |
+| **Dir** | `public/assets/video/` |
+| **Uso** | Fondo animado en Hero section |
+
+### 👩 Foto Principal de Catalina (1 archivo)
+
+| Campo | Valor |
+|-------|-------|
+| **Archivo** | `catalina-main.jpg` |
+| **Formato** | JPG (calidad 85%) |
+| **Resolución** | 800x1067 (3:4) |
+| **Tamaño máx** | 200-400 KB |
+| **Dir** | `public/assets/photos/` |
+| **Uso** | Sección Bio - Foto principal |
+
+### 📸 Fotos Galería Bio (6 archivos)
+
+| # | Archivo | Resolución | Uso |
+|---|---------|------------|-----|
+| 1 | `catalina-01.jpg` | 600x600 (1:1) | Grid galería |
+| 2 | `catalina-02.jpg` | 600x600 (1:1) | Grid galería |
+| 3 | `catalina-03.jpg` | 600x600 (1:1) | Grid galería |
+| 4 | `catalina-04.jpg` | 600x600 (1:1) | Grid galería |
+| 5 | `catalina-05.jpg` | 600x600 (1:1) | Grid galería |
+| 6 | `catalina-06.jpg` | 600x600 (1:1) | Grid galería |
+
+**Formato:** JPG | **Tamaño máx:** 100-200 KB c/u | **Dir:** `public/assets/photos/`
+
+### 🎀 Fotos Horizontal Scroll - La Previa (8 archivos)
+
+| # | Archivo | Resolución | Uso |
+|---|---------|------------|-----|
+| 1 | `previa-01-preparativos.jpg` | 450x600 (3:4) | Scroll horizontal |
+| 2 | `previa-02-vestido.jpg` | 450x600 (3:4) | Scroll horizontal |
+| 3 | `previa-03-maquillaje.jpg` | 450x600 (3:4) | Scroll horizontal |
+| 4 | `previa-04-pelo.jpg` | 450x600 (3:4) | Scroll horizontal |
+| 5 | `previa-05-accesorios.jpg` | 450x600 (3:4) | Scroll horizontal |
+| 6 | `previa-06-familia.jpg` | 450x600 (3:4) | Scroll horizontal |
+| 7 | `previa-07-amigas.jpg` | 450x600 (3:4) | Scroll horizontal |
+| 8 | `previa-08-momentos.jpg` | 450x600 (3:4) | Scroll horizontal |
+
+**Formato:** JPG | **Tamaño máx:** 100-150 KB c/u | **Dir:** `public/assets/photos/`
+
+### 🗺️ Mapa del Evento (1 archivo)
+
+| Campo | Valor |
+|-------|-------|
+| **Archivo** | `venue-map.jpg` |
+| **Formato** | JPG |
+| **Resolución** | 1200x600 (2:1) |
+| **Tamaño máx** | 200-300 KB |
+| **Dir** | `public/assets/photos/` |
+| **Uso** | Sección Event Details |
+
+### 🎨 Iconos SVG (5 archivos)
+
+| # | Archivo | Uso |
+|---|---------|-----|
+| 1 | `envelope.svg` | Icono de invitación |
+| 2 | `sparkle.svg` | Estrella decorativa |
+| 3 | `note-music.svg` | Nota musical |
+| 4 | `heart.svg` | Corazón |
+| 5 | `star.svg` | Estrella |
+
+**Dir:** `public/assets/icons/`
+
+### 📁 Estructura de Directorios
+
+```
+public/
+└── assets/
+    ├── video/
+    │   ├── hero-bg.mp4
+    │   └── hero-bg.webm
+    ├── photos/
+    │   ├── catalina-main.jpg
+    │   ├── catalina-01.jpg
+    │   ├── catalina-02.jpg
+    │   ├── catalina-03.jpg
+    │   ├── catalina-04.jpg
+    │   ├── catalina-05.jpg
+    │   ├── catalina-06.jpg
+    │   ├── previa-01-preparativos.jpg
+    │   ├── previa-02-vestido.jpg
+    │   ├── previa-03-maquillaje.jpg
+    │   ├── previa-04-pelo.jpg
+    │   ├── previa-05-accesorios.jpg
+    │   ├── previa-06-familia.jpg
+    │   ├── previa-07-amigas.jpg
+    │   ├── previa-08-momentos.jpg
+    │   └── venue-map.jpg
+    └── icons/
+        ├── envelope.svg
+        ├── sparkle.svg
+        ├── note-music.svg
+        ├── heart.svg
+        └── star.svg
+```
+
+### 📋 Guía de Nomenclatura
+
+```
+[categoria]-[numero]-[descriptor].[formato]
+
+Ejemplos:
+- catalina-main.jpg
+- catalina-01.jpg
+- previa-01-preparativos.jpg
+- hero-bg.mp4
+- venue-map.jpg
+```
+
+### ⚙️ Especificaciones Técnicas
+
+| Tipo | Formato | Compresión | Color Profile |
+|------|---------|------------|---------------|
+| Fotos JPG | .jpg | Calidad 80-85% | sRGB |
+| Video MP4 | .mp4 | H.264, CRF 23 | - |
+| Video WebM | .webm | VP9 | - |
+| Iconos | .svg | Optimizado | - |
+
+### 🔄 Checklist de Reemplazo
+
+| Componente | Placeholder | Reemplazar con |
+|------------|-------------|----------------|
+| `Hero.jsx` | Gradiente animado | `hero-bg.mp4` |
+| `CatalinaBio.jsx` | `👩` emoji | `catalina-main.jpg` |
+| `CatalinaBio.jsx` | Gradientes color | `catalina-01.jpg` a `catalina-06.jpg` |
+| `PreviaGallery.jsx` | Emojis | `previa-01.jpg` a `previa-08.jpg` |
+| `EventDetails.jsx` | `🗺️` emoji | `venue-map.jpg` |
+
+### 🤖 Generar Imágenes de Ejemplo
+
+El proyecto incluye un script para generar imágenes de ejemplo usando **Pollinations.ai** (gratis, sin API key):
+
+```bash
+node scripts/generate-assets.js
+```
+
+Esto creará imágenes de ejemplo en `public/assets/photos/`. Luego reemplázalas con fotos reales.
+
+### 📝 Notas de Optimización
+
+1. **Herramientas de compresión:**
+   - [Squoosh](https://squoosh.app/) - Compresión inteligente
+   - [TinyPNG](https://tinypng.com/) - Compresión JPG/PNG
+   - [Cloudinary](https://cloudinary.com/) - CDN con transformaciones
+
+2. **Responsive:** Las fotos se redimensionan automáticamente con CSS
+
+3. **Lazy loading:** Agregar `loading="lazy"` a imágenes no críticas:
+   ```jsx
+   <img src="/assets/foto.jpg" loading="lazy" alt="..." />
+   ```
+
+4. **Formatos modernos:** Considerar WebP para mejor compresión:
+   ```html
+   <picture>
+     <source srcset="/assets/foto.webp" type="image/webp">
+     <img src="/assets/foto.jpg" alt="...">
+   </picture>
+   ```
+
+---
+
 ## 🎨 Personalización
 
 ### Colores
