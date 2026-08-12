@@ -123,7 +123,7 @@ const Hero = () => {
 
       {/* Content */}
       <div className="relative z-10 text-center px-4 mb-16">
-        <p className="font-script text-2xl md:text-3xl text-rosa-claro mb-6 animate-float">
+        <p className="font-script text-2xl md:text-3xl text-rosa-claro mb-6 animate-float" style={{ margin: '30px 0 0 0' }}>
           ¡Celebramos mis
         </p>
 
@@ -160,7 +160,7 @@ const Hero = () => {
         ref={scrollIndicatorRef}
         className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col items-center z-10"
       >
-        <p className="font-body text-sm text-white/60 mb-3 tracking-widest">DESCUBRE MÁS</p>
+        <p className="font-body text-sm text-white/60 mb-3 tracking-widest">DESCUBRÍ MÁS</p>
         <div className="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center pt-2">
           <div className="w-1 h-3 bg-rosa rounded-full animate-bounce" />
         </div>
