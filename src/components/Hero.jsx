@@ -42,29 +42,6 @@ const Hero = () => {
           ease: 'power2.out'
         }, '-=0.2')
 
-      // Parallax effect on scroll (subtle, no fade out)
-      gsap.to(titleRef.current, {
-        y: -80,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: heroRef.current,
-          start: 'top top',
-          end: 'bottom top',
-          scrub: 1
-        }
-      })
-
-      gsap.to(subtitleRef.current, {
-        y: -50,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: heroRef.current,
-          start: 'top top',
-          end: 'bottom top',
-          scrub: 1.5
-        }
-      })
-
       // Scroll indicator bounce
       gsap.to(scrollIndicatorRef.current, {
         y: 10,
@@ -118,7 +95,7 @@ const Hero = () => {
   return (
     <section
       ref={heroRef}
-      className="relative min-h-screen flex items-center justify-center overflow-hidden"
+      className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden pb-20"
     >
       {/* Background video */}
       <video
@@ -145,35 +122,35 @@ const Hero = () => {
       <div ref={particlesRef} className="absolute inset-0 pointer-events-none" />
 
       {/* Content */}
-      <div className="relative z-10 text-center px-4">
-        <p className="font-script text-2xl md:text-3xl text-rosa-claro mb-4 animate-float">
+      <div className="relative z-10 text-center px-4 mb-16">
+        <p className="font-script text-2xl md:text-3xl text-rosa-claro mb-6 animate-float">
           ¡Celebramos mis
         </p>
 
         <h1
           ref={titleRef}
-          className="font-display text-8xl md:text-9xl lg:text-[12rem] font-bold text-gradient leading-none mb-6"
+          className="font-display text-8xl md:text-9xl lg:text-[12rem] font-bold text-gradient leading-none mb-4"
         >
           15
         </h1>
 
         <p
           ref={subtitleRef}
-          className="font-display text-4xl md:text-6xl lg:text-7xl text-white mb-8 text-glow"
+          className="font-display text-4xl md:text-6xl lg:text-7xl text-white mb-10 text-glow"
         >
           años!
         </p>
 
         <div
           ref={dateRef}
-          className="glass inline-block px-8 py-4 rounded-full mb-12"
+          className="glass inline-block px-8 py-4 rounded-full mb-10"
         >
           <p className="font-body text-xl md:text-2xl text-dorado tracking-widest">
             20 DE NOVIEMBRE 2026
           </p>
         </div>
 
-        <p className="font-script text-3xl md:text-4xl text-rosa-claro mb-8">
+        <p className="font-script text-3xl md:text-4xl text-rosa-claro">
           Acompañame en este día tan especial
         </p>
       </div>
@@ -181,9 +158,9 @@ const Hero = () => {
       {/* Scroll indicator */}
       <div
         ref={scrollIndicatorRef}
-        className="absolute bottom-10 left-1/2 transform -translate-x-1/2 flex flex-col items-center"
+        className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col items-center z-10"
       >
-        <p className="font-body text-sm text-white/60 mb-2 tracking-widest">DESCUBRE MÁS</p>
+        <p className="font-body text-sm text-white/60 mb-3 tracking-widest">DESCUBRE MÁS</p>
         <div className="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center pt-2">
           <div className="w-1 h-3 bg-rosa rounded-full animate-bounce" />
         </div>

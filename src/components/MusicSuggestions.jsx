@@ -10,15 +10,25 @@ const MusicSuggestions = () => {
   const formRef = useRef(null)
   const suggestionsRef = useRef(null)
 
-  const [suggestions, setSuggestions] = useState([
+  const defaultSuggestions = [
     { id: 1, title: 'Flowers', artist: 'Miley Cyrus', votes: 12 },
     { id: 2, title: 'Anti-Hero', artist: 'Taylor Swift', votes: 10 },
     { id: 3, title: 'As It Was', artist: 'Harry Styles', votes: 8 },
     { id: 4, title: 'Levitating', artist: 'Dua Lipa', votes: 7 },
-  ])
+  ]
+
+  const [suggestions, setSuggestions] = useState(() => {
+    const saved = localStorage.getItem('music-suggestions')
+    return saved ? JSON.parse(saved) : defaultSuggestions
+  })
 
   const [newSong, setNewSong] = useState({ title: '', artist: '' })
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  // Persist to localStorage
+  useEffect(() => {
+    localStorage.setItem('music-suggestions', JSON.stringify(suggestions))
+  }, [suggestions])
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -65,22 +75,41 @@ const MusicSuggestions = () => {
     return () => ctx.revert()
   }, [])
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     if (!newSong.title || !newSong.artist) return
 
     setIsSubmitting(true)
 
-    // Simulate API call
-    setTimeout(() => {
-      setSuggestions(prev => [
-        { id: Date.now(), title: newSong.title, artist: newSong.artist, votes: 1 },
-        ...prev
-      ])
-      setNewSong({ title: '', artist: '' })
-      setIsSubmitting(false)
+    const newSuggestion = { 
+      id: Date.now(), 
+      title: newSong.title, 
+      artist: newSong.artist, 
+      votes: 1 
+    }
 
-      // Animate new item
+    // Submit to Netlify Forms
+    try {
+      await fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+          'form-name': 'music-suggestions',
+          title: newSong.title,
+          artist: newSong.artist
+        }).toString()
+      })
+    } catch (error) {
+      // Continue even if Netlify fails
+    }
+
+    // Add to local state (persisted via localStorage)
+    setSuggestions(prev => [newSuggestion, ...prev])
+    setNewSong({ title: '', artist: '' })
+    setIsSubmitting(false)
+
+    // Animate new item
+    setTimeout(() => {
       gsap.from(suggestionsRef.current?.firstChild, {
         scale: 0.8,
         opacity: 0,
@@ -88,7 +117,7 @@ const MusicSuggestions = () => {
         duration: 0.5,
         ease: 'back.out(1.7)'
       })
-    }, 500)
+    }, 50)
   }
 
   const handleVote = (id) => {
@@ -144,7 +173,18 @@ const MusicSuggestions = () => {
                 Sugerir canción
               </h3>
 
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form 
+                onSubmit={handleSubmit} 
+                className="space-y-6"
+                name="music-suggestions"
+                method="POST"
+                data-netlify="true"
+                data-netlify-honeypot="bot-field"
+              >
+                <input type="hidden" name="form-name" value="music-suggestions" />
+                <p className="hidden">
+                  <label>No fill this: <input name="bot-field" /></label>
+                </p>
                 <div>
                   <label className="block font-body text-sm text-white/60 mb-2">
                     Nombre de la canción

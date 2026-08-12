@@ -90,23 +90,41 @@ const RSVP = () => {
     }
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     setIsSubmitting(true)
 
-    // Simulate API call
-    setTimeout(() => {
-      setIsSubmitting(false)
-      setIsSubmitted(true)
-
-      // Success animation
-      gsap.from(formRef.current, {
-        scale: 0.95,
-        opacity: 0,
-        duration: 0.5,
-        ease: 'back.out(1.7)'
+    // Submit to Netlify Forms
+    try {
+      const response = await fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+          'form-name': 'rsvp',
+          ...formData,
+          attending: formData.attending ? 'Sí' : 'No',
+          guests: String(formData.guests)
+        }).toString()
       })
-    }, 1500)
+
+      if (response.ok) {
+        setIsSubmitted(true)
+        // Save to localStorage as backup
+        const submissions = JSON.parse(localStorage.getItem('rsvp-submissions') || '[]')
+        submissions.push({ ...formData, timestamp: new Date().toISOString() })
+        localStorage.setItem('rsvp-submissions', JSON.stringify(submissions))
+      } else {
+        throw new Error('Form submission failed')
+      }
+    } catch (error) {
+      // Fallback to localStorage only
+      const submissions = JSON.parse(localStorage.getItem('rsvp-submissions') || '[]')
+      submissions.push({ ...formData, timestamp: new Date().toISOString() })
+      localStorage.setItem('rsvp-submissions', JSON.stringify(submissions))
+      setIsSubmitted(true)
+    }
+
+    setIsSubmitting(false)
   }
 
   const handleChange = (field, value) => {
@@ -158,7 +176,18 @@ const RSVP = () => {
               </div>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="space-y-8">
+            <form 
+              onSubmit={handleSubmit} 
+              className="space-y-8"
+              name="rsvp"
+              method="POST"
+              data-netlify="true"
+              data-netlify-honeypot="bot-field"
+            >
+              <input type="hidden" name="form-name" value="rsvp" />
+              <p className="hidden">
+                <label>No fill this: <input name="bot-field" /></label>
+              </p>
               {/* Name */}
               <div>
                 <label className="block font-body text-sm text-white/60 mb-2">

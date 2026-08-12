@@ -9,6 +9,7 @@ const EventDetails = () => {
   const titleRef = useRef(null)
   const detailsRef = useRef(null)
   const countdownRef = useRef(null)
+  const mapRef = useRef(null)
 
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
@@ -18,7 +19,7 @@ const EventDetails = () => {
   })
 
   useEffect(() => {
-    // Calculate countdown to November 2026
+    // Calculate countdown to November 20, 2026 at 20:00
     const targetDate = new Date('2026-11-20T20:00:00')
 
     const updateCountdown = () => {
@@ -85,6 +86,19 @@ const EventDetails = () => {
           toggleActions: 'play none none reverse'
         }
       })
+
+      // Map animation
+      gsap.from(mapRef.current, {
+        y: 40,
+        opacity: 0,
+        duration: 1,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: mapRef.current,
+          start: 'top 85%',
+          toggleActions: 'play none none reverse'
+        }
+      })
     }, sectionRef)
 
     return () => ctx.revert()
@@ -105,8 +119,8 @@ const EventDetails = () => {
     {
       icon: '📅',
       title: 'Fecha',
-      content: 'Noviembre 2026',
-      subtext: 'Día por confirmar'
+      content: '20 de Noviembre 2026',
+      subtext: 'Sábado'
     },
     {
       icon: '🕗',
@@ -117,8 +131,8 @@ const EventDetails = () => {
     {
       icon: '📍',
       title: 'Lugar',
-      content: 'Salón de Eventos',
-      subtext: 'Dirección por confirmar'
+      content: 'Quintana 30',
+      subtext: 'Chacabuco, Buenos Aires'
     },
     {
       icon: '👗',
@@ -127,6 +141,12 @@ const EventDetails = () => {
       subtext: 'Colores pasteles bienvenidos'
     }
   ]
+
+  // Google Maps embed URL with custom marker
+  const mapLat = -34.63026033819848
+  const mapLng = -60.451379309634284
+  const mapEmbedUrl = `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3301.5!2d${mapLng}!3d${mapLat}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2sQuintana+30%2C+Chacabuco!5e0!3m2!1ses!2sar!4v1234567890`
+  const mapStaticUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${mapLat},${mapLng}&zoom=16&size=800x400&maptype=roadmap&markers=color:red%7Clabel:C%7C${mapLat},${mapLng}&key=`
 
   return (
     <section
@@ -168,7 +188,7 @@ const EventDetails = () => {
         {/* Event details grid */}
         <div
           ref={detailsRef}
-          className="grid md:grid-cols-2 lg:grid-cols-4 gap-6"
+          className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12"
         >
           {details.map((detail, index) => (
             <div
@@ -191,18 +211,36 @@ const EventDetails = () => {
           ))}
         </div>
 
-        {/* Map placeholder */}
-        <div className="mt-12 glass rounded-2xl p-8">
-          <div className="aspect-video rounded-xl overflow-hidden">
-            <img
-              src="/assets/photos/venue-map.jpg"
-              alt="Mapa del lugar del evento"
-              className="w-full h-full object-cover"
+        {/* Google Maps */}
+        <div ref={mapRef} className="glass rounded-2xl p-4 md:p-6">
+          <div className="aspect-video rounded-xl overflow-hidden relative">
+            <iframe
+              src={`https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3301.5!2d${mapLng}!3d${mapLat}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2sQuintana+30,+Chacabuco,+Buenos+Aires!5e0!3m2!1ses!2sar!4v1700000000000!5m2!1ses!2sar`}
+              width="100%"
+              height="100%"
+              style={{ border: 0, position: 'absolute', inset: 0 }}
+              allowFullScreen=""
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              title="Ubicación del evento - Quintana 30, Chacabuco"
             />
           </div>
-          <p className="text-center mt-4 font-body text-white/50 text-sm">
-            * Reemplazar con mapa real o integrar Google Maps
-          </p>
+          <div className="mt-4 text-center">
+            <p className="font-display text-lg text-white">
+              📍 Quintana 30, Chacabuco
+            </p>
+            <p className="font-body text-sm text-white/50 mt-1">
+              Buenos Aires, Argentina
+            </p>
+            <a
+              href={`https://www.google.com/maps?q=${mapLat},${mapLng}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block mt-3 px-6 py-2 glass rounded-full font-body text-sm text-rosa hover:bg-rosa/20 transition-colors"
+            >
+              Abrir en Google Maps →
+            </a>
+          </div>
         </div>
       </div>
     </section>
