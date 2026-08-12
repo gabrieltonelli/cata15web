@@ -122,8 +122,7 @@ const Hero = () => {
       ref={heroRef}
       className="relative min-h-screen flex items-center justify-center overflow-hidden"
     >
-      {/* Background video (uncomment when you have hero-bg.mp4) */}
-      {/*
+      {/* Background video */}
       <video 
         autoPlay 
         muted 
@@ -133,7 +132,6 @@ const Hero = () => {
       >
         <source src="/assets/video/hero-bg.mp4" type="video/mp4" />
       </video>
-      */}
       
       {/* Background gradient */}
       <div className="absolute inset-0 bg-gradient-to-b from-oscuro via-oscuro-claro to-oscuro" />
