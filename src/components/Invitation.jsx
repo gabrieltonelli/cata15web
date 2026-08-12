@@ -30,7 +30,7 @@ const Invitation = () => {
 
       // Line by line reveal
       const lines = [line1Ref.current, line2Ref.current, line3Ref.current]
-      
+
       lines.forEach((line, index) => {
         gsap.from(line, {
           y: 50,
@@ -76,7 +76,7 @@ const Invitation = () => {
   }, [])
 
   return (
-    <section 
+    <section
       ref={sectionRef}
       className="relative min-h-screen flex items-center justify-center section-padding overflow-hidden"
     >
@@ -89,22 +89,22 @@ const Invitation = () => {
 
       <div className="relative z-10 max-w-4xl mx-auto text-center">
         {/* Envelope icon */}
-        <div 
+        <div
           ref={envelopeRef}
           className="mb-12"
         >
           <div className="inline-block p-8 glass rounded-full">
-            <svg 
-              className="w-20 h-20 text-dorado" 
-              fill="none" 
-              stroke="currentColor" 
+            <svg
+              className="w-20 h-20 text-dorado"
+              fill="none"
+              stroke="currentColor"
               viewBox="0 0 24 24"
             >
-              <path 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                strokeWidth={1.5} 
-                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" 
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
               />
             </svg>
           </div>
@@ -112,21 +112,20 @@ const Invitation = () => {
 
         {/* Invitation text */}
         <div className="space-y-8">
-          <p 
+          <p
             ref={line1Ref}
             className="font-script text-3xl md:text-4xl text-rosa-claro"
           >
             Estás cordialmente invitado/a
           </p>
-          
-          <h2 
+
+          <h2
             ref={line2Ref}
             className="font-display text-4xl md:text-6xl lg:text-7xl text-white leading-tight"
           >
-            A celebrar los{' '}
+            A celebrar mis{' '}
             <span className="text-gradient font-bold">15 años</span>
-            <br />
-            de nuestra <span className="text-gradient font-bold">Catalina</span>
+
           </h2>
 
           {/* Ornament */}
@@ -138,11 +137,11 @@ const Invitation = () => {
             </div>
           </div>
 
-          <p 
+          <p
             ref={line3Ref}
             className="font-body text-xl md:text-2xl text-white/80 max-w-2xl mx-auto leading-relaxed"
           >
-            Será un honor compartir contigo este momento tan especial en la vida de nuestra hija. 
+            Es mi deseo compartir con vos este momento tan especial de mi vida.
             Tu presencia hará este día aún más mágico.
           </p>
         </div>

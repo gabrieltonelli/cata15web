@@ -9,7 +9,7 @@ const EventDetails = () => {
   const titleRef = useRef(null)
   const detailsRef = useRef(null)
   const countdownRef = useRef(null)
-  
+
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
     hours: 0,
@@ -19,12 +19,12 @@ const EventDetails = () => {
 
   useEffect(() => {
     // Calculate countdown to November 2026
-    const targetDate = new Date('2026-11-15T20:00:00')
-    
+    const targetDate = new Date('2026-11-20T20:00:00')
+
     const updateCountdown = () => {
       const now = new Date()
       const difference = targetDate - now
-      
+
       if (difference > 0) {
         setTimeLeft({
           days: Math.floor(difference / (1000 * 60 * 60 * 24)),
@@ -34,10 +34,10 @@ const EventDetails = () => {
         })
       }
     }
-    
+
     updateCountdown()
     const interval = setInterval(updateCountdown, 1000)
-    
+
     return () => clearInterval(interval)
   }, [])
 
@@ -129,13 +129,13 @@ const EventDetails = () => {
   ]
 
   return (
-    <section 
+    <section
       ref={sectionRef}
       className="relative min-h-screen section-padding overflow-hidden"
     >
       {/* Background */}
       <div className="absolute inset-0 bg-gradient-to-b from-oscuro via-oscuro-claro to-oscuro" />
-      
+
       {/* Decorative elements */}
       <div className="absolute top-20 right-20 text-dorado/10 text-9xl animate-float">✦</div>
       <div className="absolute bottom-20 left-20 text-rosa/10 text-7xl animate-float" style={{ animationDelay: '3s' }}>✦</div>
@@ -150,7 +150,7 @@ const EventDetails = () => {
         </div>
 
         {/* Countdown */}
-        <div 
+        <div
           ref={countdownRef}
           className="mb-16"
         >
@@ -166,12 +166,12 @@ const EventDetails = () => {
         </div>
 
         {/* Event details grid */}
-        <div 
+        <div
           ref={detailsRef}
           className="grid md:grid-cols-2 lg:grid-cols-4 gap-6"
         >
           {details.map((detail, index) => (
-            <div 
+            <div
               key={index}
               className="glass rounded-2xl p-6 text-center hover:shadow-lg hover:shadow-rosa/10 transition-all duration-300 group"
             >
@@ -194,7 +194,7 @@ const EventDetails = () => {
         {/* Map placeholder */}
         <div className="mt-12 glass rounded-2xl p-8">
           <div className="aspect-video rounded-xl overflow-hidden">
-            <img 
+            <img
               src="/assets/photos/venue-map.jpg"
               alt="Mapa del lugar del evento"
               className="w-full h-full object-cover"

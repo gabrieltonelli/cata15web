@@ -9,7 +9,7 @@ const RSVP = () => {
   const titleRef = useRef(null)
   const formRef = useRef(null)
   const particlesRef = useRef(null)
-  
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -63,11 +63,11 @@ const RSVP = () => {
     for (let i = 0; i < 30; i++) {
       const particle = document.createElement('div')
       particle.className = 'particle'
-      
+
       const size = Math.random() * 4 + 2
       const colors = ['#FF6B9D', '#C44DFF', '#FFD93D', '#FFB3CC']
       const color = colors[Math.floor(Math.random() * colors.length)]
-      
+
       particle.style.cssText = `
         width: ${size}px;
         height: ${size}px;
@@ -76,7 +76,7 @@ const RSVP = () => {
         top: ${Math.random() * 100}%;
         opacity: ${Math.random() * 0.4 + 0.1};
       `
-      
+
       container.appendChild(particle)
 
       gsap.to(particle, {
@@ -93,12 +93,12 @@ const RSVP = () => {
   const handleSubmit = (e) => {
     e.preventDefault()
     setIsSubmitting(true)
-    
+
     // Simulate API call
     setTimeout(() => {
       setIsSubmitting(false)
       setIsSubmitted(true)
-      
+
       // Success animation
       gsap.from(formRef.current, {
         scale: 0.95,
@@ -114,20 +114,20 @@ const RSVP = () => {
   }
 
   return (
-    <section 
+    <section
       ref={sectionRef}
       className="relative min-h-screen section-padding overflow-hidden"
     >
       {/* Background */}
       <div className="absolute inset-0 bg-gradient-to-b from-oscuro via-oscuro-claro to-oscuro" />
-      
+
       {/* Particles container */}
       <div ref={particlesRef} className="absolute inset-0 pointer-events-none" />
 
       <div className="relative z-10 max-w-4xl mx-auto">
         {/* Section title */}
         <div ref={titleRef} className="text-center mb-16">
-          <p className="font-script text-2xl text-rosa-claro mb-4">Confirma tu</p>
+          <p className="font-script text-2xl text-rosa-claro mb-4">Confirmá tu</p>
           <h2 className="font-display text-5xl md:text-7xl lg:text-8xl text-gradient font-bold">
             Asistencia
           </h2>
@@ -137,7 +137,7 @@ const RSVP = () => {
         </div>
 
         {/* Form */}
-        <div 
+        <div
           ref={formRef}
           className="glass rounded-2xl p-8 md:p-12"
         >
@@ -198,11 +198,10 @@ const RSVP = () => {
                   <button
                     type="button"
                     onClick={() => handleChange('attending', true)}
-                    className={`p-4 rounded-xl border-2 transition-all duration-300 ${
-                      formData.attending === true
+                    className={`p-4 rounded-xl border-2 transition-all duration-300 ${formData.attending === true
                         ? 'border-rosa bg-rosa/20 text-white'
                         : 'border-white/10 hover:border-white/30 text-white/60'
-                    }`}
+                      }`}
                   >
                     <span className="text-3xl block mb-2">🎉</span>
                     <span className="font-body">¡Sí, allí estaré!</span>
@@ -210,11 +209,10 @@ const RSVP = () => {
                   <button
                     type="button"
                     onClick={() => handleChange('attending', false)}
-                    className={`p-4 rounded-xl border-2 transition-all duration-300 ${
-                      formData.attending === false
+                    className={`p-4 rounded-xl border-2 transition-all duration-300 ${formData.attending === false
                         ? 'border-pupura bg-pupura/20 text-white'
                         : 'border-white/10 hover:border-white/30 text-white/60'
-                    }`}
+                      }`}
                   >
                     <span className="text-3xl block mb-2">😢</span>
                     <span className="font-body">No podré ir</span>
@@ -226,7 +224,7 @@ const RSVP = () => {
               {formData.attending === true && (
                 <div className="animate-fadeIn">
                   <label className="block font-body text-sm text-white/60 mb-2">
-                   ¿Cuántos asistirán?
+                    ¿Cuántos asistirán?
                   </label>
                   <div className="flex items-center gap-4">
                     <button

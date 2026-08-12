@@ -29,7 +29,7 @@ const PreviaGallery = () => {
       const container = scrollContainerRef.current
       if (container) {
         const totalScroll = container.scrollWidth - container.clientWidth
-        
+
         gsap.to(container, {
           scrollLeft: totalScroll,
           ease: 'none',
@@ -47,7 +47,7 @@ const PreviaGallery = () => {
       // Photos entrance animation
       photosRef.current.forEach((photo, index) => {
         if (!photo) return
-        
+
         gsap.from(photo, {
           scale: 0.8,
           opacity: 0,
@@ -79,13 +79,13 @@ const PreviaGallery = () => {
   ]
 
   return (
-    <section 
+    <section
       ref={sectionRef}
       className="relative min-h-screen section-padding overflow-hidden"
     >
       {/* Background */}
       <div className="absolute inset-0 bg-gradient-to-b from-oscuro via-oscuro-claro to-oscuro" />
-      
+
       {/* Decorative elements */}
       <div className="absolute top-1/4 left-10 text-rosa/10 text-8xl animate-float">✿</div>
       <div className="absolute bottom-1/4 right-10 text-pupura/10 text-6xl animate-float" style={{ animationDelay: '2s' }}>❀</div>
@@ -103,7 +103,7 @@ const PreviaGallery = () => {
         </div>
 
         {/* Horizontal scroll gallery */}
-        <div 
+        <div
           ref={scrollContainerRef}
           className="horizontal-scroll gap-6 pb-8 px-8"
           style={{ scrollSnapType: 'x mandatory' }}
@@ -114,7 +114,7 @@ const PreviaGallery = () => {
               ref={el => photosRef.current[index] = el}
               className="flex-shrink-0 w-72 md:w-80 aspect-[3/4] rounded-2xl overflow-hidden glass cursor-pointer group"
             >
-              <img 
+              <img
                 src={photo.src}
                 alt={photo.label}
                 className="w-full h-full object-cover transition-all duration-300 group-hover:scale-105"
@@ -124,7 +124,7 @@ const PreviaGallery = () => {
               <div className="absolute inset-0 bg-gradient-to-t from-oscuro/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
                 <p className="font-display text-xl text-white">{photo.label}</p>
               </div>
-              
+
               {/* Shimmer effect on hover */}
               <div className="absolute inset-0 shimmer opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
             </div>
@@ -134,7 +134,7 @@ const PreviaGallery = () => {
         {/* Scroll indicator */}
         <div className="flex justify-center mt-8">
           <div className="flex items-center gap-2 text-white/50">
-            <span className="font-body text-sm">Desliza</span>
+            <span className="font-body text-sm">Deslizá</span>
             <svg className="w-5 h-5 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
             </svg>

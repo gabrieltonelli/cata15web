@@ -42,7 +42,7 @@ const CatalinaBio = () => {
       // Photos stagger animation
       photosRef.current.forEach((photo, index) => {
         if (!photo) return
-        
+
         gsap.from(photo, {
           scale: 0.8,
           opacity: 0,
@@ -93,19 +93,19 @@ const CatalinaBio = () => {
   ]
 
   return (
-    <section 
+    <section
       ref={sectionRef}
       className="relative min-h-screen section-padding overflow-hidden"
     >
       {/* Background */}
       <div className="absolute inset-0 bg-gradient-to-b from-oscuro via-oscuro-claro to-oscuro" />
-      
+
       <div className="relative z-10 max-w-7xl mx-auto">
         {/* Section title */}
         <div ref={titleRef} className="text-center mb-16">
-          <p className="font-script text-2xl text-rosa-claro mb-4">Conoce a la</p>
+          <p className="font-script text-2xl text-rosa-claro mb-4">Algo sobre mí</p>
           <h2 className="font-display text-5xl md:text-7xl lg:text-8xl text-gradient font-bold">
-            Quinceañera
+            Catalina
           </h2>
         </div>
 
@@ -114,7 +114,7 @@ const CatalinaBio = () => {
           {/* Main photo */}
           <div className="relative">
             <div className="aspect-[3/4] rounded-2xl overflow-hidden glass p-2">
-              <img 
+              <img
                 src="/assets/photos/catalina-main.jpg"
                 alt="Foto principal de Catalina"
                 className="w-full h-full object-cover rounded-xl"
@@ -130,20 +130,20 @@ const CatalinaBio = () => {
             <h3 className="font-display text-3xl md:text-4xl text-white mb-6">
               Hola, soy <span className="text-gradient">Catalina</span>
             </h3>
-            
+
             <div className="space-y-4 font-body text-lg text-white/80 leading-relaxed">
               <p>
-                Soy una chica apasionada por la vida, la música y los buenos momentos. 
-                Me encanta pasar tiempo con mis amigos y familia, y siempre estoy 
+                Soy una chica apasionada por la vida, la música y los buenos momentos.
+                Me encanta pasar tiempo con mis amigos y familia, y siempre estoy
                 buscando nuevas aventuras.
               </p>
               <p>
-                Mi pasión por la [música/arte/deporte] comenzó cuando era pequeña, 
-                y desde entonces no he parado de explorar todo lo que el mundo tiene 
+                Mi pasión por la [música/arte/deporte] comenzó cuando era pequeña,
+                y desde entonces no he parado de explorar todo lo que el mundo tiene
                 para ofrecer.
               </p>
               <p>
-                Estos 15 años son el comienzo de una nueva etapa llena de sueños 
+                Estos 15 años son el comienzo de una nueva etapa llena de sueños
                 y posibilidades. ¡Los invito a celebrar conmigo!
               </p>
             </div>
@@ -177,7 +177,7 @@ const CatalinaBio = () => {
               ref={el => photosRef.current[index] = el}
               className={`aspect-square rounded-xl overflow-hidden glass cursor-pointer transition-shadow hover:shadow-lg hover:shadow-rosa/20`}
             >
-              <img 
+              <img
                 src={photo.src}
                 alt={photo.alt}
                 className="w-full h-full object-cover"

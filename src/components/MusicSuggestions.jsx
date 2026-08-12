@@ -9,14 +9,14 @@ const MusicSuggestions = () => {
   const titleRef = useRef(null)
   const formRef = useRef(null)
   const suggestionsRef = useRef(null)
-  
+
   const [suggestions, setSuggestions] = useState([
     { id: 1, title: 'Flowers', artist: 'Miley Cyrus', votes: 12 },
     { id: 2, title: 'Anti-Hero', artist: 'Taylor Swift', votes: 10 },
     { id: 3, title: 'As It Was', artist: 'Harry Styles', votes: 8 },
     { id: 4, title: 'Levitating', artist: 'Dua Lipa', votes: 7 },
   ])
-  
+
   const [newSong, setNewSong] = useState({ title: '', artist: '' })
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -68,9 +68,9 @@ const MusicSuggestions = () => {
   const handleSubmit = (e) => {
     e.preventDefault()
     if (!newSong.title || !newSong.artist) return
-    
+
     setIsSubmitting(true)
-    
+
     // Simulate API call
     setTimeout(() => {
       setSuggestions(prev => [
@@ -79,7 +79,7 @@ const MusicSuggestions = () => {
       ])
       setNewSong({ title: '', artist: '' })
       setIsSubmitting(false)
-      
+
       // Animate new item
       gsap.from(suggestionsRef.current?.firstChild, {
         scale: 0.8,
@@ -92,10 +92,10 @@ const MusicSuggestions = () => {
   }
 
   const handleVote = (id) => {
-    setSuggestions(prev => 
+    setSuggestions(prev =>
       prev.map(s => s.id === id ? { ...s, votes: s.votes + 1 } : s)
     )
-    
+
     // Animate vote
     const element = suggestionsRef.current?.querySelector(`[data-id="${id}"]`)
     if (element) {
@@ -110,13 +110,13 @@ const MusicSuggestions = () => {
   const sortedSuggestions = [...suggestions].sort((a, b) => b.votes - a.votes)
 
   return (
-    <section 
+    <section
       ref={sectionRef}
       className="relative min-h-screen section-padding overflow-hidden"
     >
       {/* Background */}
       <div className="absolute inset-0 bg-gradient-to-b from-oscuro via-oscuro-claro to-oscuro" />
-      
+
       {/* Music notes decoration */}
       <div className="absolute top-20 left-10 text-rosa/10 text-8xl animate-float">♪</div>
       <div className="absolute top-40 right-20 text-pupura/10 text-6xl animate-float" style={{ animationDelay: '1s' }}>♫</div>
@@ -126,12 +126,12 @@ const MusicSuggestions = () => {
       <div className="relative z-10 max-w-6xl mx-auto">
         {/* Section title */}
         <div ref={titleRef} className="text-center mb-16">
-          <p className="font-script text-2xl text-rosa-claro mb-4">¿Qué quieres</p>
+          <p className="font-script text-2xl text-rosa-claro mb-4">¿Qué te gustaría </p>
           <h2 className="font-display text-5xl md:text-7xl lg:text-8xl text-gradient font-bold">
             Bailar?
           </h2>
           <p className="font-body text-lg text-white/60 mt-4 max-w-xl mx-auto">
-            Sugiere las canciones que no pueden faltar en la fiesta
+            Sugerí las canciones que no pueden faltar en la fiesta
           </p>
         </div>
 
@@ -143,7 +143,7 @@ const MusicSuggestions = () => {
                 <span className="text-3xl">🎤</span>
                 Sugerir canción
               </h3>
-              
+
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
                   <label className="block font-body text-sm text-white/60 mb-2">
@@ -158,7 +158,7 @@ const MusicSuggestions = () => {
                     required
                   />
                 </div>
-                
+
                 <div>
                   <label className="block font-body text-sm text-white/60 mb-2">
                     Artista / Grupo
@@ -172,7 +172,7 @@ const MusicSuggestions = () => {
                     required
                   />
                 </div>
-                
+
                 <button
                   type="submit"
                   disabled={isSubmitting}
@@ -204,24 +204,22 @@ const MusicSuggestions = () => {
                 <span className="text-3xl">🎶</span>
                 Canciones sugeridas
               </h3>
-              
+
               <div className="space-y-3">
                 {sortedSuggestions.map((song, index) => (
-                  <div 
+                  <div
                     key={song.id}
                     data-id={song.id}
-                    className={`flex items-center gap-4 p-4 rounded-xl transition-all duration-300 hover:bg-white/5 ${
-                      index === 0 ? 'bg-dorado/10 border border-dorado/30' : ''
-                    }`}
+                    className={`flex items-center gap-4 p-4 rounded-xl transition-all duration-300 hover:bg-white/5 ${index === 0 ? 'bg-dorado/10 border border-dorado/30' : ''
+                      }`}
                   >
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center font-display text-lg ${
-                      index === 0 ? 'bg-dorado text-oscuro' : 
-                      index === 1 ? 'bg-white/20 text-white' : 
-                      index === 2 ? 'bg-rosa/30 text-rosa' : 'bg-white/10 text-white/60'
-                    }`}>
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center font-display text-lg ${index === 0 ? 'bg-dorado text-oscuro' :
+                      index === 1 ? 'bg-white/20 text-white' :
+                        index === 2 ? 'bg-rosa/30 text-rosa' : 'bg-white/10 text-white/60'
+                      }`}>
                       {index + 1}
                     </div>
-                    
+
                     <div className="flex-1 min-w-0">
                       <p className="font-body font-semibold text-white truncate">
                         {song.title}
@@ -230,7 +228,7 @@ const MusicSuggestions = () => {
                         {song.artist}
                       </p>
                     </div>
-                    
+
                     <button
                       onClick={() => handleVote(song.id)}
                       className="flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 hover:bg-rosa/20 transition-colors"
@@ -241,7 +239,7 @@ const MusicSuggestions = () => {
                   </div>
                 ))}
               </div>
-              
+
               {suggestions.length === 0 && (
                 <div className="text-center py-8">
                   <div className="text-6xl mb-4">🎵</div>
