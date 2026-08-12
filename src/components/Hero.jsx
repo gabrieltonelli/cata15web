@@ -42,10 +42,9 @@ const Hero = () => {
         ease: 'power2.out'
       }, '-=0.2')
 
-      // Parallax effect on scroll
+      // Parallax effect on scroll (subtle, no fade out)
       gsap.to(titleRef.current, {
-        y: -150,
-        opacity: 0,
+        y: -80,
         ease: 'none',
         scrollTrigger: {
           trigger: heroRef.current,
@@ -56,8 +55,7 @@ const Hero = () => {
       })
 
       gsap.to(subtitleRef.current, {
-        y: -100,
-        opacity: 0,
+        y: -50,
         ease: 'none',
         scrollTrigger: {
           trigger: heroRef.current,
@@ -128,13 +126,13 @@ const Hero = () => {
         muted 
         loop 
         playsInline
-        className="absolute inset-0 w-full h-full object-cover"
+        className="absolute inset-0 w-full h-full object-cover z-0"
       >
         <source src="/assets/video/hero-bg.mp4" type="video/mp4" />
       </video>
       
-      {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-oscuro via-oscuro-claro to-oscuro" />
+      {/* Background gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-b from-oscuro/70 via-oscuro/40 to-oscuro/80" />
       
       {/* Animated background circles */}
       <div className="absolute inset-0 overflow-hidden">
