@@ -68,14 +68,14 @@ const PreviaGallery = () => {
   }, [])
 
   const photos = [
-    { id: 1, gradient: 'from-rosa to-pupura', label: 'Preparativos', emoji: '💄' },
-    { id: 2, gradient: 'from-pupura to-dorado', label: 'Vestido', emoji: '👗' },
-    { id: 3, gradient: 'from-dorado to-rosa', label: 'Maquillaje', emoji: '💋' },
-    { id: 4, gradient: 'from-rosa-claro to-pupura', label: 'Pelo', emoji: '💇‍♀️' },
-    { id: 5, gradient: 'from-pupura to-rosa', label: 'Accesorios', emoji: '💎' },
-    { id: 6, gradient: 'from-dorado to-rosa-claro', label: 'Familia', emoji: '👨‍👩‍👧' },
-    { id: 7, gradient: 'from-rosa to-pupura', label: 'Amigas', emoji: '👯‍♀️' },
-    { id: 8, gradient: 'from-pupura to-dorado', label: 'Momentos', emoji: '📸' },
+    { id: 1, src: '/assets/photos/previa-01-preparativos.jpg', label: 'Preparativos' },
+    { id: 2, src: '/assets/photos/previa-02-vestido.jpg', label: 'Vestido' },
+    { id: 3, src: '/assets/photos/previa-03-maquillaje.jpg', label: 'Maquillaje' },
+    { id: 4, src: '/assets/photos/previa-04-pelo.jpg', label: 'Pelo' },
+    { id: 5, src: '/assets/photos/previa-05-accesorios.jpg', label: 'Accesorios' },
+    { id: 6, src: '/assets/photos/previa-06-familia.jpg', label: 'Familia' },
+    { id: 7, src: '/assets/photos/previa-07-amigas.jpg', label: 'Amigas' },
+    { id: 8, src: '/assets/photos/previa-08-momentos.jpg', label: 'Momentos' },
   ]
 
   return (
@@ -114,8 +114,14 @@ const PreviaGallery = () => {
               ref={el => photosRef.current[index] = el}
               className="flex-shrink-0 w-72 md:w-80 aspect-[3/4] rounded-2xl overflow-hidden glass cursor-pointer group"
             >
-              <div className={`w-full h-full bg-gradient-to-br ${photo.gradient} opacity-40 flex flex-col items-center justify-center transition-all duration-300 group-hover:opacity-60`}>
-                <span className="text-7xl mb-4 group-hover:scale-110 transition-transform duration-300">{photo.emoji}</span>
+              <img 
+                src={photo.src}
+                alt={photo.label}
+                className="w-full h-full object-cover transition-all duration-300 group-hover:scale-105"
+                loading="lazy"
+              />
+              {/* Label overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-oscuro/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
                 <p className="font-display text-xl text-white">{photo.label}</p>
               </div>
               

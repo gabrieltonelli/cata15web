@@ -84,12 +84,12 @@ const CatalinaBio = () => {
   }, [])
 
   const photos = [
-    { id: 1, gradient: 'from-rosa to-pupura', emoji: '🎂' },
-    { id: 2, gradient: 'from-pupura to-dorado', emoji: '✨' },
-    { id: 3, gradient: 'from-dorado to-rosa', emoji: '🌸' },
-    { id: 4, gradient: 'from-rosa-claro to-pupura', emoji: '💫' },
-    { id: 5, gradient: 'from-pupura to-rosa', emoji: '🎀' },
-    { id: 6, gradient: 'from-dorado to-rosa-claro', emoji: '🦋' },
+    { id: 1, src: '/assets/photos/catalina-01.jpg', alt: 'Catalina - Momento especial 1' },
+    { id: 2, src: '/assets/photos/catalina-02.jpg', alt: 'Catalina - Momento especial 2' },
+    { id: 3, src: '/assets/photos/catalina-03.jpg', alt: 'Catalina - Momento especial 3' },
+    { id: 4, src: '/assets/photos/catalina-04.jpg', alt: 'Catalina - Momento especial 4' },
+    { id: 5, src: '/assets/photos/catalina-05.jpg', alt: 'Catalina - Momento especial 5' },
+    { id: 6, src: '/assets/photos/catalina-06.jpg', alt: 'Catalina - Momento especial 6' },
   ]
 
   return (
@@ -111,16 +111,14 @@ const CatalinaBio = () => {
 
         {/* Bio content */}
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center mb-20">
-          {/* Main photo placeholder */}
+          {/* Main photo */}
           <div className="relative">
             <div className="aspect-[3/4] rounded-2xl overflow-hidden glass p-2">
-              <div className="w-full h-full rounded-xl bg-gradient-to-br from-rosa/20 via-pupura/20 to-dorado/20 flex items-center justify-center">
-                <div className="text-center">
-                  <div className="text-8xl mb-4">👩</div>
-                  <p className="font-script text-2xl text-rosa-claro">Foto de Catalina</p>
-                  <p className="font-body text-sm text-white/50 mt-2">Reemplazar con foto real</p>
-                </div>
-              </div>
+              <img 
+                src="/assets/photos/catalina-main.jpg"
+                alt="Foto principal de Catalina"
+                className="w-full h-full object-cover rounded-xl"
+              />
             </div>
             {/* Decorative elements */}
             <div className="absolute -top-4 -right-4 text-4xl animate-float">✨</div>
@@ -179,16 +177,15 @@ const CatalinaBio = () => {
               ref={el => photosRef.current[index] = el}
               className={`aspect-square rounded-xl overflow-hidden glass cursor-pointer transition-shadow hover:shadow-lg hover:shadow-rosa/20`}
             >
-              <div className={`w-full h-full bg-gradient-to-br ${photo.gradient} opacity-30 flex items-center justify-center`}>
-                <span className="text-5xl md:text-6xl">{photo.emoji}</span>
-              </div>
+              <img 
+                src={photo.src}
+                alt={photo.alt}
+                className="w-full h-full object-cover"
+                loading="lazy"
+              />
             </div>
           ))}
         </div>
-
-        <p className="text-center mt-8 font-body text-white/50 text-sm">
-          * Reemplazar placeholders con fotos reales de Catalina
-        </p>
       </div>
     </section>
   )

@@ -192,16 +192,17 @@ const EventDetails = () => {
         </div>
 
         {/* Map placeholder */}
-        <div className="mt-12 glass rounded-2xl p-8 text-center">
-          <div className="aspect-video bg-gradient-to-br from-oscuro-claro to-oscuro rounded-xl flex items-center justify-center">
-            <div className="text-center">
-              <div className="text-6xl mb-4">🗺️</div>
-              <p className="font-display text-xl text-white">Mapa del lugar</p>
-              <p className="font-body text-sm text-white/50 mt-2">
-                * Integrar con Google Maps o similar
-              </p>
-            </div>
+        <div className="mt-12 glass rounded-2xl p-8">
+          <div className="aspect-video rounded-xl overflow-hidden">
+            <img 
+              src="/assets/photos/venue-map.jpg"
+              alt="Mapa del lugar del evento"
+              className="w-full h-full object-cover"
+            />
           </div>
+          <p className="text-center mt-4 font-body text-white/50 text-sm">
+            * Reemplazar con mapa real o integrar Google Maps
+          </p>
         </div>
       </div>
     </section>
