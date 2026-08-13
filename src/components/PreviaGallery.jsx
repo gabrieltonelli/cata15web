@@ -25,25 +25,6 @@ const PreviaGallery = () => {
         }
       })
 
-      // Horizontal scroll animation
-      const container = scrollContainerRef.current
-      if (container) {
-        const totalScroll = container.scrollWidth - container.clientWidth
-
-        gsap.to(container, {
-          scrollLeft: totalScroll,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top 30%',
-            end: () => `+=${totalScroll}`,
-            scrub: 1,
-            pin: true,
-            anticipatePin: 1,
-          }
-        })
-      }
-
       // Photos entrance animation
       photosRef.current.forEach((photo, index) => {
         if (!photo) return
@@ -67,6 +48,30 @@ const PreviaGallery = () => {
     return () => ctx.revert()
   }, [])
 
+  // Handle horizontal scroll with wheel event
+  useEffect(() => {
+    const container = scrollContainerRef.current
+    if (!container) return
+
+    const handleWheel = (e) => {
+      // Check if we can scroll horizontally
+      const isAtStart = container.scrollLeft <= 0
+      const isAtEnd = container.scrollLeft >= container.scrollWidth - container.clientWidth - 1
+
+      // If scrolling right and not at end, or scrolling left and not at start
+      if ((e.deltaY > 0 && !isAtEnd) || (e.deltaY < 0 && !isAtStart)) {
+        e.preventDefault()
+        container.scrollLeft += e.deltaY
+      }
+    }
+
+    container.addEventListener('wheel', handleWheel, { passive: false })
+
+    return () => {
+      container.removeEventListener('wheel', handleWheel)
+    }
+  }, [])
+
   const photos = [
     { id: 1, src: '/assets/photos/previa-01-preparativos.jpg', label: 'Preparativos' },
     { id: 2, src: '/assets/photos/previa-02-vestido.jpg', label: 'Vestido' },
@@ -81,7 +86,7 @@ const PreviaGallery = () => {
   return (
     <section
       ref={sectionRef}
-      className="relative min-h-screen section-padding overflow-hidden"
+      className="relative section-padding overflow-hidden"
     >
       {/* Background */}
       <div className="absolute inset-0 bg-gradient-to-b from-oscuro via-oscuro-claro to-oscuro" />
@@ -92,7 +97,7 @@ const PreviaGallery = () => {
 
       <div className="relative z-10">
         {/* Section title */}
-        <div ref={titleRef} className="text-center mb-16">
+        <div ref={titleRef} className="text-center mb-12">
           <p className="font-script text-2xl text-rosa-claro mb-4">Una mirada a</p>
           <h2 className="font-display text-5xl md:text-7xl lg:text-8xl text-gradient font-bold">
             La Previa
@@ -105,14 +110,19 @@ const PreviaGallery = () => {
         {/* Horizontal scroll gallery */}
         <div
           ref={scrollContainerRef}
-          className="horizontal-scroll gap-6 pb-8 px-8"
-          style={{ scrollSnapType: 'x mandatory' }}
+          className="flex gap-6 overflow-x-auto pb-8 px-8 snap-x snap-mandatory scrollbar-hide"
+          style={{
+            scrollBehavior: 'smooth',
+            WebkitOverflowScrolling: 'touch',
+            scrollbarWidth: 'none',
+            msOverflowStyle: 'none'
+          }}
         >
           {photos.map((photo, index) => (
             <div
               key={photo.id}
               ref={el => photosRef.current[index] = el}
-              className="flex-shrink-0 w-72 md:w-80 aspect-[3/4] rounded-2xl overflow-hidden glass cursor-pointer group"
+              className="flex-shrink-0 w-72 md:w-80 aspect-[3/4] rounded-2xl overflow-hidden glass cursor-pointer group snap-start"
             >
               <img
                 src={photo.src}
