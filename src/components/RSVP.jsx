@@ -212,8 +212,8 @@ const RSVP = () => {
                   type="button"
                   onClick={() => handleChange('attending', 'yes')}
                   className={`py-3 px-4 border text-xs sm:text-sm font-sans tracking-wider uppercase transition-all cursor-pointer ${formData.attending === 'yes'
-                    ? 'border-white bg-white text-black font-semibold shadow-md'
-                    : 'border-white/15 bg-white/5 text-white/60 hover:border-white/40'
+                      ? 'border-white bg-white text-black font-semibold shadow-md'
+                      : 'border-white/15 bg-white/5 text-white/60 hover:border-white/40'
                     }`}
                 >
                   ¡SÍ, CONFIRMO!
@@ -222,8 +222,8 @@ const RSVP = () => {
                   type="button"
                   onClick={() => handleChange('attending', 'no')}
                   className={`py-3 px-4 border text-xs sm:text-sm font-sans tracking-wider uppercase transition-all cursor-pointer ${formData.attending === 'no'
-                    ? 'border-white bg-white text-black font-semibold shadow-md'
-                    : 'border-white/15 bg-white/5 text-white/60 hover:border-white/40'
+                      ? 'border-white bg-white text-black font-semibold shadow-md'
+                      : 'border-white/15 bg-white/5 text-white/60 hover:border-white/40'
                     }`}
                 >
                   NO PODRÉ ASISTIR
