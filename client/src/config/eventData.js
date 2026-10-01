@@ -54,7 +54,7 @@ export const eventConfig = {
   // RSVP
   rsvpTitle: 'CONFIRMÁ TU ASISTENCIA',
   rsvpDeadline: import.meta.env.VITE_RSVP_DEADLINE || 'Por favor confirmar antes del 1 de Noviembre de 2026',
-  rsvpEndpoint: import.meta.env.VITE_RSVP_ENDPOINT || '', // Si está vacío se usa Netlify Forms o guardado local
+  rsvpEndpoint: import.meta.env.VITE_RSVP_ENDPOINT || '/api/rsvp', // Endpoint API hacia el backend monorepo / Netlify Function
 
   // Audio de fondo
   audioUrl: import.meta.env.VITE_AUDIO_URL || '/assets/mp3/Rihanna-Diamonds.mp3',

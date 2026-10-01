@@ -54,7 +54,7 @@ const Footer = () => {
         >
           <span>{eventConfig.creatorCredit}</span>
           <svg
-            className="w-5 h-5 text-emerald-400 group-hover:text-emerald-300 transition-transform duration-200 group-hover:scale-110"
+            className="w-5 h-5 text-white group-hover:text-white/80 transition-transform duration-200 group-hover:scale-110"
             fill="currentColor"
             viewBox="0 0 24 24"
           >

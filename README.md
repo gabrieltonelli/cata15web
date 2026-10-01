@@ -1,183 +1,168 @@
-# ✦ Cata15Web - Web App de Invitación a Evento
+# ✦ Cata15Web - Monorepo (Client + Server)
 
-Aplicación Web Single Page (SPA) moderna, minimalista y elegante para invitación a evento (15 años), desarrollada en **React 19 + Vite + Tailwind CSS**.
-
-Diseñada bajo un concepto visual de **alto contraste (Dark Mode / Blanco / Negro)**, enfoque 100% utilitario y refinado, eliminando cualquier elemento sentimental o cursi y priorizando la experiencia de usuario (UX) para brindar información clara y recolectar confirmaciones de asistencia.
-
----
-
-## 🎨 Concepto Visual y Arquitectura
-
-El diseño sigue una estética editorial de lujo con un scroll vertical continuo:
-
-1. **Fondo Fijo (Fixed Background / Parallax):**
-   - Video de fondo sutil en loop con oscurecimiento controlado (`brightness: 0.42`).
-   - Permanece fijo mientras el usuario se desplaza, revelando u ocultando el video a través de la alternancia de bloques sólidos y transparentes.
-
-2. **Componente 1: Pantalla de Bienvenida (`WelcomeHero`):**
-   - Hero overlay a pantalla completa (100vh) en fondo sólido blanco y tipografía editorial de alto impacto (`MIS XV CATALINA`).
-   - **Precarga multimedia en segundo plano:** Descarga anticipada de videos e imágenes críticas para una reproducción fluida e instantánea.
-   - **Botón dinámico `INGRESAR`:** Se va rellenando de negro a medida que se descargan los recursos, con inversión visual del texto y la flecha (de negro a blanco) garantizando un contraste perfecto.
-
-3. **Componente 2: Contador Dinámico (`Countdown`):**
-   - Fondo de video en loop con filtro CSS de escala de grises y alto contraste.
-   - Título principal `MIS XV CATALINA` de gran tamaño con contador reescalado (-30%).
-
-4. **Componente 3: Tarjetas de Información (`InfoCards`):**
-   - Flujo continuo y sin márgenes/bordes en secciones contiguas de alto impacto:
-     - **Tarjeta A (¿Cuándo?):** Fondo blanco sólido, icono de calendario, fecha, hora y botón para agendar en Google Calendar.
-     - **Transición Boomerang (Una Noche Inolvidable):** Ubicada inmediatamente después de ¿Cuándo?, con video en loop boomerang (adelante y atrás) y filtro CSS independiente `.video-noche-inolvidable` sin márgenes ni bordes.
-     - **Tarjeta B (¿Dónde?):** Fondo blanco sólido, icono de ubicación, dirección y botón a Google Maps.
-     - **Tarjeta C (Regalos):** Fondo negro sólido sin márgenes ni bordes, con botón para abrir modal de datos bancarios.
-     - **Tarjeta D (Dress Code):** Fondo blanco sólido sin márgenes ni bordes con especificaciones de vestimenta.
-
-5. **Componente 4: Formulario de Asistencia (`RSVP`):**
-   - Fondo negro pleno de alto contraste.
-   - Campos y lógica condicional:
-     - Nombre (requerido)
-     - Apellido (requerido)
-     - ¿Asistirás? (selectores: *¡Sí, confirmo!* / *No podré asistir*)
-     - Requerimientos alimenticios (solo visible si confirma asistencia)
-     - Sugerencia musical (solo visible si confirma asistencia)
-     - Comentarios u observaciones (ubicado encima del botón de confirmación)
-   - Manejo de estados (cargando, pantalla de respuesta registrada, error) con integración hacia Netlify Forms, API endpoint configurable vía variable de entorno y respaldo en almacenamiento local (`localStorage`).
-
-6. **Componente 5: Footer / Despedida (`Footer`):**
-   - **Sección TE ESPERO:** Fondo blanco sólido sobrio con tipografía oscura, año y destellos lineales (`✦ ✧ ✦`).
-   - **Banda de Créditos:** Banda inferior con leyenda *"creado con amor by Ancle Gaby"* y enlace directo hacia chat de WhatsApp con mensaje preconfigurado.
-
-7. **Reproductor de Audio Ambiental (`AudioPlayer`):**
-   - Control flotante y discreto en la esquina inferior con animación de ondas sonoras, play/pause y soporte de inicio automático tras el clic en `INGRESAR`.
+Aplicación Web de Invitación a Evento (15 años) con arquitectura **Monorepo**:
+- **Frontend (`client/`)**: Desarrollado con **React 19 + Vite + Tailwind CSS**, bajo un concepto estético de alto contraste (*Dark Mode / Blanco / Negro*), tipografía editorial y transiciones de video fluidas.
+- **Backend (`server/`)**: API REST con **Express y Netlify Functions** para procesar las confirmaciones de asistencia (RSVP) y persistirlas en **Google Sheets** sin exponer credenciales ni tokens en el cliente web.
 
 ---
 
-## 🛠️ Stack Tecnológico
+## 📁 Estructura del Monorepo
 
-| Tecnología | Versión | Propósito |
-|------------|---------|-----------|
-| **React** | 19.x | Componentes funcionales y Hooks (`useState`, `useEffect`, `useRef`) |
-| **Vite** | 6.x | Bundler ultra rápido y entorno de desarrollo |
-| **Tailwind CSS** | 3.4.x | Estilos utility-first y diseño responsive mobile-first |
-| **Google Fonts** | - | Tipografías de lujo: *Cinzel*, *Playfair Display* y *Montserrat* |
-
----
-
-## ⚙️ Variables de Entorno y Parametrización
-
-Toda la data estática se encuentra centralizada en `src/config/eventData.js` y puede configurarse mediante variables de entorno en `.env` evitando valores hardcodeados.
-
-Consulte el archivo [.env.template](file:///.env.template) para ver todas las opciones documentadas con comentarios y ejemplos.
-
-### Lista de variables disponibles:
-
-| Variable | Descripción | Valor por Defecto |
-|----------|-------------|-------------------|
-| `VITE_EVENT_MAIN_TITLE` | Título principal en la portada y Hero | `MIS XV CATALINA` |
-| `VITE_EVENT_TITLE` | Nombre secundario | `CATALINA` |
-| `VITE_EVENT_SUBTITLE` | Subtítulo descriptivo | `MIS XV AÑOS` |
-| `VITE_HERO_DATE_DISPLAY` | Fecha mostrada en la pantalla de bienvenida | `20 • 11 • 2026` |
-| `VITE_HERO_VIDEO` | Ruta del video de fondo para el Hero | `/assets/video/hero-bg2.mp4` |
-| `VITE_TRANSITION_VIDEO` | Video en bucle boomerang para sección Una Noche Inolvidable | `/assets/video/video2.mp4` |
-| `VITE_DISCO_BALLS_IMAGE` | Ruta de la imagen de fondo con bolas espejadas | `/assets/photos/a2c632e4-3d7f-434f-831a-6cfb07fc3aef.jpg` |
-| `VITE_EVENT_TARGET_DATE` | Fecha objetivo ISO 8601 para el Countdown | `2026-11-20T20:00:00` |
-| `VITE_EVENT_DATE_TEXT` | Texto legible de la fecha | `Viernes 20 de Noviembre de 2026` |
-| `VITE_EVENT_TIME_TEXT` | Texto del horario | `20:00 hs (Puntual)` |
-| `VITE_GOOGLE_CALENDAR_URL` | Enlace directo para añadir el evento al calendario | URL de Google Calendar |
-| `VITE_VENUE_NAME` | Nombre del salón o recinto | `Salón Quintana` |
-| `VITE_VENUE_ADDRESS` | Dirección completa del evento | `Quintana 30, Chacabuco, Buenos Aires` |
-| `VITE_MAPS_URL` | Enlace para navegación en Google Maps | URL de búsqueda Maps |
-| `VITE_MAPS_EMBED_URL` | URL del iframe para mapa integrado | Embed de Google Maps |
-| `VITE_GIFTS_TEXT` | Texto explicativo para la sección de regalos | Mensaje formal |
-| `VITE_BANK_HOLDER` | Nombre del titular de la cuenta | `Catalina Tonelli` |
-| `VITE_BANK_NAME` | Nombre del banco o billetera | `Banco Galicia` |
-| `VITE_BANK_CBU` | CBU bancario (22 dígitos) | `0070000000000000000000` |
-| `VITE_BANK_ALIAS` | Alias de la cuenta bancaria | `CATA.15.FIESTA` |
-| `VITE_BANK_ACCOUNT_TYPE` | Tipo de cuenta bancaria | `Caja de Ahorro en Pesos` |
-| `VITE_DRESS_CODE` | Código de vestimenta | `Elegante` |
-| `VITE_DRESS_CODE_DETAILS` | Aclaraciones del dress code | Indicaciones sobre tonos recomendados |
-| `VITE_RSVP_DEADLINE` | Fecha límite para confirmar asistencia | `Por favor confirmar antes del 1 de Noviembre de 2026` |
-| `VITE_RSVP_ENDPOINT` | URL de backend o webhook opcional para RSVP | `""` (usa Netlify Forms / LocalStorage) |
-| `VITE_AUDIO_URL` | Enlace a la pista de audio ambiental | `/assets/mp3/Rihanna-Diamonds.mp3` |
-| `VITE_AUDIO_TITLE` | Título de la pista de música ambiental | `Rihanna - Diamonds` |
-| `VITE_FOOTER_CLOSING` | Frase de despedida en el footer | `TE ESPERO` |
-| `VITE_FOOTER_YEAR` | Año visible en el footer | `2026` |
-| `VITE_CREATOR_CREDIT` | Crédito visible en la banda inferior | `Creado con amor by AncleGaby` |
-| `VITE_WHATSAPP_PHONE` | Teléfono de WhatsApp para contacto | `5492352440495` |
-| `VITE_WHATSAPP_MESSAGE` | Mensaje inicial preconfigurado de WhatsApp | `Hola, me interesaría crear una página de invitación a mi evento` |
-
----
-
-## 🚀 Instalación y Uso
-
-### 1. Clonar el repositorio y acceder a la carpeta:
-```bash
-git clone https://github.com/gabrieltonelli/cata15web.git
-cd cata15web
-```
-
-### 2. Configurar variables de entorno:
-```bash
-cp .env.template .env
-```
-Edite `.env` con los datos reales del evento.
-
-### 3. Instalar dependencias:
-```bash
-npm install
-```
-
-### 4. Iniciar en modo desarrollo:
-```bash
-npm run dev
-```
-
-### 5. Compilar para producción:
-```bash
-npm run build
-```
-Los archivos optimizados se generarán en la carpeta `dist/`.
-
----
-
-## 📁 Estructura del Proyecto
-
-```
+```text
 cata15web/
+├── client/                      # Frontend (SPA React + Vite)
+│   ├── public/                  # Multimedia (videos, fotos, audio, favicon)
+│   ├── src/
+│   │   ├── components/          # WelcomeHero, Countdown, InfoCards, RSVP, Footer, etc.
+│   │   ├── config/              # eventData.js (parametrización)
+│   │   └── styles/              # index.css (Tailwind & custom utilities)
+│   ├── .env                     # Variables locales del cliente (ignorado en git)
+│   ├── .env.template            # Plantilla documentada de variables del cliente
+│   ├── package.json             # Dependencias del cliente
+│   └── vite.config.js           # Configuración con proxy a http://localhost:3002/api
+│
+├── server/                      # Backend (Node.js + Express + Netlify Functions)
+│   ├── data/                    # submissions.json (fallback local de resguardo)
+│   ├── functions/
+│   │   └── api.js               # Handler serverless para Netlify Functions
+│   ├── src/
+│   │   ├── config/env.js        # Validación y lectura de variables de entorno
+│   │   ├── services/            # sheetsService.js (integración con Google Sheets)
+│   │   ├── app.js               # Express application y rutas (/api/health, /api/rsvp)
+│   │   └── server.js            # Servidor local Express
+│   ├── .env                     # Credenciales y puertos del servidor (ignorado en git)
+│   ├── .env.template            # Plantilla documentada de variables del servidor
+│   └── package.json             # Dependencias del servidor (express, googleapis, etc.)
+│
 ├── docs/
-│   └── gu_a_de_diseño_y_requerimientos_refactorizacion_de_invitacion.md # Guía oficial
-├── public/
-│   ├── assets/
-│   │   ├── icons/       # Iconografía SVG y favicon.jpg (bola espejada)
-│   │   ├── mp3/         # Rihanna-Diamonds.mp3
-│   │   └── video/       # hero-bg2.mp4, video2.mp4
-│   ├── _redirects       # Reglas de redirección para SPA
-│   └── favicon.svg      # Favicon complementario
-├── src/
-│   ├── components/
-│   │   ├── AudioPlayer.jsx     # Reproductor flotante de audio ambiental
-│   │   ├── Countdown.jsx       # Componente 2: Contador en tiempo real
-│   │   ├── FixedBackground.jsx # Fondo fijo de video en loop con gradiente
-│   │   ├── Footer.jsx          # Componente 5: Cierre y despedida
-│   │   ├── GiftModal.jsx       # Modal de datos bancarios con copia rápida
-│   │   ├── InfoCards.jsx       # Componente 3: Tarjetas A, B, C y D
-│   │   ├── RSVP.jsx            # Componente 4: Formulario de asistencia
-│   │   └── WelcomeHero.jsx     # Componente 1: Pantalla inicial con botón INGRESAR
-│   ├── config/
-│   │   └── eventData.js        # Configuración centralizada vía import.meta.env
-│   ├── styles/
-│   │   └── index.css           # Estilos base y tokens de Tailwind
-│   ├── App.jsx                 # Componente principal ensamblador
-│   └── main.jsx                # Punto de entrada de React
-├── .env.template               # Plantilla de variables de entorno documentada
-├── .env                        # Variables locales (ignorado en git)
-├── .gitignore                  # Configuración de exclusión para Git
-├── package.json                # Dependencias y scripts
-├── tailwind.config.js          # Configuración de diseño y tipografías
-└── vite.config.js              # Configuración de Vite
+│   └── google-apps-script.js    # Código listo para pegar en Google Sheets Apps Script
+├── netlify.toml                 # Configuración de despliegue para Netlify (build & functions)
+└── package.json                 # Scripts raíz del monorepo
 ```
 
 ---
 
-## 📄 Licencia
+## 🚀 Cómo Levantar el Proyecto Localmente
 
-Proyecto privado desarrollado para la celebración de 15 años de Catalina.
+Para arrancar el entorno de desarrollo, abrí dos terminales o levantá primero el backend y luego el frontend:
+
+### 1. Iniciar el Servidor Backend (`server/`)
+```bash
+# Opción A (desde la carpeta server):
+cd server
+npm install
+npm run dev
+
+# Opción B (desde la raíz del monorepo):
+npm run dev:server
+```
+El backend iniciará en **`http://localhost:3002`** con los endpoints:
+- Comprobación de estado: `http://localhost:3002/api/health`
+- Recepción de confirmaciones: `http://localhost:3002/api/rsvp`
+
+### 2. Iniciar el Cliente Frontend (`client/`)
+```bash
+# Opción A (desde la carpeta client):
+cd client
+npm install
+npm run dev
+
+# Opción B (desde la raíz del monorepo):
+npm run dev:client
+```
+El cliente iniciará en **`http://localhost:5173`**. Las llamadas a `/api/*` serán reenviadas automáticamente por el proxy de Vite hacia el servidor en `http://localhost:3002`.
+
+---
+
+## 📊 Persistencia en Google Sheets
+
+La planilla de destino configurada es:
+👉 **[Ver Planilla de Google Sheets](https://docs.google.com/spreadsheets/d/1u7LT_cZn-SUzWxPNg1MZfPi0wsJNZfeUgEoilp0wemo/edit?usp=sharing)**
+*(ID: `1u7LT_cZn-SUzWxPNg1MZfPi0wsJNZfeUgEoilp0wemo`)*
+
+El backend soporta **dos métodos de conexión** y un **mecanismo de resguardo local**:
+
+### Método 1: Google Apps Script Webhook (Recomendado - 2 minutos)
+Es la forma más sencilla, segura y rápida ya que no requiere dar de alta credenciales en Google Cloud Console:
+1. Abrí la planilla en tu navegador.
+2. Hacé clic en **Extensiones** ➔ **Apps Script**.
+3. Copiá el código completo que se encuentra en [docs/google-apps-script.js](file:///c:/Users/gabrielt/Documents/Proyectos/PROPIOS/cata15web/docs/google-apps-script.js) y reemplazá el contenido del editor.
+4. Hacé clic en **Guardar** (ícono de disquete).
+5. Hacé clic en **Implementar** ➔ **Nueva implementación**.
+6. Seleccioná el tipo **Aplicación web**:
+   - *Descripción*: `Webhook RSVP Mis XV`
+   - *Ejecutar como*: `Yo` (tu cuenta)
+   - *Quién tiene acceso*: `Cualquier persona` (Anyone)
+7. Hacé clic en **Implementar** y copiá la **URL de la aplicación web** generada (termina en `/exec`).
+8. Pegá dicha URL en `server/.env`:
+   ```env
+   GOOGLE_APPS_SCRIPT_URL=https://script.google.com/macros/s/AKfycb.../exec
+   ```
+
+### Método 2: Google Cloud Service Account (API Oficial v4)
+Si preferís utilizar una cuenta de servicio de Google Cloud:
+1. En Google Cloud Console, habilitá la **Google Sheets API**.
+2. Creá una **Cuenta de Servicio** y generá una clave en formato JSON.
+3. Compartí la planilla de Google Sheets con el correo de la cuenta de servicio con permisos de **Editor**.
+4. Configurá las variables en `server/.env`:
+   ```env
+   GOOGLE_SERVICE_ACCOUNT_EMAIL=tu-servicio@proyecto.iam.gserviceaccount.com
+   GOOGLE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
+   ```
+
+### Resguardo Local de Seguridad (Fallback)
+Si aún no configuraste ninguna credencial de Google, el backend **resguarda automáticamente las confirmaciones** en el archivo local `server/data/submissions.json` y avisa por consola. De esta forma:
+- El formulario web nunca falla de cara al invitado.
+- Los datos nunca se pierden durante pruebas locales o antes del despliegue final.
+
+---
+
+## 🌐 Despliegue en Netlify
+
+El proyecto está listo para ser desplegado en **Netlify** con cero configuración adicional gracias al archivo [netlify.toml](file:///c:/Users/gabrielt/Documents/Proyectos/PROPIOS/cata15web/netlify.toml):
+
+1. **Build settings en Netlify**:
+   - **Build command**: `npm run build`
+   - **Publish directory**: `client/dist`
+   - **Functions directory**: `server/functions`
+2. **Variables de entorno en Netlify**:
+   Configurá en el panel de Netlify (*Site configuration* ➔ *Environment variables*):
+   - `GOOGLE_SHEET_ID`: `1u7LT_cZn-SUzWxPNg1MZfPi0wsJNZfeUgEoilp0wemo`
+   - `GOOGLE_APPS_SCRIPT_URL`: (la URL de tu Webhook de Apps Script)
+   - *(Opcional)* `GOOGLE_SERVICE_ACCOUNT_EMAIL` y `GOOGLE_PRIVATE_KEY` si usás Service Account.
+3. **Enrutamiento Serverless**:
+   Cualquier petición enviada a `/api/rsvp` o `/api/health` es redirigida internamente por Netlify hacia la función `server/functions/api.js` (`/.netlify/functions/api/*`).
+
+---
+
+## ⚙️ Variables de Entorno
+
+### Frontend (`client/.env`)
+Revisá [client/.env.template](file:///c:/Users/gabrielt/Documents/Proyectos/PROPIOS/cata15web/client/.env.template) para detalles.
+- `VITE_EVENT_MAIN_TITLE`: Título principal (`MIS XV CATALINA`).
+- `VITE_EVENT_TARGET_DATE`: Fecha objetivo para el countdown.
+- `VITE_RSVP_ENDPOINT`: Endpoint del backend (por defecto `/api/rsvp`).
+- `VITE_WHATSAPP_PHONE`: Teléfono del enlace de contacto.
+- `VITE_WHATSAPP_MESSAGE`: Mensaje preconfigurado de WhatsApp.
+
+### Backend (`server/.env`)
+Revisá [server/.env.template](file:///c:/Users/gabrielt/Documents/Proyectos/PROPIOS/cata15web/server/.env.template) para detalles.
+- `PORT`: Puerto del servidor local (`3002`).
+- `CORS_ORIGIN`: Origen permitido (`*`).
+- `GOOGLE_SHEET_ID`: ID del documento de Google Sheets.
+- `GOOGLE_SHEET_NAME`: Nombre de la hoja (`Respuestas`).
+- `GOOGLE_APPS_SCRIPT_URL`: URL del Webhook de Apps Script.
+- `GOOGLE_SERVICE_ACCOUNT_EMAIL`: Email de servicio de Google Cloud.
+- `GOOGLE_PRIVATE_KEY`: Llave privada de la cuenta de servicio.
+
+---
+
+## 🎨 Aspectos Visuales y Experiencia de Usuario
+
+- **Pantalla de Entrada:** Portada de lujo con precarga multimedia y botón dinámico `INGRESAR` con contraste adaptativo.
+- **Hero:** Video en loop con filtro CSS en escala de grises y alto contraste (`grayscale(100%) contrast(150%)`).
+- **Countdown:** Título principal de gran tamaño con contador reescalado (-30%).
+- **Una Noche Inolvidable:** Sección sin márgenes ni bordes con video en bucle boomerang (avance y retroceso continuo).
+- **Tarjetas Informativas:** Cuándo, Dónde, Regalos y Dress Code sin bordes innecesarios y con modal bancario.
+- **Formulario RSVP:** Campos condicionales (si no asiste, oculta menú y música), campo de observaciones y confirmación visual.
+- **Footer:** Sección "TE ESPERO" con fondo blanco puro y última banda de créditos con **icono de WhatsApp blanco**.
