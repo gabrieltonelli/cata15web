@@ -1,85 +1,49 @@
-import { useEffect, useRef, useState, useCallback } from 'react'
-import { gsap } from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { ScrollSmoother } from 'gsap/ScrollSmoother'
+import { useRef } from 'react'
 
-// Components
-import LoadingScreen from './components/LoadingScreen'
-import Hero from './components/Hero'
-import Invitation from './components/Invitation'
-import CatalinaBio from './components/CatalinaBio'
-import EventDetails from './components/EventDetails'
-import MusicSuggestions from './components/MusicSuggestions'
+// Componentes refactorizados según la guía de diseño
+import FixedBackground from './components/FixedBackground'
+import WelcomeHero from './components/WelcomeHero'
+import Countdown from './components/Countdown'
+import InfoCards from './components/InfoCards'
 import RSVP from './components/RSVP'
-import PreviaGallery from './components/PreviaGallery'
 import Footer from './components/Footer'
-
-gsap.registerPlugin(ScrollTrigger, ScrollSmoother)
+import AudioPlayer from './components/AudioPlayer'
 
 function App() {
-  const mainRef = useRef(null)
-  const smoothRef = useRef(null)
-  const [isLoading, setIsLoading] = useState(true)
-  const [smoother, setSmoother] = useState(null)
+  const audioPlayerRef = useRef(null)
 
-  const handleLoadingComplete = useCallback(() => {
-    setIsLoading(false)
-  }, [])
-
-  useEffect(() => {
-    if (!isLoading && mainRef.current && smoothRef.current) {
-      // Small delay to ensure DOM is ready
-      const timer = setTimeout(() => {
-        const sm = ScrollSmoother.create({
-          wrapper: smoothRef.current,
-          content: mainRef.current,
-          smooth: 1.5,
-          effects: true,
-          smoothTouch: 0.1,
-        })
-        setSmoother(sm)
-
-        // Refresh ScrollTrigger after everything is loaded
-        setTimeout(() => {
-          ScrollTrigger.refresh()
-        }, 100)
-      }, 100)
-
-      return () => {
-        clearTimeout(timer)
-        if (smoother) {
-          smoother.kill()
-        }
-      }
+  const handleEnterEvent = () => {
+    // Al interactuar con el botón INGRESAR, activamos el audio ambiental
+    if (audioPlayerRef.current) {
+      audioPlayerRef.current.startAudio()
     }
-  }, [isLoading])
+  }
 
   return (
-    <div className="relative">
-      {/* Loading Screen */}
-      <LoadingScreen onComplete={handleLoadingComplete} />
+    <div className="relative min-h-screen bg-transparent text-white font-sans selection:bg-white selection:text-black">
+      {/* Fondo Fijo (Fixed Background / Parallax) */}
+      <FixedBackground />
 
-      {/* Main content - only rendered after loading */}
-      {!isLoading && (
-        <>
-          {/* Grain overlay for texture */}
-          <div className="grain-overlay" />
-          
-          {/* Smooth scroll wrapper */}
-          <div ref={smoothRef} className="overflow-hidden">
-            <main ref={mainRef}>
-              <Hero />
-              <Invitation />
-              <CatalinaBio />
-              <EventDetails />
-              <MusicSuggestions />
-              <RSVP />
-              <PreviaGallery />
-              <Footer />
-            </main>
-          </div>
-        </>
-      )}
+      {/* Componente 1: Pantalla de Bienvenida (Hero Overlay) */}
+      <WelcomeHero onEnter={handleEnterEvent} />
+
+      {/* Contenido en scroll vertical continuo superpuesto */}
+      <main className="relative z-10 w-full flex flex-col items-center">
+        {/* Componente 2: Contador (Countdown) */}
+        <Countdown />
+
+        {/* Componente 3: Tarjetas de Información (Info Cards A, B, C, D) */}
+        <InfoCards />
+
+        {/* Componente 4: Formulario de Asistencia (RSVP) */}
+        <RSVP />
+
+        {/* Componente 5: Footer / Despedida */}
+        <Footer />
+      </main>
+
+      {/* Reproductor de Audio Flotante y Discreto */}
+      <AudioPlayer ref={audioPlayerRef} />
     </div>
   )
 }

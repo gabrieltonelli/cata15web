@@ -7,36 +7,47 @@ export default {
   theme: {
     extend: {
       colors: {
-        'rosa': '#FF6B9D',
-        'rosa-claro': '#FFB3CC',
-        'pupura': '#C44DFF',
-        'dorado': '#FFD93D',
-        'dorado-oscuro': '#B8960F',
-        'oscuro': '#1A1A2E',
-        'oscuro-claro': '#2D2D44',
+        dark: {
+          950: '#050505',
+          900: '#0A0A0A',
+          850: '#111111',
+          800: '#171717',
+          700: '#262626',
+          600: '#404040',
+        },
+        light: {
+          50: '#FAFAFA',
+          100: '#F5F5F5',
+          200: '#E5E5E5',
+          300: '#D4D4D4',
+        },
+        gold: {
+          light: '#F3E8D2',
+          DEFAULT: '#D4AF37',
+          muted: '#A39264',
+        }
       },
       fontFamily: {
-        'display': ['Playfair Display', 'serif'],
-        'body': ['Montserrat', 'sans-serif'],
-        'script': ['Dancing Script', 'cursive'],
+        serif: ['Playfair Display', 'serif'],
+        cinzel: ['Cinzel', 'serif'],
+        sans: ['Montserrat', 'sans-serif'],
+      },
+      letterSpacing: {
+        'luxury': '0.25em',
+        'ultra-luxury': '0.35em',
       },
       animation: {
-        'float': 'float 6s ease-in-out infinite',
-        'glow': 'glow 2s ease-in-out infinite alternate',
-        'shimmer': 'shimmer 2s linear infinite',
+        'fade-in': 'fadeIn 0.8s ease-out forwards',
+        'float-slow': 'floatSlow 7s ease-in-out infinite',
       },
       keyframes: {
-        float: {
+        fadeIn: {
+          '0%': { opacity: '0', transform: 'translateY(16px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        floatSlow: {
           '0%, 100%': { transform: 'translateY(0px)' },
-          '50%': { transform: 'translateY(-20px)' },
-        },
-        glow: {
-          '0%': { boxShadow: '0 0 20px rgba(255, 107, 157, 0.5)' },
-          '100%': { boxShadow: '0 0 40px rgba(196, 77, 255, 0.8)' },
-        },
-        shimmer: {
-          '0%': { backgroundPosition: '-200% 0' },
-          '100%': { backgroundPosition: '200% 0' },
+          '50%': { transform: 'translateY(-10px)' },
         },
       },
     },

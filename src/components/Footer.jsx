@@ -1,122 +1,39 @@
-import { useEffect, useRef } from 'react'
-import { gsap } from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import eventConfig from '../config/eventData'
 
-gsap.registerPlugin(ScrollTrigger)
-
+/**
+ * Componente 5: Footer / Despedida
+ * Visual: Fondo transparente o sobrio oscuro sobre el fondo fijo.
+ * Contenido: Mensaje de cierre corto ("TE ESPERO" o "NOS VEMOS PRONTO") con destellos/estrellas lineales.
+ */
 const Footer = () => {
-  const footerRef = useRef(null)
-  const heartsRef = useRef([])
-
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      // Hearts animation
-      heartsRef.current.forEach((heart, index) => {
-        if (!heart) return
-
-        gsap.from(heart, {
-          scale: 0,
-          opacity: 0,
-          duration: 0.6,
-          delay: index * 0.1,
-          ease: 'back.out(1.7)',
-          scrollTrigger: {
-            trigger: footerRef.current,
-            start: 'top 90%',
-            toggleActions: 'play none none reverse'
-          }
-        })
-      })
-    }, footerRef)
-
-    return () => ctx.revert()
-  }, [])
-
   return (
-    <footer
-      ref={footerRef}
-      className="relative py-16 overflow-hidden"
-    >
-      {/* Background */}
-      <div className="absolute inset-0 bg-gradient-to-t from-oscuro via-oscuro-claro to-transparent" />
-
-      <div className="relative z-10 max-w-4xl mx-auto text-center px-4">
-        {/* Hearts */}
-        <div className="flex justify-center gap-4 mb-8">
-          {['❤️', '💖', '💕', '💗', '💖', '❤️'].map((heart, index) => (
-            <span
-              key={index}
-              ref={el => heartsRef.current[index] = el}
-              className="text-2xl md:text-3xl"
-            >
-              {heart}
-            </span>
-          ))}
+    <footer className="relative z-10 w-full py-20 px-6 text-center text-white">
+      <div className="max-w-xl mx-auto space-y-8">
+        
+        {/* Destellos / estrellas minimalistas */}
+        <div className="flex items-center justify-center gap-4 text-white/40">
+          <span className="text-sm font-serif">✧</span>
+          <span className="text-xl font-serif text-white/80">✦</span>
+          <span className="text-sm font-serif">✧</span>
         </div>
 
-        {/* Quote */}
-        <blockquote className="mb-8">
-          <p className="font-script text-2xl md:text-3xl text-rosa-claro italic">
-            "La vida no se mide por las veces que respiras,
-            sino por los momentos que te dejan sin aliento"
-          </p>
-        </blockquote>
-
-        {/* Names */}
-        <div className="mb-8">
-          <p className="font-body text-white/60 mb-2">Con amor,</p>
-          <p className="font-display text-2xl text-white">
-            <span className="text-gradient">Catalina</span>
+        {/* Mensaje de cierre corto */}
+        <div className="space-y-2">
+          <h2 className="font-cinzel text-3xl sm:text-4xl md:text-5xl font-light tracking-[0.2em] text-white">
+            {eventConfig.footerClosing}
+          </h2>
+          <p className="font-serif italic text-sm text-white/60 tracking-widest pt-1">
+            {eventConfig.title} • {eventConfig.footerYear}
           </p>
         </div>
 
-        {/* Contact */}
-        <div className="flex flex-wrap justify-center gap-6 mb-8">
-          <a
-            href="mailto:contacto@cata15.com"
-            className="glass px-6 py-3 rounded-full font-body text-white/80 hover:bg-white/10 transition-colors flex items-center gap-2"
-          >
-            <span>📧</span>
-            <span>contacto@cata15.com</span>
-          </a>
-          <a
-            href="tel:+541234567890"
-            className="glass px-6 py-3 rounded-full font-body text-white/80 hover:bg-white/10 transition-colors flex items-center gap-2"
-          >
-            <span>📱</span>
-            <span>+54 123 456 7890</span>
-          </a>
-        </div>
+        {/* Separador fino */}
+        <div className="w-16 h-px bg-white/20 mx-auto" />
 
-        {/* Social */}
-        <div className="flex justify-center gap-4 mb-8">
-          <a
-            href="#"
-            className="w-12 h-12 glass rounded-full flex items-center justify-center text-xl hover:bg-white/10 transition-colors"
-          >
-            📷
-          </a>
-          <a
-            href="#"
-            className="w-12 h-12 glass rounded-full flex items-center justify-center text-xl hover:bg-white/10 transition-colors"
-          >
-            📱
-          </a>
-          <a
-            href="#"
-            className="w-12 h-12 glass rounded-full flex items-center justify-center text-xl hover:bg-white/10 transition-colors"
-          >
-            💬
-          </a>
-        </div>
-
-        {/* Copyright */}
-        <div className="border-t border-white/10 pt-8">
-          <p className="font-body text-sm text-white/40">
-            © 2026 Catalina's XV | Diseñado con ❤️
-          </p>
-          <p className="font-body text-xs text-white/30 mt-2">
-            #Cata15 #QuinceañeraCatalina
+        {/* Información mínima y sobria */}
+        <div className="pt-2">
+          <p className="font-sans text-[10px] tracking-ultra-luxury uppercase text-white/40">
+            INVITACIÓN DIGITAL
           </p>
         </div>
       </div>

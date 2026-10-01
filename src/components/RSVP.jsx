@@ -1,336 +1,287 @@
-import { useEffect, useRef, useState } from 'react'
-import { gsap } from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { useState } from 'react'
+import eventConfig from '../config/eventData'
 
-gsap.registerPlugin(ScrollTrigger)
-
+/**
+ * Componente 4: Formulario de Asistencia (RSVP)
+ * Fondo negro/oscuro de alto contraste.
+ * Campos: Nombre, Apellido, ¿Asistirás?, Requerimientos alimenticios, Sugerencia musical.
+ * Manejo de estados: Cargando, Éxito, Error.
+ */
 const RSVP = () => {
-  const sectionRef = useRef(null)
-  const titleRef = useRef(null)
-  const formRef = useRef(null)
-  const particlesRef = useRef(null)
-
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    attending: null,
-    guests: 1,
-    dietary: '',
-    message: ''
+    firstName: '',
+    lastName: '',
+    attending: 'yes', // 'yes' | 'no'
+    dietary: 'Ninguno',
+    musicSuggestion: ''
   })
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [isSubmitted, setIsSubmitted] = useState(false)
 
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      // Title animation
-      gsap.from(titleRef.current, {
-        y: 80,
-        opacity: 0,
-        duration: 1.2,
-        ease: 'power4.out',
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: 'top 70%',
-          toggleActions: 'play none none reverse'
-        }
-      })
-
-      // Form animation
-      gsap.from(formRef.current, {
-        y: 60,
-        opacity: 0,
-        duration: 1,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: formRef.current,
-          start: 'top 80%',
-          toggleActions: 'play none none reverse'
-        }
-      })
-
-      // Create particles
-      createParticles()
-    }, sectionRef)
-
-    return () => ctx.revert()
-  }, [])
-
-  const createParticles = () => {
-    const container = particlesRef.current
-    if (!container) return
-
-    for (let i = 0; i < 30; i++) {
-      const particle = document.createElement('div')
-      particle.className = 'particle'
-
-      const size = Math.random() * 4 + 2
-      const colors = ['#FF6B9D', '#C44DFF', '#FFD93D', '#FFB3CC']
-      const color = colors[Math.floor(Math.random() * colors.length)]
-
-      particle.style.cssText = `
-        width: ${size}px;
-        height: ${size}px;
-        background: ${color};
-        left: ${Math.random() * 100}%;
-        top: ${Math.random() * 100}%;
-        opacity: ${Math.random() * 0.4 + 0.1};
-      `
-
-      container.appendChild(particle)
-
-      gsap.to(particle, {
-        y: -window.innerHeight * 0.5,
-        x: `random(-50, 50)`,
-        duration: `random(10, 20)`,
-        repeat: -1,
-        delay: Math.random() * 5,
-        ease: 'none'
-      })
-    }
-  }
-
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    setIsSubmitting(true)
-
-    // Submit to Netlify Forms
-    try {
-      const response = await fetch('/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams({
-          'form-name': 'rsvp',
-          ...formData,
-          attending: formData.attending ? 'Sí' : 'No',
-          guests: String(formData.guests)
-        }).toString()
-      })
-
-      if (response.ok) {
-        setIsSubmitted(true)
-        // Save to localStorage as backup
-        const submissions = JSON.parse(localStorage.getItem('rsvp-submissions') || '[]')
-        submissions.push({ ...formData, timestamp: new Date().toISOString() })
-        localStorage.setItem('rsvp-submissions', JSON.stringify(submissions))
-      } else {
-        throw new Error('Form submission failed')
-      }
-    } catch (error) {
-      // Fallback to localStorage only
-      const submissions = JSON.parse(localStorage.getItem('rsvp-submissions') || '[]')
-      submissions.push({ ...formData, timestamp: new Date().toISOString() })
-      localStorage.setItem('rsvp-submissions', JSON.stringify(submissions))
-      setIsSubmitted(true)
-    }
-
-    setIsSubmitting(false)
-  }
+  const [status, setStatus] = useState({
+    submitting: false,
+    submitted: false,
+    error: null
+  })
 
   const handleChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }))
   }
 
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+
+    if (!formData.firstName.trim() || !formData.lastName.trim()) {
+      setStatus(prev => ({ ...prev, error: 'Por favor complete su nombre y apellido.' }))
+      return
+    }
+
+    setStatus({ submitting: true, submitted: false, error: null })
+
+    const payload = {
+      'form-name': 'rsvp',
+      nombre: formData.firstName.trim(),
+      apellido: formData.lastName.trim(),
+      asistencia: formData.attending === 'yes' ? 'Confirma asistencia' : 'No asistirá',
+      requerimientoAlimenticio: formData.dietary,
+      cancionSugerida: formData.musicSuggestion.trim() || 'Sin sugerencia',
+      fechaEnvio: new Date().toISOString()
+    }
+
+    try {
+      // Si hay un endpoint configurado por variable de entorno, enviar allí vía JSON
+      if (eventConfig.rsvpEndpoint) {
+        const res = await fetch(eventConfig.rsvpEndpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        })
+        if (!res.ok) throw new Error('Error al enviar formulario a la API')
+      } else {
+        // Fallback a Netlify Forms mediante POST URL-encoded
+        await fetch('/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams(payload).toString()
+        })
+      }
+
+      // Guardado de respaldo en localStorage
+      try {
+        const stored = JSON.parse(localStorage.getItem('rsvp_records') || '[]')
+        stored.push(payload)
+        localStorage.setItem('rsvp_records', JSON.stringify(stored))
+      } catch (storageErr) {
+        console.warn('LocalStorage error:', storageErr)
+      }
+
+      setStatus({ submitting: false, submitted: true, error: null })
+    } catch (err) {
+      console.warn('Error en la solicitud:', err)
+      // Como respaldo seguro para el usuario, guardamos localmente y confirmamos
+      try {
+        const stored = JSON.parse(localStorage.getItem('rsvp_records') || '[]')
+        stored.push(payload)
+        localStorage.setItem('rsvp_records', JSON.stringify(stored))
+        setStatus({ submitting: false, submitted: true, error: null })
+      } catch (fallbackErr) {
+        setStatus({
+          submitting: false,
+          submitted: false,
+          error: 'Hubo un inconveniente al procesar tu confirmación. Por favor intentá nuevamente.'
+        })
+      }
+    }
+  }
+
   return (
-    <section
-      ref={sectionRef}
-      className="relative min-h-screen section-padding overflow-hidden"
-    >
-      {/* Background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-oscuro via-oscuro-claro to-oscuro" />
-
-      {/* Particles container */}
-      <div ref={particlesRef} className="absolute inset-0 pointer-events-none" />
-
-      <div className="relative z-10 max-w-4xl mx-auto">
-        {/* Section title */}
-        <div ref={titleRef} className="text-center mb-16">
-          <p className="font-script text-2xl text-rosa-claro mb-4">Confirmá tu</p>
-          <h2 className="font-display text-5xl md:text-7xl lg:text-8xl text-gradient font-bold">
-            Asistencia
+    <section className="relative z-10 w-full bg-[#0A0A0A] text-white py-20 sm:py-28 px-6 sm:px-12 border-t border-white/10">
+      <div className="max-w-xl mx-auto w-full">
+        {/* Encabezado */}
+        <div className="text-center space-y-3 mb-12">
+          <span className="font-sans text-[11px] tracking-ultra-luxury uppercase text-white/50 font-semibold">
+            R.S.V.P.
+          </span>
+          <h2 className="font-cinzel text-3xl sm:text-4xl md:text-5xl font-bold tracking-[0.15em] text-white">
+            {eventConfig.rsvpTitle}
           </h2>
-          <p className="font-body text-lg text-white/60 mt-4 max-w-xl mx-auto">
-            Haznos saber si podrás acompañarnos en este día tan especial
+          <p className="font-sans text-xs sm:text-sm tracking-wider text-white/60 pt-1">
+            {eventConfig.rsvpDeadline}
           </p>
         </div>
 
-        {/* Form */}
-        <div
-          ref={formRef}
-          className="glass rounded-2xl p-8 md:p-12"
-        >
-          {isSubmitted ? (
-            <div className="text-center py-12">
-              <div className="text-8xl mb-6 animate-float">🎉</div>
-              <h3 className="font-display text-3xl text-white mb-4">
-                ¡Gracias, {formData.name}!
-              </h3>
-              <p className="font-body text-lg text-white/80 max-w-md mx-auto">
-                Hemos registrado tu respuesta. ¡Estamos emocionados de celebrar contigo!
-              </p>
-              <div className="mt-8 flex justify-center gap-4">
-                <div className="glass px-6 py-3 rounded-full">
-                  <span className="text-dorado">✨</span>
-                  <span className="ml-2 font-body text-white/80">Te esperamos</span>
-                </div>
-              </div>
+        {/* Estado Éxito */}
+        {status.submitted ? (
+          <div className="p-8 sm:p-12 border border-white/20 bg-white/5 text-center space-y-4 animate-fade-in">
+            <div className="w-12 h-12 mx-auto border border-white flex items-center justify-center">
+              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 13l4 4L19 7" />
+              </svg>
             </div>
-          ) : (
-            <form 
-              onSubmit={handleSubmit} 
-              className="space-y-8"
-              name="rsvp"
-              method="POST"
-              data-netlify="true"
-              data-netlify-honeypot="bot-field"
-            >
-              <input type="hidden" name="form-name" value="rsvp" />
-              <p className="hidden">
-                <label>No fill this: <input name="bot-field" /></label>
-              </p>
-              {/* Name */}
-              <div>
-                <label className="block font-body text-sm text-white/60 mb-2">
-                  Nombre completo
+            <h3 className="font-cinzel text-2xl font-bold tracking-wider text-white">
+              ¡CONFIRMACIÓN REGISTRADA!
+            </h3>
+            <p className="font-sans text-sm text-white/70 leading-relaxed max-w-sm mx-auto">
+              Muchas gracias, <span className="font-semibold text-white">{formData.firstName} {formData.lastName}</span>.
+              Hemos guardado tu respuesta correctamente.
+            </p>
+            <div className="pt-4">
+              <button
+                type="button"
+                onClick={() => {
+                  setFormData({
+                    firstName: '',
+                    lastName: '',
+                    attending: 'yes',
+                    dietary: 'Ninguno',
+                    musicSuggestion: ''
+                  })
+                  setStatus({ submitting: false, submitted: false, error: null })
+                }}
+                className="text-xs font-sans tracking-luxury uppercase text-white/60 hover:text-white underline underline-offset-4 cursor-pointer"
+              >
+                Enviar otra respuesta
+              </button>
+            </div>
+          </div>
+        ) : (
+          /* Formulario */
+          <form
+            onSubmit={handleSubmit}
+            name="rsvp"
+            method="POST"
+            data-netlify="true"
+            data-netlify-honeypot="bot-field"
+            className="space-y-6"
+          >
+            <input type="hidden" name="form-name" value="rsvp" />
+            <div className="hidden">
+              <label>No completar: <input name="bot-field" /></label>
+            </div>
+
+            {/* Error banner si ocurre */}
+            {status.error && (
+              <div className="p-4 border border-red-500/50 bg-red-950/30 text-xs font-sans text-red-200">
+                {status.error}
+              </div>
+            )}
+
+            {/* Nombre y Apellido */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label className="block font-sans text-[11px] tracking-luxury uppercase text-white/70">
+                  Nombre *
                 </label>
                 <input
                   type="text"
-                  value={formData.name}
-                  onChange={(e) => handleChange('name', e.target.value)}
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 font-body text-white placeholder-white/30 focus:outline-none focus:border-rosa/50 transition-colors"
-                  placeholder="Tu nombre"
                   required
+                  value={formData.firstName}
+                  onChange={(e) => handleChange('firstName', e.target.value)}
+                  placeholder="Tu nombre"
+                  className="w-full bg-white/5 border border-white/15 px-4 py-3 text-sm text-white placeholder-white/30 focus:outline-none focus:border-white transition-colors"
                 />
               </div>
 
-              {/* Email */}
-              <div>
-                <label className="block font-body text-sm text-white/60 mb-2">
-                  Email
+              <div className="space-y-1.5">
+                <label className="block font-sans text-[11px] tracking-luxury uppercase text-white/70">
+                  Apellido *
                 </label>
                 <input
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => handleChange('email', e.target.value)}
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 font-body text-white placeholder-white/30 focus:outline-none focus:border-rosa/50 transition-colors"
-                  placeholder="tu@email.com"
+                  type="text"
                   required
+                  value={formData.lastName}
+                  onChange={(e) => handleChange('lastName', e.target.value)}
+                  placeholder="Tu apellido"
+                  className="w-full bg-white/5 border border-white/15 px-4 py-3 text-sm text-white placeholder-white/30 focus:outline-none focus:border-white transition-colors"
                 />
               </div>
+            </div>
 
-              {/* Attending */}
-              <div>
-                <label className="block font-body text-sm text-white/60 mb-4">
-                  ¿Podrás acompañarnos?
-                </label>
-                <div className="grid grid-cols-2 gap-4">
-                  <button
-                    type="button"
-                    onClick={() => handleChange('attending', true)}
-                    className={`p-4 rounded-xl border-2 transition-all duration-300 ${formData.attending === true
-                        ? 'border-rosa bg-rosa/20 text-white'
-                        : 'border-white/10 hover:border-white/30 text-white/60'
-                      }`}
-                  >
-                    <span className="text-3xl block mb-2">🎉</span>
-                    <span className="font-body">¡Sí, allí estaré!</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleChange('attending', false)}
-                    className={`p-4 rounded-xl border-2 transition-all duration-300 ${formData.attending === false
-                        ? 'border-pupura bg-pupura/20 text-white'
-                        : 'border-white/10 hover:border-white/30 text-white/60'
-                      }`}
-                  >
-                    <span className="text-3xl block mb-2">😢</span>
-                    <span className="font-body">No podré ir</span>
-                  </button>
-                </div>
+            {/* ¿Asistirás? */}
+            <div className="space-y-2 pt-2">
+              <label className="block font-sans text-[11px] tracking-luxury uppercase text-white/70">
+                ¿Asistirás? *
+              </label>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => handleChange('attending', 'yes')}
+                  className={`py-3 px-4 border text-xs sm:text-sm font-sans tracking-wider uppercase transition-all cursor-pointer ${
+                    formData.attending === 'yes'
+                      ? 'border-white bg-white text-black font-semibold shadow-md'
+                      : 'border-white/15 bg-white/5 text-white/60 hover:border-white/40'
+                  }`}
+                >
+                  ¡SÍ, CONFIRMO!
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleChange('attending', 'no')}
+                  className={`py-3 px-4 border text-xs sm:text-sm font-sans tracking-wider uppercase transition-all cursor-pointer ${
+                    formData.attending === 'no'
+                      ? 'border-white bg-white text-black font-semibold shadow-md'
+                      : 'border-white/15 bg-white/5 text-white/60 hover:border-white/40'
+                  }`}
+                >
+                  NO PODRÉ ASISTIR
+                </button>
               </div>
+            </div>
 
-              {/* Number of guests */}
-              {formData.attending === true && (
-                <div className="animate-fadeIn">
-                  <label className="block font-body text-sm text-white/60 mb-2">
-                    ¿Cuántos asistirán?
-                  </label>
-                  <div className="flex items-center gap-4">
-                    <button
-                      type="button"
-                      onClick={() => handleChange('guests', Math.max(1, formData.guests - 1))}
-                      className="w-12 h-12 rounded-full glass flex items-center justify-center text-white hover:bg-white/10 transition-colors"
-                    >
-                      -
-                    </button>
-                    <span className="font-display text-3xl text-white w-12 text-center">
-                      {formData.guests}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => handleChange('guests', Math.min(5, formData.guests + 1))}
-                      className="w-12 h-12 rounded-full glass flex items-center justify-center text-white hover:bg-white/10 transition-colors"
-                    >
-                      +
-                    </button>
-                  </div>
-                </div>
-              )}
+            {/* Requerimientos alimenticios */}
+            <div className="space-y-1.5 pt-2">
+              <label className="block font-sans text-[11px] tracking-luxury uppercase text-white/70">
+                Requerimiento alimentario
+              </label>
+              <select
+                value={formData.dietary}
+                onChange={(e) => handleChange('dietary', e.target.value)}
+                className="w-full bg-[#121212] border border-white/15 px-4 py-3 text-sm text-white focus:outline-none focus:border-white transition-colors cursor-pointer"
+              >
+                <option value="Ninguno">Ninguno (Menú tradicional)</option>
+                <option value="Celíaco (Sin TACC)">Celíaco (Sin TACC)</option>
+                <option value="Vegetariano">Vegetariano</option>
+                <option value="Vegano">Vegano</option>
+                <option value="Hipertenso / Sin sal">Hipertenso / Sin sal</option>
+                <option value="Diabético">Diabético</option>
+                <option value="Otro">Otro requerimiento específico</option>
+              </select>
+            </div>
 
-              {/* Dietary restrictions */}
-              {formData.attending === true && (
-                <div className="animate-fadeIn">
-                  <label className="block font-body text-sm text-white/60 mb-2">
-                    Restricciones alimentarias
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.dietary}
-                    onChange={(e) => handleChange('dietary', e.target.value)}
-                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 font-body text-white placeholder-white/30 focus:outline-none focus:border-rosa/50 transition-colors"
-                    placeholder="Ej: Vegetariano, sin gluten..."
-                  />
-                </div>
-              )}
+            {/* Sugerencia Musical */}
+            <div className="space-y-1.5 pt-2">
+              <label className="block font-sans text-[11px] tracking-luxury uppercase text-white/70">
+                Sugerencia Musical
+              </label>
+              <input
+                type="text"
+                value={formData.musicSuggestion}
+                onChange={(e) => handleChange('musicSuggestion', e.target.value)}
+                placeholder="¿Qué canción no puede faltar en la fiesta?"
+                className="w-full bg-white/5 border border-white/15 px-4 py-3 text-sm text-white placeholder-white/30 focus:outline-none focus:border-white transition-colors"
+              />
+            </div>
 
-              {/* Message */}
-              <div>
-                <label className="block font-body text-sm text-white/60 mb-2">
-                  Mensaje para Catalina (opcional)
-                </label>
-                <textarea
-                  value={formData.message}
-                  onChange={(e) => handleChange('message', e.target.value)}
-                  rows={4}
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 font-body text-white placeholder-white/30 focus:outline-none focus:border-rosa/50 transition-colors resize-none"
-                  placeholder="Escribe un mensaje de felicitación..."
-                />
-              </div>
-
-              {/* Submit button */}
+            {/* Botón de envío */}
+            <div className="pt-4">
               <button
                 type="submit"
-                disabled={isSubmitting || formData.attending === null}
-                className="w-full bg-gradient-to-r from-rosa to-pupura text-white font-body font-semibold py-4 rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2 text-lg"
+                disabled={status.submitting}
+                className="w-full py-4 border border-white bg-white text-dark-950 font-sans text-xs tracking-ultra-luxury uppercase font-bold transition-all duration-300 hover:bg-transparent hover:text-white disabled:opacity-50 flex items-center justify-center cursor-pointer shadow-lg"
               >
-                {isSubmitting ? (
-                  <>
-                    <svg className="animate-spin h-6 w-6" viewBox="0 0 24 24">
+                {status.submitting ? (
+                  <span className="flex items-center gap-2">
+                    <svg className="animate-spin h-4 w-4 text-current" viewBox="0 0 24 24">
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                     </svg>
-                    Enviando...
-                  </>
+                    CONFIRMANDO...
+                  </span>
                 ) : (
-                  <>
-                    <span>💌</span>
-                    Confirmar asistencia
-                  </>
+                  <span>CONFIRMAR ASISTENCIA</span>
                 )}
               </button>
-            </form>
-          )}
-        </div>
+            </div>
+          </form>
+        )}
       </div>
     </section>
   )
