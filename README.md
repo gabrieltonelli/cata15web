@@ -1,89 +1,83 @@
 # ✦ Cata15Web - Monorepo (Client + Server)
 
-Aplicación Web de Invitación a Evento (15 años) con arquitectura **Monorepo**:
-- **Frontend (`client/`)**: Desarrollado con **React 19 + Vite + Tailwind CSS**, bajo un concepto estético de alto contraste (*Dark Mode / Blanco / Negro*), tipografía editorial y transiciones de video fluidas.
-- **Backend (`server/`)**: API REST con **Express y Netlify Functions** para procesar las confirmaciones de asistencia (RSVP) y persistirlas en **Google Sheets** sin exponer credenciales ni tokens en el cliente web.
+Aplicación Web de Invitación a Evento (15 años) con arquitectura **Monorepo limpia**:
+- **Frontend (`client/`)**: Desarrollado con **React 19 + Vite + Tailwind CSS**, bajo un concepto estético de alto contraste (*Dark Mode / Blanco / Negro*), tipografía editorial y transiciones de video fluidas. Maneja sus propias dependencias y su propio archivo de entorno `client/.env`.
+- **Backend (`server/`)**: API REST con **Express y Netlify Functions** para procesar las confirmaciones de asistencia (RSVP) y persistirlas en **Google Sheets** sin exponer credenciales en el cliente web. Maneja sus propias dependencias y su propio archivo de entorno `server/.env`.
 
 ---
 
-## 📁 Estructura del Monorepo
+## 📁 Estructura del Proyecto
 
 ```text
 cata15web/
-├── client/                      # Frontend (SPA React + Vite)
-│   ├── public/                  # Multimedia (videos, fotos, audio, favicon)
+├── client/                      # Frontend autónomo (SPA React + Vite)
+│   ├── public/                  # Multimedia (videos, fotos, audio Rihanna-Diamonds.mp3, favicon)
 │   ├── src/
 │   │   ├── components/          # WelcomeHero, Countdown, InfoCards, RSVP, Footer, etc.
 │   │   ├── config/              # eventData.js (parametrización)
 │   │   └── styles/              # index.css (Tailwind & custom utilities)
-│   ├── .env                     # Variables locales del cliente (ignorado en git)
+│   ├── .env                     # Variables de entorno locales del cliente (ignorado en git)
 │   ├── .env.template            # Plantilla documentada de variables del cliente
-│   ├── package.json             # Dependencias del cliente
-│   └── vite.config.js           # Configuración con proxy a http://localhost:3002/api
+│   ├── package.json             # Dependencias y scripts de React/Vite
+│   └── vite.config.js           # Configuración con proxy hacia http://localhost:3002/api
 │
-├── server/                      # Backend (Node.js + Express + Netlify Functions)
-│   ├── data/                    # submissions.json (fallback local de resguardo)
+├── server/                      # Backend autónomo (Node.js + Express + Netlify Functions)
+│   ├── data/                    # submissions.json (resguardo local de seguridad)
 │   ├── functions/
 │   │   └── api.js               # Handler serverless para Netlify Functions
 │   ├── src/
-│   │   ├── config/env.js        # Validación y lectura de variables de entorno
-│   │   ├── services/            # sheetsService.js (integración con Google Sheets)
-│   │   ├── app.js               # Express application y rutas (/api/health, /api/rsvp)
+│   │   ├── config/env.js        # Carga de server/.env y validación
+│   │   ├── services/
+│   │   │   └── sheetsService.js # Persistencia en Google Sheets (Apps Script / Service Account / Local)
+│   │   ├── app.js               # Express application (/api/health, /api/rsvp)
 │   │   └── server.js            # Servidor local Express
-│   ├── .env                     # Credenciales y puertos del servidor (ignorado en git)
+│   ├── .env                     # Variables y credenciales del servidor (ignorado en git)
 │   ├── .env.template            # Plantilla documentada de variables del servidor
-│   └── package.json             # Dependencias del servidor (express, googleapis, etc.)
+│   └── package.json             # Dependencias y scripts del backend
 │
 ├── docs/
-│   └── google-apps-script.js    # Código listo para pegar en Google Sheets Apps Script
+│   ├── google-apps-script.js    # Código listo para pegar en Google Sheets Apps Script
+│   └── gu_a_de_diseño_y_requerimientos_refactorizacion_de_invitacion.md
 ├── netlify.toml                 # Configuración de despliegue para Netlify (build & functions)
-└── package.json                 # Scripts raíz del monorepo
+└── README.md                    # Documentación del proyecto
 ```
 
 ---
 
 ## 🚀 Cómo Levantar el Proyecto Localmente
 
-Para arrancar el entorno de desarrollo, abrí dos terminales o levantá primero el backend y luego el frontend:
+Tanto el backend como el frontend son completamente autónomos. Abrí dos terminales:
 
 ### 1. Iniciar el Servidor Backend (`server/`)
 ```bash
-# Opción A (desde la carpeta server):
 cd server
-npm install
+npm install    # (solo la primera vez)
 npm run dev
-
-# Opción B (desde la raíz del monorepo):
-npm run dev:server
 ```
-El backend iniciará en **`http://localhost:3002`** con los endpoints:
+El backend iniciará en **`http://localhost:3002`** (parametrizable vía `PORT` en `server/.env`) con los endpoints:
 - Comprobación de estado: `http://localhost:3002/api/health`
 - Recepción de confirmaciones: `http://localhost:3002/api/rsvp`
 
 ### 2. Iniciar el Cliente Frontend (`client/`)
 ```bash
-# Opción A (desde la carpeta client):
 cd client
-npm install
+npm install    # (solo la primera vez)
 npm run dev
-
-# Opción B (desde la raíz del monorepo):
-npm run dev:client
 ```
-El cliente iniciará en **`http://localhost:5173`**. Las llamadas a `/api/*` serán reenviadas automáticamente por el proxy de Vite hacia el servidor en `http://localhost:3002`.
+El cliente iniciará en **`http://localhost:5173`**. Las llamadas a `/api/*` son reenviadas automáticamente por el proxy de Vite hacia el servidor en `http://localhost:3002`.
 
 ---
 
 ## 📊 Persistencia en Google Sheets
 
-La planilla de destino configurada es:
+Planilla de destino:
 👉 **[Ver Planilla de Google Sheets](https://docs.google.com/spreadsheets/d/1u7LT_cZn-SUzWxPNg1MZfPi0wsJNZfeUgEoilp0wemo/edit?usp=sharing)**
 *(ID: `1u7LT_cZn-SUzWxPNg1MZfPi0wsJNZfeUgEoilp0wemo`)*
 
-El backend soporta **dos métodos de conexión** y un **mecanismo de resguardo local**:
+El backend soporta **dos métodos de conexión** sin exponer credenciales en el cliente:
 
 ### Método 1: Google Apps Script Webhook (Recomendado - 2 minutos)
-Es la forma más sencilla, segura y rápida ya que no requiere dar de alta credenciales en Google Cloud Console:
+Es la forma más sencilla, segura y directa ya que no requiere dar de alta un proyecto en Google Cloud Console:
 1. Abrí la planilla en tu navegador.
 2. Hacé clic en **Extensiones** ➔ **Apps Script**.
 3. Copiá el código completo que se encuentra en [docs/google-apps-script.js](file:///c:/Users/gabrielt/Documents/Proyectos/PROPIOS/cata15web/docs/google-apps-script.js) y reemplazá el contenido del editor.
@@ -93,8 +87,9 @@ Es la forma más sencilla, segura y rápida ya que no requiere dar de alta crede
    - *Descripción*: `Webhook RSVP Mis XV`
    - *Ejecutar como*: `Yo` (tu cuenta)
    - *Quién tiene acceso*: `Cualquier persona` (Anyone)
-7. Hacé clic en **Implementar** y copiá la **URL de la aplicación web** generada (termina en `/exec`).
-8. Pegá dicha URL en `server/.env`:
+7. Hacé clic en **Implementar** y autorizá los permisos.
+8. Copiá la **URL de la aplicación web** generada (termina en `/exec`).
+9. Pegá dicha URL en `server/.env`:
    ```env
    GOOGLE_APPS_SCRIPT_URL=https://script.google.com/macros/s/AKfycb.../exec
    ```
@@ -119,48 +114,58 @@ Si aún no configuraste ninguna credencial de Google, el backend **resguarda aut
 
 ## 🌐 Despliegue en Netlify
 
-El proyecto está listo para ser desplegado en **Netlify** con cero configuración adicional gracias al archivo [netlify.toml](file:///c:/Users/gabrielt/Documents/Proyectos/PROPIOS/cata15web/netlify.toml):
+El archivo [netlify.toml](file:///c:/Users/gabrielt/Documents/Proyectos/PROPIOS/cata15web/netlify.toml) compila el frontend e instala las dependencias de la función backend sin requerir dependencias en la raíz:
 
-1. **Build settings en Netlify**:
-   - **Build command**: `npm run build`
-   - **Publish directory**: `client/dist`
-   - **Functions directory**: `server/functions`
-2. **Variables de entorno en Netlify**:
-   Configurá en el panel de Netlify (*Site configuration* ➔ *Environment variables*):
+```toml
+[build]
+  command = "cd client && npm install && npm run build && cd ../server && npm install"
+  publish = "client/dist"
+  functions = "server/functions"
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+```
+
+1. **Variables de entorno en el panel de Netlify** (*Site configuration* ➔ *Environment variables*):
    - `GOOGLE_SHEET_ID`: `1u7LT_cZn-SUzWxPNg1MZfPi0wsJNZfeUgEoilp0wemo`
    - `GOOGLE_APPS_SCRIPT_URL`: (la URL de tu Webhook de Apps Script)
    - *(Opcional)* `GOOGLE_SERVICE_ACCOUNT_EMAIL` y `GOOGLE_PRIVATE_KEY` si usás Service Account.
-3. **Enrutamiento Serverless**:
-   Cualquier petición enviada a `/api/rsvp` o `/api/health` es redirigida internamente por Netlify hacia la función `server/functions/api.js` (`/.netlify/functions/api/*`).
 
 ---
 
-## ⚙️ Variables de Entorno
+## ⚙️ Variables de Entorno y Parametrización
 
 ### Frontend (`client/.env`)
-Revisá [client/.env.template](file:///c:/Users/gabrielt/Documents/Proyectos/PROPIOS/cata15web/client/.env.template) para detalles.
+Documentadas con comentarios y ejemplos en [client/.env.template](file:///c:/Users/gabrielt/Documents/Proyectos/PROPIOS/cata15web/client/.env.template):
 - `VITE_EVENT_MAIN_TITLE`: Título principal (`MIS XV CATALINA`).
-- `VITE_EVENT_TARGET_DATE`: Fecha objetivo para el countdown.
-- `VITE_RSVP_ENDPOINT`: Endpoint del backend (por defecto `/api/rsvp`).
-- `VITE_WHATSAPP_PHONE`: Teléfono del enlace de contacto.
-- `VITE_WHATSAPP_MESSAGE`: Mensaje preconfigurado de WhatsApp.
+- `VITE_EVENT_TARGET_DATE`: Fecha y hora para la cuenta regresiva.
+- `VITE_RSVP_ENDPOINT`: Endpoint hacia la API (por defecto `/api/rsvp`).
+- `VITE_WHATSAPP_PHONE`: Teléfono de contacto de WhatsApp.
+- `VITE_WHATSAPP_MESSAGE`: Mensaje preconfigurado al contactar.
 
 ### Backend (`server/.env`)
-Revisá [server/.env.template](file:///c:/Users/gabrielt/Documents/Proyectos/PROPIOS/cata15web/server/.env.template) para detalles.
+Documentadas con comentarios y ejemplos en [server/.env.template](file:///c:/Users/gabrielt/Documents/Proyectos/PROPIOS/cata15web/server/.env.template):
 - `PORT`: Puerto del servidor local (`3002`).
-- `CORS_ORIGIN`: Origen permitido (`*`).
+- `CORS_ORIGIN`: Origen permitido para CORS (`*`).
 - `GOOGLE_SHEET_ID`: ID del documento de Google Sheets.
-- `GOOGLE_SHEET_NAME`: Nombre de la hoja (`Respuestas`).
+- `GOOGLE_SHEET_NAME`: Nombre de la pestaña de respuestas (`Respuestas`).
 - `GOOGLE_APPS_SCRIPT_URL`: URL del Webhook de Apps Script.
-- `GOOGLE_SERVICE_ACCOUNT_EMAIL`: Email de servicio de Google Cloud.
-- `GOOGLE_PRIVATE_KEY`: Llave privada de la cuenta de servicio.
+- `GOOGLE_SERVICE_ACCOUNT_EMAIL`: Email de la cuenta de servicio de Google.
+- `GOOGLE_PRIVATE_KEY`: Clave privada RSA de la cuenta de servicio.
 
 ---
 
-## 🎨 Aspectos Visuales y Experiencia de Usuario
+## 🎨 Aspectos Visuales Destacados
 
 - **Pantalla de Entrada:** Portada de lujo con precarga multimedia y botón dinámico `INGRESAR` con contraste adaptativo.
-- **Hero:** Video en loop con filtro CSS en escala de grises y alto contraste (`grayscale(100%) contrast(150%)`).
+- **Hero:** Video en bucle con filtro CSS en escala de grises y alto contraste (`grayscale(100%) contrast(150%)`).
 - **Countdown:** Título principal de gran tamaño con contador reescalado (-30%).
 - **Una Noche Inolvidable:** Sección sin márgenes ni bordes con video en bucle boomerang (avance y retroceso continuo).
 - **Tarjetas Informativas:** Cuándo, Dónde, Regalos y Dress Code sin bordes innecesarios y con modal bancario.
