@@ -145,12 +145,21 @@ const WelcomeHero = ({ onEnter }) => {
             </div>
           </button>
 
-          {/* Indicador de precarga sutil debajo del botón mientras carga */}
-          {loadProgress < 100 && (
-            <span className="font-sans text-[10px] tracking-widest text-dark-600/70 uppercase">
-              PREPARANDO EXPERIENCIA • {Math.round(loadProgress)}%
-            </span>
-          )}
+          {/* Indicador de precarga: espacio reservado fijo (cero saltos) y ancho tabular fijo (cero vibración) */}
+          <div className="h-5 flex items-center justify-center overflow-hidden">
+            <div
+              className={`flex items-center justify-center font-sans text-[10px] tracking-widest uppercase transition-all duration-700 ease-out select-none ${
+                loadProgress >= 100
+                  ? 'opacity-0 pointer-events-none -translate-y-0.5'
+                  : 'text-dark-600/70 opacity-100 translate-y-0'
+              }`}
+            >
+              <span>PREPARANDO EXPERIENCIA •&nbsp;</span>
+              <span className="tabular-nums font-mono w-10 text-left inline-block font-medium">
+                {Math.round(loadProgress)}%
+              </span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
