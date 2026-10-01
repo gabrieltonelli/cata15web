@@ -12,9 +12,11 @@ export const eventConfig = {
 
   // Video de fondo para el Hero
   heroVideo: import.meta.env.VITE_HERO_VIDEO || '/assets/video/hero-bg2.mp4',
+  heroVideoBoomerang: import.meta.env.VITE_HERO_VIDEO_BOOMERANG !== 'false', // Activar/desactivar boomerang en el Hero (true/false)
 
   // Video de transición para la sección Una Noche Inolvidable (efecto boomerang)
   transitionVideo: import.meta.env.VITE_TRANSITION_VIDEO || '/assets/video/video2.mp4',
+  transitionVideoBoomerang: import.meta.env.VITE_TRANSITION_VIDEO_BOOMERANG !== 'false', // Activar/desactivar boomerang en transición
 
   // Imagen de bolas espejadas para transiciones
   discoBallsImage: import.meta.env.VITE_DISCO_BALLS_IMAGE || '/assets/photos/a2c632e4-3d7f-434f-831a-6cfb07fc3aef.jpg',

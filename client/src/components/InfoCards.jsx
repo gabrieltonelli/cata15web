@@ -79,6 +79,7 @@ const InfoCards = () => {
         {/* Video en loop boomerang con clase propia y filtro CSS específico */}
         <BoomerangVideo
           src={eventConfig.transitionVideo}
+          boomerang={eventConfig.transitionVideoBoomerang}
           className="video-noche-inolvidable absolute inset-0 w-full h-full object-cover -z-10"
         />
 

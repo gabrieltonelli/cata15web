@@ -2,14 +2,16 @@ import { useRef, useEffect } from 'react'
 
 /**
  * Componente BoomerangVideo
- * Reproduce un video en bucle infinito tipo boomerang:
- * Al llegar al final, se reproduce en sentido inverso hasta el inicio, y repite indefinidamente.
+ * Reproduce un video en bucle continuo:
+ * - Si boomerang = true: Al llegar al final se reproduce en sentido inverso hasta el inicio, y repite indefinidamente.
+ * - Si boomerang = false: Utiliza el bucle infinito tradicional (loop nativo de HTML5 hacia adelante).
  */
 const BoomerangVideo = ({
   src,
   className = '',
   playbackSpeed = 1,
-  style = {}
+  style = {},
+  boomerang = true
 }) => {
   const videoRef = useRef(null)
   const isReversingRef = useRef(false)
@@ -19,6 +21,16 @@ const BoomerangVideo = ({
     const video = videoRef.current
     if (!video) return
 
+    // Si boomerang está desactivado, reproducir en loop estándar nativo
+    if (!boomerang) {
+      video.loop = true
+      isReversingRef.current = false
+      if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current)
+      video.play().catch(() => {})
+      return
+    }
+
+    video.loop = false
     let lastTimestamp = null
 
     // Función para rebobinar cuadro a cuadro a velocidad controlada
@@ -80,7 +92,7 @@ const BoomerangVideo = ({
         cancelAnimationFrame(animFrameRef.current)
       }
     }
-  }, [src, playbackSpeed])
+  }, [src, playbackSpeed, boomerang])
 
   return (
     <video
@@ -88,6 +100,7 @@ const BoomerangVideo = ({
       src={src}
       autoPlay
       muted
+      loop={!boomerang}
       playsInline
       preload="auto"
       className={className}
