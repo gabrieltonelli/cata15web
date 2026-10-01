@@ -118,14 +118,15 @@ El archivo [netlify.toml](file:///c:/Users/gabrielt/Documents/Proyectos/PROPIOS/
 
 ```toml
 [build]
-  command = "cd client && npm install && npm run build && cd ../server && npm install"
+  command = "cd client && npm install && npm run build"
   publish = "client/dist"
-  functions = "server/functions"
+  functions = "netlify/functions"
 
 [[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/api/:splat"
   status = 200
+  force = true
 
 [[redirects]]
   from = "/*"
@@ -162,9 +163,15 @@ Documentadas con comentarios y ejemplos en [server/.env.template](file:///c:/Use
 
 ---
 
-## 🎨 Aspectos Visuales Destacados
+## 🎨 Aspectos Visuales y Experiencia de Usuario
 
-- **Pantalla de Entrada:** Portada de lujo con precarga multimedia y botón dinámico `INGRESAR` con contraste adaptativo.
+- **Efecto de Entrada Progresivo (Scroll Reveal):**
+  - Implementación con `IntersectionObserver` de alto rendimiento (`threshold: 0.12`, `rootMargin: '0px 0px -40px 0px'`).
+  - Transición fluida de 950ms con curva de desaceleración editorial de lujo `cubic-bezier(0.16, 1, 0.3, 1)`.
+  - Desplazamiento y escalado microscópico suave (`opacity: 0 -> 1`, `translateY: 28px -> 0`, `scale: 0.985 -> 1`).
+  - Animación única por elemento (`unobserve`) que evita interrupciones o saltos visuales durante la lectura.
+  - Aplicado a todas las secciones posteriores al Hero: ¿Cuándo?, Una Noche Inolvidable (Boomerang), ¿Dónde?, Regalos, Dress Code, RSVP y Footer "Te Espero".
+- **Pantalla de Entrada:** Portada de lujo con precarga multimedia optimizada (sin saltos de layout ni vibración del contador) y botón dinámico `INGRESAR` con contraste adaptativo.
 - **Hero:** Video en bucle con filtro CSS en escala de grises y alto contraste (`grayscale(100%) contrast(150%)`).
 - **Countdown:** Título principal de gran tamaño con contador reescalado (-30%).
 - **Una Noche Inolvidable:** Sección sin márgenes ni bordes con video en bucle boomerang (avance y retroceso continuo).

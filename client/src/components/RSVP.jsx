@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import eventConfig from '../config/eventData'
+import ScrollReveal from './ScrollReveal'
 
 /**
  * Componente 4: Formulario de Asistencia (RSVP)
- * Fondo negro/oscuro de alto contraste.
+ * Fondo negro/oscuro de alto contraste con entrada suave ScrollReveal.
  * Campos condicionales según asistencia (si marca 'No podré asistir', oculta requerimientos y música).
  * Incluye campo de comentarios u observaciones encima del botón de envío.
  */
@@ -128,7 +129,7 @@ const RSVP = () => {
 
   return (
     <section className="relative z-10 w-full bg-[#0A0A0A] text-white py-20 sm:py-28 px-6 sm:px-12 border-t border-white/10">
-      <div className="max-w-xl mx-auto w-full">
+      <ScrollReveal className="max-w-xl mx-auto w-full">
         {/* Encabezado */}
         <div className="text-center space-y-3 mb-12">
           <span className="font-sans text-[11px] tracking-ultra-luxury uppercase text-white/50 font-semibold">
@@ -336,7 +337,7 @@ const RSVP = () => {
             </div>
           </form>
         )}
-      </div>
+      </ScrollReveal>
     </section>
   )
 }
