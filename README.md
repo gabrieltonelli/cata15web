@@ -167,10 +167,17 @@ Documentadas con comentarios y ejemplos en [server/.env.template](file:///c:/Use
 
 - **Efecto de Entrada Progresivo (Scroll Reveal):**
   - Implementación con `IntersectionObserver` de alto rendimiento (`threshold: 0.12`, `rootMargin: '0px 0px -40px 0px'`).
-  - Transición fluida de 950ms con curva de desaceleración editorial de lujo `cubic-bezier(0.16, 1, 0.3, 1)`.
+  - Transición fluida con curva de desaceleración editorial de lujo `cubic-bezier(0.16, 1, 0.3, 1)`.
   - Desplazamiento y escalado microscópico suave (`opacity: 0 -> 1`, `translateY: 28px -> 0`, `scale: 0.985 -> 1`).
   - Animación única por elemento (`unobserve`) que evita interrupciones o saltos visuales durante la lectura.
   - Aplicado a todas las secciones posteriores al Hero: ¿Cuándo?, Una Noche Inolvidable (Boomerang), ¿Dónde?, Regalos, Dress Code, RSVP y Footer "Te Espero".
+- **Iconos Animados One-Shot (Estética de Línea Fina):**
+  - Animación secuencial que se ejecuta **una única vez tras la aparición** en pantalla de cada sección, sin loops infinitos molestos:
+    - **¿Cuándo? (Fecha y Horario):** Trazo vectorial dinámico del marco del calendario (`anim-draw-stroke`) seguido de la aparición en cascada armónica (staggered pop) de los días.
+    - **¿Dónde? (Ubicación):** Descenso elástico suave del pin de mapa con micro-rebote y onda sonar concéntrica que emana en la base al fijarse la coordenada.
+    - **Regalos (Presentes):** Apertura sutil de la tapa de la caja con respiración del moño y destello suave de cinta antes de asentarse.
+    - **Dress Code (Vestimenta):** Trazado orfebre del diamante facetado con barrido diagonal de reflejo especular (*shimmer sweep*).
+  - Conservan la estética minimalista de líneas negras puras (o blancas sobre fondo oscuro) con `strokeWidth={1.25}`.
 - **Pantalla de Entrada:** Portada de lujo con precarga multimedia optimizada (sin saltos de layout ni vibración del contador) y botón dinámico `INGRESAR` con contraste adaptativo.
 - **Hero:** Video en bucle con filtro CSS en escala de grises y alto contraste (`grayscale(100%) contrast(150%)`).
 - **Countdown:** Título principal de gran tamaño con contador reescalado (-30%).
