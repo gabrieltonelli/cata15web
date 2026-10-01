@@ -51,16 +51,24 @@ const Countdown = () => {
   ]
 
   return (
-    <section
-      className="relative z-10 w-full min-h-screen flex flex-col items-center justify-center py-24 px-6 overflow-hidden bg-center bg-cover bg-no-repeat shadow-2xl"
-      style={{
-        backgroundImage: `url("${eventConfig.discoBallsImage}")`,
-        backgroundPosition: 'center',
-        backgroundSize: 'cover'
-      }}
-    >
-      {/* Overlay oscuro de alto contraste para garantizar 100% de legibilidad */}
-      <div className="absolute inset-0 bg-gradient-to-b from-dark-950/85 via-dark-950/60 to-dark-950/90 backdrop-blur-[1px]" />
+    <section className="relative z-10 w-full min-h-screen flex flex-col items-center justify-center py-24 px-6 overflow-hidden shadow-2xl">
+      {/* Video de fondo con efecto de escala de grises y alto contraste */}
+      <video
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="absolute inset-0 w-full h-full object-cover -z-10"
+        style={{
+          filter: 'grayscale(100%) contrast(150%)'
+        }}
+      >
+        <source src={eventConfig.heroVideo} type="video/mp4" />
+        Tu navegador no soporta el elemento de video.
+      </video>
+
+      {/* Overlay oscuro sutil para asegurar 100% de legibilidad en texto y contador */}
+      <div className="absolute inset-0 bg-gradient-to-b from-dark-950/80 via-dark-950/50 to-dark-950/85 -z-10" />
 
       {/* Contenido centrado */}
       <div className="relative z-10 max-w-4xl mx-auto w-full text-center space-y-12">

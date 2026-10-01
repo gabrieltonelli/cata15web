@@ -1,4 +1,4 @@
-import React from 'react'
+import eventConfig from '../config/eventData'
 
 /**
  * Fondo fijo en loop (Fixed Background / Parallax)
@@ -7,16 +7,16 @@ import React from 'react'
 const FixedBackground = () => {
   return (
     <div className="fixed inset-0 w-full h-full -z-20 overflow-hidden pointer-events-none">
-      {/* Video de fondo en loop */}
+      {/* Video de fondo en loop con filtro grayscale y contrast */}
       <video
         autoPlay
         muted
         loop
         playsInline
         className="w-full h-full object-cover scale-105"
-        style={{ filter: 'brightness(0.42) contrast(1.1)' }}
+        style={{ filter: 'grayscale(100%) contrast(150%) brightness(0.42)' }}
       >
-        <source src="/assets/video/hero-bg.mp4" type="video/mp4" />
+        <source src={eventConfig.heroVideo} type="video/mp4" />
       </video>
 
       {/* Capa de contraste y gradiente sutil para garantizar legibilidad */}

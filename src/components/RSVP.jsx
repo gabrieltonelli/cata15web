@@ -4,8 +4,8 @@ import eventConfig from '../config/eventData'
 /**
  * Componente 4: Formulario de Asistencia (RSVP)
  * Fondo negro/oscuro de alto contraste.
- * Campos: Nombre, Apellido, ¿Asistirás?, Requerimientos alimenticios, Sugerencia musical.
- * Manejo de estados: Cargando, Éxito, Error.
+ * Campos condicionales según asistencia (si marca 'No podré asistir', oculta requerimientos y música).
+ * Incluye campo de comentarios u observaciones encima del botón de envío.
  */
 const RSVP = () => {
   const [formData, setFormData] = useState({
@@ -13,7 +13,8 @@ const RSVP = () => {
     lastName: '',
     attending: 'yes', // 'yes' | 'no'
     dietary: 'Ninguno',
-    musicSuggestion: ''
+    musicSuggestion: '',
+    comments: ''
   })
 
   const [status, setStatus] = useState({
@@ -36,13 +37,16 @@ const RSVP = () => {
 
     setStatus({ submitting: true, submitted: false, error: null })
 
+    const isAttending = formData.attending === 'yes'
+
     const payload = {
       'form-name': 'rsvp',
       nombre: formData.firstName.trim(),
       apellido: formData.lastName.trim(),
-      asistencia: formData.attending === 'yes' ? 'Confirma asistencia' : 'No asistirá',
-      requerimientoAlimenticio: formData.dietary,
-      cancionSugerida: formData.musicSuggestion.trim() || 'Sin sugerencia',
+      asistencia: isAttending ? 'Confirma asistencia' : 'No asistirá',
+      requerimientoAlimenticio: isAttending ? formData.dietary : 'No aplica',
+      cancionSugerida: isAttending ? (formData.musicSuggestion.trim() || 'Sin sugerencia') : 'No aplica',
+      comentarios: formData.comments.trim() || 'Sin comentarios',
       fechaEnvio: new Date().toISOString()
     }
 
@@ -117,11 +121,13 @@ const RSVP = () => {
               </svg>
             </div>
             <h3 className="font-cinzel text-2xl font-bold tracking-wider text-white">
-              ¡CONFIRMACIÓN REGISTRADA!
+              ¡RESPUESTA REGISTRADA!
             </h3>
             <p className="font-sans text-sm text-white/70 leading-relaxed max-w-sm mx-auto">
               Muchas gracias, <span className="font-semibold text-white">{formData.firstName} {formData.lastName}</span>.
-              Hemos guardado tu respuesta correctamente.
+              {formData.attending === 'yes'
+                ? ' ¡Nos emociona mucho contar con tu presencia!'
+                : ' Agradecemos que nos hayas avisado.'}
             </p>
             <div className="pt-4">
               <button
@@ -132,7 +138,8 @@ const RSVP = () => {
                     lastName: '',
                     attending: 'yes',
                     dietary: 'Ninguno',
-                    musicSuggestion: ''
+                    musicSuggestion: '',
+                    comments: ''
                   })
                   setStatus({ submitting: false, submitted: false, error: null })
                 }}
@@ -226,42 +233,61 @@ const RSVP = () => {
               </div>
             </div>
 
-            {/* Requerimientos alimenticios */}
-            <div className="space-y-1.5 pt-2">
-              <label className="block font-sans text-[11px] tracking-luxury uppercase text-white/70">
-                Requerimiento alimentario
-              </label>
-              <select
-                value={formData.dietary}
-                onChange={(e) => handleChange('dietary', e.target.value)}
-                className="w-full bg-[#121212] border border-white/15 px-4 py-3 text-sm text-white focus:outline-none focus:border-white transition-colors cursor-pointer"
-              >
-                <option value="Ninguno">Ninguno (Menú tradicional)</option>
-                <option value="Celíaco (Sin TACC)">Celíaco (Sin TACC)</option>
-                <option value="Vegetariano">Vegetariano</option>
-                <option value="Vegano">Vegano</option>
-                <option value="Hipertenso / Sin sal">Hipertenso / Sin sal</option>
-                <option value="Diabético">Diabético</option>
-                <option value="Otro">Otro requerimiento específico</option>
-              </select>
-            </div>
+            {/* Campos condicionales (Solo si confirma asistencia) */}
+            {formData.attending === 'yes' && (
+              <div className="space-y-6 pt-1 animate-fade-in">
+                {/* Requerimientos alimenticios */}
+                <div className="space-y-1.5">
+                  <label className="block font-sans text-[11px] tracking-luxury uppercase text-white/70">
+                    Requerimiento alimentario
+                  </label>
+                  <select
+                    value={formData.dietary}
+                    onChange={(e) => handleChange('dietary', e.target.value)}
+                    className="w-full bg-[#121212] border border-white/15 px-4 py-3 text-sm text-white focus:outline-none focus:border-white transition-colors cursor-pointer"
+                  >
+                    <option value="Ninguno">Ninguno (Menú tradicional)</option>
+                    <option value="Celíaco (Sin TACC)">Celíaco (Sin TACC)</option>
+                    <option value="Vegetariano">Vegetariano</option>
+                    <option value="Vegano">Vegano</option>
+                    <option value="Hipertenso / Sin sal">Hipertenso / Sin sal</option>
+                    <option value="Diabético">Diabético</option>
+                    <option value="Otro">Otro requerimiento específico</option>
+                  </select>
+                </div>
 
-            {/* Sugerencia Musical */}
+                {/* Sugerencia Musical */}
+                <div className="space-y-1.5">
+                  <label className="block font-sans text-[11px] tracking-luxury uppercase text-white/70">
+                    Sugerencia Musical
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.musicSuggestion}
+                    onChange={(e) => handleChange('musicSuggestion', e.target.value)}
+                    placeholder="¿Qué canción no puede faltar en la fiesta?"
+                    className="w-full bg-white/5 border border-white/15 px-4 py-3 text-sm text-white placeholder-white/30 focus:outline-none focus:border-white transition-colors"
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Campo de Comentarios u observaciones (encima del botón enviar) */}
             <div className="space-y-1.5 pt-2">
               <label className="block font-sans text-[11px] tracking-luxury uppercase text-white/70">
-                Sugerencia Musical
+                Comentarios u observaciones
               </label>
-              <input
-                type="text"
-                value={formData.musicSuggestion}
-                onChange={(e) => handleChange('musicSuggestion', e.target.value)}
-                placeholder="¿Qué canción no puede faltar en la fiesta?"
-                className="w-full bg-white/5 border border-white/15 px-4 py-3 text-sm text-white placeholder-white/30 focus:outline-none focus:border-white transition-colors"
+              <textarea
+                rows={3}
+                value={formData.comments}
+                onChange={(e) => handleChange('comments', e.target.value)}
+                placeholder="Mensaje, felicitación o aclaración adicional..."
+                className="w-full bg-white/5 border border-white/15 px-4 py-3 text-sm text-white placeholder-white/30 focus:outline-none focus:border-white transition-colors resize-none"
               />
             </div>
 
             {/* Botón de envío */}
-            <div className="pt-4">
+            <div className="pt-2">
               <button
                 type="submit"
                 disabled={status.submitting}
@@ -276,7 +302,7 @@ const RSVP = () => {
                     CONFIRMANDO...
                   </span>
                 ) : (
-                  <span>CONFIRMAR ASISTENCIA</span>
+                  <span>CONFIRMAR RESPUESTA</span>
                 )}
               </button>
             </div>

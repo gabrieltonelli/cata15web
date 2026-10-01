@@ -9,13 +9,19 @@ export const eventConfig = {
   title: import.meta.env.VITE_EVENT_TITLE || 'CATALINA',
   subtitle: import.meta.env.VITE_EVENT_SUBTITLE || 'MIS XV AÑOS',
   heroDateDisplay: import.meta.env.VITE_HERO_DATE_DISPLAY || '20 • 11 • 2026',
-  
-  // Imagen de bolas espejadas para Hero y transiciones
+
+  // Video de fondo para el Hero
+  heroVideo: import.meta.env.VITE_HERO_VIDEO || '/assets/video/hero-bg2.mp4',
+
+  // Video de transición para la sección Una Noche Inolvidable (efecto boomerang)
+  transitionVideo: import.meta.env.VITE_TRANSITION_VIDEO || '/assets/video/video2.mp4',
+
+  // Imagen de bolas espejadas para transiciones
   discoBallsImage: import.meta.env.VITE_DISCO_BALLS_IMAGE || '/assets/photos/a2c632e4-3d7f-434f-831a-6cfb07fc3aef.jpg',
 
   // Fecha objetivo para el countdown (formato ISO 8601)
   targetDate: import.meta.env.VITE_EVENT_TARGET_DATE || '2026-11-20T20:00:00',
-  
+
   // Fecha y hora formateada para la tarjeta ¿Cuándo?
   dateTitle: '¿CUÁNDO?',
   dateText: import.meta.env.VITE_EVENT_DATE_TEXT || 'Viernes 20 de Noviembre de 2026',
@@ -51,12 +57,15 @@ export const eventConfig = {
   rsvpEndpoint: import.meta.env.VITE_RSVP_ENDPOINT || '', // Si está vacío se usa Netlify Forms o guardado local
 
   // Audio de fondo
-  audioUrl: import.meta.env.VITE_AUDIO_URL || 'https://assets.mixkit.co/music/preview/mixkit-serene-view-443.mp3',
-  audioTitle: import.meta.env.VITE_AUDIO_TITLE || 'Música Ambiental',
+  audioUrl: import.meta.env.VITE_AUDIO_URL || '/assets/mp3/Rihanna-Diamonds.mp3',
+  audioTitle: import.meta.env.VITE_AUDIO_TITLE || 'Rihanna - Diamonds',
 
-  // Footer
+  // Footer y Créditos
   footerClosing: import.meta.env.VITE_FOOTER_CLOSING || 'TE ESPERO',
   footerYear: import.meta.env.VITE_FOOTER_YEAR || '2026',
+  creatorCredit: import.meta.env.VITE_CREATOR_CREDIT || 'Creado con amor by AncleGaby',
+  whatsappPhone: import.meta.env.VITE_WHATSAPP_PHONE || '5492352440495',
+  whatsappMessage: import.meta.env.VITE_WHATSAPP_MESSAGE || 'Hola, me interesaría crear una página de invitación a mi evento',
 }
 
 export default eventConfig

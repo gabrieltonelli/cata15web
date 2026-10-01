@@ -1,21 +1,26 @@
 import { useState } from 'react'
 import eventConfig from '../config/eventData'
 import GiftModal from './GiftModal'
+import BoomerangVideo from './BoomerangVideo'
 
 /**
  * Componente 3: Tarjetas de Información (Info Cards)
- * Alternancia entre fondos sólidos (blanco / negro), separador de transición con bolas espejadas y Dress Code.
- * Ancho completo en mobile con padding generoso, iconografía minimalista de trazo fino.
+ * Orden:
+ * 1. Tarjeta A: Fecha y Horario (¿Cuándo?)
+ * 2. Transición: Una Noche Inolvidable (Video Boomerang) [Sin márgenes ni bordes]
+ * 3. Tarjeta B: Ubicación (¿Dónde?)
+ * 4. Tarjeta C: Regalos [Sin márgenes ni bordes]
+ * 5. Tarjeta D: Dress Code [Sin márgenes ni bordes]
  */
 const InfoCards = () => {
   const [isGiftModalOpen, setIsGiftModalOpen] = useState(false)
 
   return (
-    <div className="relative z-10 w-full space-y-16 md:space-y-24">
+    <div className="relative z-10 w-full flex flex-col">
       {/* ========================================================= */}
-      {/* TARJETA A: FECHA Y HORA (Fondo Sólido Blanco, Texto Oscuro) */}
+      {/* TARJETA A: FECHA Y HORA (¿CUÁNDO?) */}
       {/* ========================================================= */}
-      <section className="w-full bg-white text-dark-950 py-16 sm:py-24 px-6 sm:px-12 shadow-xl">
+      <section className="w-full bg-white text-dark-950 py-16 sm:py-24 px-6 sm:px-12 shadow-md">
         <div className="max-w-2xl mx-auto text-center space-y-6">
           {/* Icono de calendario minimalista */}
           <div className="flex justify-center">
@@ -68,9 +73,38 @@ const InfoCards = () => {
       </section>
 
       {/* ========================================================= */}
-      {/* TARJETA B: UBICACIÓN (Fondo Sólido Blanco, Texto Oscuro) */}
+      {/* SECCIÓN TRANSICIÓN: UNA NOCHE INOLVIDABLE (LUEGO DE CUANDO) */}
+      {/* Sin márgenes (m-0) ni bordes (border-none) */}
       {/* ========================================================= */}
-      <section className="w-full bg-white text-dark-950 py-16 sm:py-24 px-6 sm:px-12 shadow-xl">
+      <section className="relative w-full py-28 sm:py-36 px-6 flex items-center justify-center overflow-hidden m-0 border-none shadow-none">
+        {/* Video en loop boomerang con clase propia y filtro CSS específico */}
+        <BoomerangVideo
+          src={eventConfig.transitionVideo}
+          className="video-noche-inolvidable absolute inset-0 w-full h-full object-cover -z-10"
+        />
+
+        {/* Overlay oscuro sutil para alto contraste y elegancia */}
+        <div className="absolute inset-0 bg-gradient-to-b from-dark-950/80 via-dark-950/50 to-dark-950/85 -z-10" />
+
+        <div className="relative z-10 max-w-xl mx-auto text-center space-y-4 text-white">
+          <div className="flex items-center justify-center gap-3 text-white/50">
+            <span className="w-10 h-px bg-white/40" />
+            <span className="text-xs">✦</span>
+            <span className="w-10 h-px bg-white/40" />
+          </div>
+          <p className="font-cinzel text-2xl sm:text-3xl md:text-5xl tracking-[0.2em] font-light text-white uppercase drop-shadow-lg">
+            UNA NOCHE INOLVIDABLE
+          </p>
+          <p className="font-sans text-[11px] sm:text-xs tracking-ultra-luxury text-white/80 uppercase font-medium">
+            CELEBREMOS JUNTOS
+          </p>
+        </div>
+      </section>
+
+      {/* ========================================================= */}
+      {/* TARJETA B: UBICACIÓN (¿DÓNDE?) */}
+      {/* ========================================================= */}
+      <section className="w-full bg-white text-dark-950 py-16 sm:py-24 px-6 sm:px-12 shadow-md">
         <div className="max-w-2xl mx-auto text-center space-y-6">
           {/* Icono de pin / ubicación */}
           <div className="flex justify-center">
@@ -117,9 +151,10 @@ const InfoCards = () => {
       </section>
 
       {/* ========================================================= */}
-      {/* TARJETA C: REGALOS (Fondo Sólido Negro, Letras Claras) */}
+      {/* TARJETA C: REGALOS */}
+      {/* Sin márgenes (m-0) ni bordes (border-none) */}
       {/* ========================================================= */}
-      <section className="w-full bg-[#0A0A0A] text-white py-16 sm:py-24 px-6 sm:px-12 border-y border-white/10 shadow-2xl">
+      <section className="w-full bg-[#0A0A0A] text-white py-16 sm:py-24 px-6 sm:px-12 m-0 border-none shadow-none">
         <div className="max-w-2xl mx-auto text-center space-y-6">
           {/* Icono de caja de regalo minimalista */}
           <div className="flex justify-center">
@@ -159,38 +194,10 @@ const InfoCards = () => {
       <GiftModal isOpen={isGiftModalOpen} onClose={() => setIsGiftModalOpen(false)} />
 
       {/* ========================================================= */}
-      {/* SEPARADOR DE TRANSICIÓN: BOLAS ESPEJADAS DE ALTO CONTRASTE */}
+      {/* TARJETA D: DRESS CODE */}
+      {/* Sin márgenes (m-0) ni bordes (border-none) */}
       {/* ========================================================= */}
-      <section
-        className="relative w-full py-24 sm:py-32 px-6 flex items-center justify-center overflow-hidden bg-center bg-cover border-y border-white/10"
-        style={{
-          backgroundImage: `url("${eventConfig.discoBallsImage}")`,
-          backgroundPosition: 'center',
-          backgroundSize: 'cover'
-        }}
-      >
-        {/* Overlay oscuro sutil para alto contraste y elegancia */}
-        <div className="absolute inset-0 bg-dark-950/75 backdrop-blur-[0.5px]" />
-
-        <div className="relative z-10 max-w-xl mx-auto text-center space-y-4 text-white">
-          <div className="flex items-center justify-center gap-3 text-white/40">
-            <span className="w-10 h-px bg-white/30" />
-            <span className="text-xs">✦</span>
-            <span className="w-10 h-px bg-white/30" />
-          </div>
-          <p className="font-cinzel text-2xl sm:text-3xl md:text-4xl tracking-[0.2em] font-light text-white uppercase drop-shadow-md">
-            UNA NOCHE INOLVIDABLE
-          </p>
-          <p className="font-sans text-[11px] sm:text-xs tracking-ultra-luxury text-white/70 uppercase">
-            CELEBREMOS JUNTOS
-          </p>
-        </div>
-      </section>
-
-      {/* ========================================================= */}
-      {/* TARJETA D: DRESS CODE (Fondo Blanco Sólido, Alto Contraste) */}
-      {/* ========================================================= */}
-      <section className="w-full bg-white text-dark-950 py-16 sm:py-24 px-6 sm:px-12 shadow-xl">
+      <section className="w-full bg-white text-dark-950 py-16 sm:py-24 px-6 sm:px-12 m-0 border-none shadow-none">
         <div className="max-w-2xl mx-auto text-center space-y-6">
           {/* Icono de diamante / percha */}
           <div className="flex justify-center">
