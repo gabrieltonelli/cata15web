@@ -2,9 +2,9 @@ import { useState } from 'react'
 import eventConfig from '../config/eventData'
 
 /**
- * Componente 1: Pantalla de Bienvenida (Hero Overlay)
- * Fondo blanco sólido de 100vh con tipografía de lujo.
- * Al hacer clic en "INGRESAR", se desvanece suavemente para revelar el contenido interactivo.
+ * Componente 1: Pantalla de Bienvenida (Hero Overlay / Pantalla de Ingreso)
+ * Fondo blanco sólido de 100vh con diseño minimalista.
+ * Incluye el texto "MIS XV CATALINA" centrado en tipografía sans-serif elegante y botón INGRESAR.
  */
 const WelcomeHero = ({ onEnter }) => {
   const [isExiting, setIsExiting] = useState(false)
@@ -26,28 +26,22 @@ const WelcomeHero = ({ onEnter }) => {
         isExiting ? 'opacity-0 pointer-events-none scale-105' : 'opacity-100 scale-100'
       }`}
     >
-      {/* Contenedor central con proporciones y espaciado editorial */}
+      {/* Contenedor central */}
       <div className="max-w-xl w-full text-center flex flex-col items-center justify-center space-y-8">
+        
         {/* Adorno superior fino */}
         <div className="flex items-center justify-center gap-3 text-dark-600 opacity-60">
-          <div className="w-8 h-px bg-dark-900" />
-          <span className="text-xs tracking-widest uppercase">INVITACIÓN ESPECIAL</span>
-          <div className="w-8 h-px bg-dark-900" />
+          <div className="w-8 h-px bg-dark-900/40" />
+          <span className="font-sans text-[11px] tracking-ultra-luxury uppercase">INVITACIÓN</span>
+          <div className="w-8 h-px bg-dark-900/40" />
         </div>
 
-        {/* Título y Subtítulo principal */}
+        {/* Texto de entrada requerido: "MIS XV CATALINA" centrado, sans-serif elegante y minimalista */}
         <div className="space-y-3">
-          <h1 className="font-cinzel text-5xl sm:text-6xl md:text-7xl font-bold tracking-[0.18em] text-dark-950 uppercase">
-            {eventConfig.title}
+          <h1 className="font-sans text-3xl sm:text-4xl md:text-5xl font-light tracking-[0.22em] text-dark-950 uppercase leading-snug">
+            {eventConfig.mainTitle}
           </h1>
-          <p className="font-sans text-xs sm:text-sm tracking-luxury text-dark-600 uppercase font-medium">
-            {eventConfig.subtitle}
-          </p>
-        </div>
-
-        {/* Fecha sobria en formato espaciado */}
-        <div className="py-2">
-          <p className="font-serif italic text-base sm:text-lg text-dark-700 tracking-wider">
+          <p className="font-sans text-xs tracking-luxury text-dark-600 uppercase font-medium">
             {eventConfig.heroDateDisplay}
           </p>
         </div>
@@ -56,7 +50,7 @@ const WelcomeHero = ({ onEnter }) => {
         <div className="w-12 h-px bg-dark-900/20" />
 
         {/* Botón de ingreso central */}
-        <div className="pt-4">
+        <div className="pt-2">
           <button
             type="button"
             onClick={handleEnter}

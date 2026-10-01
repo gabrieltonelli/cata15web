@@ -68,9 +68,11 @@ Consulte el archivo [.env.template](file:///.env.template) para ver todas las op
 
 | Variable | Descripción | Valor por Defecto |
 |----------|-------------|-------------------|
-| `VITE_EVENT_TITLE` | Nombre principal del evento | `CATALINA` |
+| `VITE_EVENT_MAIN_TITLE` | Título principal en la portada y Hero | `MIS XV CATALINA` |
+| `VITE_EVENT_TITLE` | Nombre secundario | `CATALINA` |
 | `VITE_EVENT_SUBTITLE` | Subtítulo descriptivo | `MIS XV AÑOS` |
 | `VITE_HERO_DATE_DISPLAY` | Fecha mostrada en la pantalla de bienvenida | `20 • 11 • 2026` |
+| `VITE_DISCO_BALLS_IMAGE` | Ruta de la imagen de fondo con bolas espejadas | `/assets/photos/a2c632e4-3d7f-434f-831a-6cfb07fc3aef.jpg` |
 | `VITE_EVENT_TARGET_DATE` | Fecha objetivo ISO 8601 para el Countdown | `2026-11-20T20:00:00` |
 | `VITE_EVENT_DATE_TEXT` | Texto legible de la fecha | `Viernes 20 de Noviembre de 2026` |
 | `VITE_EVENT_TIME_TEXT` | Texto del horario | `20:00 hs (Puntual)` |

@@ -4,7 +4,7 @@ import GiftModal from './GiftModal'
 
 /**
  * Componente 3: Tarjetas de Información (Info Cards)
- * Alternancia entre fondos sólidos (blanco / negro) y transparencia sobre el fondo fijo.
+ * Alternancia entre fondos sólidos (blanco / negro), separador de transición con bolas espejadas y Dress Code.
  * Ancho completo en mobile con padding generoso, iconografía minimalista de trazo fino.
  */
 const InfoCards = () => {
@@ -157,6 +157,35 @@ const InfoCards = () => {
 
       {/* Modal de Regalos */}
       <GiftModal isOpen={isGiftModalOpen} onClose={() => setIsGiftModalOpen(false)} />
+
+      {/* ========================================================= */}
+      {/* SEPARADOR DE TRANSICIÓN: BOLAS ESPEJADAS DE ALTO CONTRASTE */}
+      {/* ========================================================= */}
+      <section
+        className="relative w-full py-24 sm:py-32 px-6 flex items-center justify-center overflow-hidden bg-center bg-cover border-y border-white/10"
+        style={{
+          backgroundImage: `url("${eventConfig.discoBallsImage}")`,
+          backgroundPosition: 'center',
+          backgroundSize: 'cover'
+        }}
+      >
+        {/* Overlay oscuro sutil para alto contraste y elegancia */}
+        <div className="absolute inset-0 bg-dark-950/75 backdrop-blur-[0.5px]" />
+
+        <div className="relative z-10 max-w-xl mx-auto text-center space-y-4 text-white">
+          <div className="flex items-center justify-center gap-3 text-white/40">
+            <span className="w-10 h-px bg-white/30" />
+            <span className="text-xs">✦</span>
+            <span className="w-10 h-px bg-white/30" />
+          </div>
+          <p className="font-cinzel text-2xl sm:text-3xl md:text-4xl tracking-[0.2em] font-light text-white uppercase drop-shadow-md">
+            UNA NOCHE INOLVIDABLE
+          </p>
+          <p className="font-sans text-[11px] sm:text-xs tracking-ultra-luxury text-white/70 uppercase">
+            CELEBREMOS JUNTOS
+          </p>
+        </div>
+      </section>
 
       {/* ========================================================= */}
       {/* TARJETA D: DRESS CODE (Fondo Blanco Sólido, Alto Contraste) */}

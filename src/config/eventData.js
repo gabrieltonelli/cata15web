@@ -5,10 +5,14 @@
 
 export const eventConfig = {
   // Datos generales del evento
+  mainTitle: import.meta.env.VITE_EVENT_MAIN_TITLE || 'MIS XV CATALINA',
   title: import.meta.env.VITE_EVENT_TITLE || 'CATALINA',
   subtitle: import.meta.env.VITE_EVENT_SUBTITLE || 'MIS XV AÑOS',
   heroDateDisplay: import.meta.env.VITE_HERO_DATE_DISPLAY || '20 • 11 • 2026',
   
+  // Imagen de bolas espejadas para Hero y transiciones
+  discoBallsImage: import.meta.env.VITE_DISCO_BALLS_IMAGE || '/assets/photos/a2c632e4-3d7f-434f-831a-6cfb07fc3aef.jpg',
+
   // Fecha objetivo para el countdown (formato ISO 8601)
   targetDate: import.meta.env.VITE_EVENT_TARGET_DATE || '2026-11-20T20:00:00',
   
@@ -51,7 +55,7 @@ export const eventConfig = {
   audioTitle: import.meta.env.VITE_AUDIO_TITLE || 'Música Ambiental',
 
   // Footer
-  footerClosing: import.meta.env.VITE_FOOTER_CLOSING || 'TE ESPERAMOS',
+  footerClosing: import.meta.env.VITE_FOOTER_CLOSING || 'TE ESPERO',
   footerYear: import.meta.env.VITE_FOOTER_YEAR || '2026',
 }
 
