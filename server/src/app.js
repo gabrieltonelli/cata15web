@@ -13,12 +13,26 @@ app.use(cors({
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
+// Middleware para normalizar rutas provenientes de Netlify Functions
+app.use((req, res, next) => {
+  // En Netlify Functions req.url puede llegar como '/.netlify/functions/api/rsvp' o '/rsvp'
+  if (req.url.startsWith('/.netlify/functions/api')) {
+    req.url = req.url.replace('/.netlify/functions/api', '/api')
+  } else if (!req.url.startsWith('/api')) {
+    req.url = '/api' + req.url
+  }
+  console.log(`[API ${req.method}] ${req.url} - IP: ${req.ip || 'desconocida'}`)
+  next()
+})
+
 // Ruta de comprobación de salud
 app.get('/api/health', (req, res) => {
   res.status(200).json({
     status: 'ok',
     timestamp: new Date().toISOString(),
-    environment: config.nodeEnv
+    environment: config.nodeEnv,
+    hasAppsScriptUrl: Boolean(config.google.appsScriptUrl),
+    hasServiceAccount: Boolean(config.google.serviceAccountEmail && config.google.privateKey)
   })
 })
 
@@ -60,13 +74,21 @@ app.post('/api/rsvp', async (req, res) => {
       ...result
     })
   } catch (error) {
-    console.error('[RSVP Error]:', error)
+    console.error('[RSVP Error en servidor]:', error)
     res.status(500).json({
       success: false,
-      error: 'Ocurrió un error al registrar la confirmación en el servidor.',
-      details: config.nodeEnv === 'development' ? error.message : undefined
+      error: 'Ocurrió un error al registrar la confirmación en Google Sheets.',
+      details: error.message
     })
   }
+})
+
+// Fallback para cualquier otra ruta API no mapeada
+app.all('*', (req, res) => {
+  res.status(404).json({
+    success: false,
+    error: `Ruta no encontrada: ${req.method} ${req.url}`
+  })
 })
 
 export default app

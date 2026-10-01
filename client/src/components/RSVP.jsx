@@ -51,27 +51,48 @@ const RSVP = () => {
     }
 
     try {
-      // Si hay un endpoint configurado por variable de entorno, enviar allí vía JSON
-      if (eventConfig.rsvpEndpoint) {
-        const res = await fetch(eventConfig.rsvpEndpoint, {
+      let success = false
+      let responseData = null
+
+      // Intentar enviar al endpoint configurado (/api/rsvp)
+      const primaryUrl = eventConfig.rsvpEndpoint || '/api/rsvp'
+      
+      const sendRequest = async (url) => {
+        const res = await fetch(url, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         })
-        if (!res.ok) throw new Error('Error al enviar formulario a la API')
-      } else {
-        // Fallback a Netlify Forms mediante POST URL-encoded
-        await fetch('/', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: new URLSearchParams(payload).toString()
-        })
+        const contentType = res.headers.get('content-type') || ''
+        if (!contentType.includes('application/json')) {
+          throw new Error(`El servidor devolvió contenido no JSON (${contentType || 'vacío'})`)
+        }
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}))
+          throw new Error(errData.error || errData.details || `Error del servidor HTTP ${res.status}`)
+        }
+        return await res.json()
+      }
+
+      try {
+        responseData = await sendRequest(primaryUrl)
+        success = true
+      } catch (primaryErr) {
+        console.warn(`[RSVP] Falló envío a ${primaryUrl}:`, primaryErr.message)
+        // Si falló en /api/rsvp y estamos en Netlify, intentar la ruta directa /.netlify/functions/api/rsvp
+        if (primaryUrl === '/api/rsvp') {
+          console.log('[RSVP] Reintentando con endpoint directo /.netlify/functions/api/rsvp...')
+          responseData = await sendRequest('/.netlify/functions/api/rsvp')
+          success = true
+        } else {
+          throw primaryErr
+        }
       }
 
       // Guardado de respaldo en localStorage
       try {
         const stored = JSON.parse(localStorage.getItem('rsvp_records') || '[]')
-        stored.push(payload)
+        stored.push({ ...payload, syncStatus: 'synced_to_server' })
         localStorage.setItem('rsvp_records', JSON.stringify(stored))
       } catch (storageErr) {
         console.warn('LocalStorage error:', storageErr)
@@ -79,20 +100,19 @@ const RSVP = () => {
 
       setStatus({ submitting: false, submitted: true, error: null })
     } catch (err) {
-      console.warn('Error en la solicitud:', err)
-      // Como respaldo seguro para el usuario, guardamos localmente y confirmamos
+      console.error('[RSVP Error definitivo]:', err)
+      // Guardado de respaldo local ante caída total de red
       try {
         const stored = JSON.parse(localStorage.getItem('rsvp_records') || '[]')
-        stored.push(payload)
+        stored.push({ ...payload, syncStatus: 'pending_sync' })
         localStorage.setItem('rsvp_records', JSON.stringify(stored))
-        setStatus({ submitting: false, submitted: true, error: null })
-      } catch (fallbackErr) {
-        setStatus({
-          submitting: false,
-          submitted: false,
-          error: 'Hubo un inconveniente al procesar tu confirmación. Por favor intentá nuevamente.'
-        })
-      }
+      } catch (e) {}
+
+      setStatus({
+        submitting: false,
+        submitted: false,
+        error: err.message || 'Hubo un inconveniente al conectar con el servidor. Por favor intentá nuevamente.'
+      })
     }
   }
 

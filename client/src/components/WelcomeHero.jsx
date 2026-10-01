@@ -12,70 +12,57 @@ const WelcomeHero = ({ onEnter }) => {
   const [isExiting, setIsExiting] = useState(false)
   const [isDismissed, setIsDismissed] = useState(false)
 
-  // Precarga de archivos multimedia críticos
+  // Precarga optimizada y no bloqueante de recursos críticos
   useEffect(() => {
-    const mediaUrls = [
-      eventConfig.heroVideo,
-      eventConfig.transitionVideo,
-      eventConfig.discoBallsImage,
-      eventConfig.audioUrl
-    ].filter(Boolean)
+    let currentProgress = 0
+    let isCancelled = false
 
-    let loadedCount = 0
-    const totalMedia = mediaUrls.length
+    // Precarga liviana de imágenes críticas (la imagen de bolas espejadas)
+    if (eventConfig.discoBallsImage) {
+      const img = new Image()
+      img.src = eventConfig.discoBallsImage
+    }
 
-    // Manejo de precarga real mediante fetch / blob
-    const preloadPromises = mediaUrls.map((url) => {
-      return new Promise((resolve) => {
-        // Para imágenes o videos
-        if (url.match(/\.(jpg|jpeg|png|webp|svg)$/i)) {
-          const img = new Image()
-          img.src = url
-          img.onload = img.onerror = () => {
-            loadedCount++
-            setLoadProgress((prev) => Math.max(prev, (loadedCount / totalMedia) * 90))
-            resolve()
-          }
-        } else {
-          // Videos
-          fetch(url)
-            .then((res) => {
-              if (!res.ok) throw new Error('Network error')
-              return res.blob()
-            })
-            .then(() => {
-              loadedCount++
-              setLoadProgress((prev) => Math.max(prev, (loadedCount / totalMedia) * 90))
-              resolve()
-            })
-            .catch(() => {
-              // Fallback ante error de red para no trabar la experiencia
-              loadedCount++
-              setLoadProgress((prev) => Math.max(prev, (loadedCount / totalMedia) * 90))
-              resolve()
-            })
-        }
-      })
-    })
+    // Precalentamiento sutil de videos y audio mediante elementos ocultos (streaming nativo del browser)
+    const warmupMedia = (url, isVideo = true) => {
+      if (!url) return
+      try {
+        const el = document.createElement(isVideo ? 'video' : 'audio')
+        el.preload = 'metadata'
+        el.src = url
+      } catch (e) {
+        // Silencioso
+      }
+    }
 
-    // Incremento suave visual
+    warmupMedia(eventConfig.heroVideo, true)
+    warmupMedia(eventConfig.transitionVideo, true)
+    warmupMedia(eventConfig.audioUrl, false)
+
+    // Animación suave, constante y fluida de la barra de progreso (duración total: ~2.2 segundos)
+    const startTime = Date.now()
+    const targetDuration = 2200 // 2.2 segundos en total
+
     const interval = setInterval(() => {
-      setLoadProgress((prev) => {
-        if (prev >= 90) return prev
-        return prev + Math.random() * 8 + 3
-      })
-    }, 120)
+      if (isCancelled) return
 
-    Promise.all(preloadPromises).then(() => {
+      const elapsed = Date.now() - startTime
+      const calculated = Math.min(100, Math.round((elapsed / targetDuration) * 100))
+
+      setLoadProgress(calculated)
+
+      if (calculated >= 100) {
+        clearInterval(interval)
+        setTimeout(() => {
+          if (!isCancelled) setIsReady(true)
+        }, 200)
+      }
+    }, 40)
+
+    return () => {
+      isCancelled = true
       clearInterval(interval)
-      // Llegar a 100% de manera fluida
-      setLoadProgress(100)
-      setTimeout(() => {
-        setIsReady(true)
-      }, 300)
-    })
-
-    return () => clearInterval(interval)
+    }
   }, [])
 
   const handleEnter = () => {

@@ -1,30 +1,32 @@
 /**
  * ==============================================================================
- * GOOGLE APPS SCRIPT PARA PERSISTENCIA AUTOMÁTICA DE RSVP
+ * GOOGLE APPS SCRIPT PARA PERSISTENCIA AUTOMÁTICA DE RSVP EN GOOGLE SHEETS
  * ==============================================================================
- * Hoja de cálculo: 
+ * Planilla:
  * https://docs.google.com/spreadsheets/d/1u7LT_cZn-SUzWxPNg1MZfPi0wsJNZfeUgEoilp0wemo/edit
  *
- * INSTRUCCIONES DE INSTALACIÓN (2 MINUTOS):
- * 1. Abrí tu planilla de Google Sheets.
- * 2. En el menú superior, hacé clic en: "Extensiones" -> "Apps Script".
+ * ⚠️ PASO CRÍTICO DE CONFIGURACIÓN (1 MINUTO):
+ * 1. Abrí la planilla en tu navegador.
+ * 2. En el menú superior: "Extensiones" -> "Apps Script".
  * 3. Borrá todo el contenido de Code.gs y pegá este código completo.
- * 4. Hacé clic en el botón "Guardar" (ícono de disquete).
- * 5. Hacé clic en el botón azul superior "Implementar" -> "Nueva implementación".
+ * 4. Hacé clic en "Guardar" (ícono de disquete).
+ * 5. Hacé clic en "Implementar" -> "Nueva implementación".
  * 6. En el engranaje "Seleccionar tipo", elegí "Aplicación web".
- * 7. Completá los campos:
+ * 7. Completá:
  *    - Descripción: "Webhook RSVP Mis XV"
  *    - Ejecutar como: "Yo" (tu cuenta de Google)
- *    - Quién tiene acceso: "Cualquier persona" (Anyone)
- * 8. Hacé clic en "Implementar" y autorizá los permisos que te solicite Google.
- * 9. Copiá la "URL de la aplicación web" generada (termina en /exec)
- * 10. Pegá esa URL en la variable GOOGLE_APPS_SCRIPT_URL de tu archivo server/.env
+ *    - ⚠️ QUIÉN TIENE ACCESO: "Cualquier persona" (Anyone)
+ *      (¡OJO! Si dejás "Solo yo", Google rechazará las peticiones con error 404).
+ * 8. Hacé clic en "Implementar" y autorizá los permisos.
+ * 9. Copiá la "URL de la aplicación web" generada (termina en /exec).
+ * 10. Pegá esa URL en server/.env y en las variables de entorno de Netlify:
+ *     GOOGLE_APPS_SCRIPT_URL=https://script.google.com/macros/s/.../exec
  * ==============================================================================
  */
 
-function doPost(e) {
+function handleRequest(e) {
   var lock = LockService.getScriptLock();
-  // Esperar hasta 30 segundos para evitar colisiones concurrentes
+  // Esperar hasta 30 segundos para evitar escrituras concurrentes simultáneas
   lock.tryLock(30000);
 
   try {
@@ -32,7 +34,7 @@ function doPost(e) {
     var sheetName = "Respuestas";
     var sheet = doc.getSheetByName(sheetName);
 
-    // Si la hoja no existe, la crea con sus encabezados estilizados
+    // Si la pestaña no existe, se crea con los encabezados estilizados
     if (!sheet) {
       sheet = doc.insertSheet(sheetName);
       var headers = [
@@ -52,12 +54,26 @@ function doPost(e) {
       sheet.setFrozenRows(1);
     }
 
-    // Parsear los datos recibidos en la petición POST
+    // Parsear datos recibidos (soporta JSON en contents, o parámetros de formulario/URL)
     var data = {};
     if (e && e.postData && e.postData.contents) {
-      data = JSON.parse(e.postData.contents);
+      try {
+        data = JSON.parse(e.postData.contents);
+      } catch (jsonErr) {
+        data = e.parameter || {};
+      }
     } else if (e && e.parameter) {
       data = e.parameter;
+    }
+
+    // Si la petición no tiene nombre (por ejemplo un health check GET simple en el navegador)
+    if (!data.nombre && !data.apellido) {
+      return ContentService
+        .createTextOutput(JSON.stringify({ 
+          status: "active", 
+          message: "Webhook de Google Sheets para RSVP activo y esperando confirmaciones." 
+        }))
+        .setMimeType(ContentService.MimeType.JSON);
     }
 
     var fecha = data.fechaEnvio || new Date().toLocaleString("es-AR", { timeZone: "America/Argentina/Buenos_Aires" });
@@ -80,7 +96,7 @@ function doPost(e) {
 
     return ContentService
       .createTextOutput(JSON.stringify({ 
-        result: "success", 
+        success: true, 
         message: "Registro guardado correctamente en Google Sheets",
         data: { nombre: nombre, apellido: apellido, asistencia: asistencia }
       }))
@@ -89,8 +105,8 @@ function doPost(e) {
   } catch (err) {
     return ContentService
       .createTextOutput(JSON.stringify({ 
-        result: "error", 
-        message: err.toString() 
+        success: false, 
+        error: err.toString() 
       }))
       .setMimeType(ContentService.MimeType.JSON);
 
@@ -99,11 +115,12 @@ function doPost(e) {
   }
 }
 
+// Soporta peticiones POST estándar
+function doPost(e) {
+  return handleRequest(e);
+}
+
+// Soporta peticiones GET o redirecciones HTTP 302 convertidas a GET
 function doGet(e) {
-  return ContentService
-    .createTextOutput(JSON.stringify({ 
-      status: "active", 
-      message: "Webhook de Google Sheets para RSVP funcionando correctamente." 
-    }))
-    .setMimeType(ContentService.MimeType.JSON);
+  return handleRequest(e);
 }

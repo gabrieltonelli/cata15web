@@ -6,7 +6,17 @@ import config from '../config/env.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
-const fallbackStoragePath = path.resolve(__dirname, '../../data/submissions.json')
+
+// En entornos serverless (Netlify / Lambda), el filesystem es de solo lectura salvo /tmp
+const isServerless = Boolean(
+  process.env.NETLIFY ||
+  process.env.AWS_LAMBDA_FUNCTION_NAME ||
+  process.env.LAMBDA_TASK_ROOT
+)
+
+const fallbackStoragePath = isServerless
+  ? path.resolve('/tmp', 'submissions.json')
+  : path.resolve(__dirname, '../../data/submissions.json')
 
 /**
  * Guarda el registro en un archivo JSON local como fallback de seguridad
@@ -26,34 +36,55 @@ const saveToLocalFallback = async (entry) => {
 
     records.push(entry)
     fs.writeFileSync(fallbackStoragePath, JSON.stringify(records, null, 2), 'utf8')
-    console.log('[Storage Fallback] Registro guardado localmente en server/data/submissions.json')
+    console.log(`[Storage Fallback] Registro guardado en ${fallbackStoragePath}`)
   } catch (err) {
-    console.error('[Storage Fallback Error]', err)
+    console.warn('[Storage Fallback Warning]: No se pudo escribir copia local en disco (entorno serverless):', err.message)
   }
 }
 
 /**
  * Método 1: Persistencia vía Google Apps Script Webhook
- * Permite que una función doPost en el Sheet reciba directamente el payload.
  */
 const appendViaAppsScript = async (data) => {
   const url = config.google.appsScriptUrl
   if (!url) return null
 
   console.log(`[Google Sheets] Enviando datos a Apps Script Webhook: ${url}`)
+
+  // Enviamos con text/plain para que Google Apps Script reciba el payload sin preflight OPTIONS ni truncamiento
   const response = await fetch(url, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'text/plain;charset=utf-8'
+    },
     body: JSON.stringify(data),
     redirect: 'follow'
   })
 
+  const rawText = await response.text()
+
   if (!response.ok) {
-    throw new Error(`Apps Script respondió con status: ${response.status} ${response.statusText}`)
+    throw new Error(`Google Apps Script respondió con HTTP ${response.status}: ${rawText.slice(0, 200)}`)
   }
 
-  const result = await response.text()
-  return { method: 'apps-script', result }
+  // Detectar si Google devolvió una página de error HTML (ej. 404 Google Drive o pantalla de login)
+  if (rawText.includes('<!DOCTYPE html>') || rawText.includes('<html')) {
+    if (rawText.includes('No se pudo abrir el archivo') || rawText.includes('Page Not Found')) {
+      throw new Error(
+        'Google Apps Script devolvió 404 (No se pudo abrir el archivo). ' +
+        'Revisá la configuración de la Web App en Google Sheets: debe estar implementada con acceso "Cualquier persona" (Anyone).'
+      )
+    }
+  }
+
+  let parsed = null
+  try {
+    parsed = JSON.parse(rawText)
+  } catch (parseErr) {
+    // Si no es JSON pero devolvió 200, retornamos el texto
+  }
+
+  return { method: 'apps-script', result: parsed || rawText }
 }
 
 /**
@@ -103,10 +134,6 @@ const appendViaServiceAccount = async (data) => {
 
 /**
  * Función principal para agregar una confirmación de RSVP.
- * Prioriza:
- * 1. Apps Script Webhook si está configurado.
- * 2. Service Account API si está configurado.
- * 3. Fallback a almacenamiento local en JSON si aún no se configuraron credenciales.
  */
 export const appendRSVP = async (data) => {
   const timestamp = new Date().toISOString()
@@ -115,7 +142,7 @@ export const appendRSVP = async (data) => {
     fechaEnvio: data.fechaEnvio || timestamp
   }
 
-  // Siempre guardamos copia local de resguardo
+  // Guardado de respaldo local
   await saveToLocalFallback(fullData)
 
   // Intentar Método 1: Google Apps Script Webhook
@@ -125,7 +152,10 @@ export const appendRSVP = async (data) => {
       return { success: true, method: 'apps-script', details: res }
     } catch (appsScriptErr) {
       console.error('[Google Sheets - Apps Script Error]:', appsScriptErr.message)
-      // Si falla, intentará el siguiente método si está disponible
+      // Si no hay Service Account configurado, lanzar el error explícito
+      if (!config.google.serviceAccountEmail || !config.google.privateKey) {
+        throw appsScriptErr
+      }
     }
   }
 
@@ -140,16 +170,15 @@ export const appendRSVP = async (data) => {
     }
   }
 
-  // Si no hay ninguna credencial remota configurada, advertir pero confirmar con fallback local
+  // Si no hay ninguna credencial remota configurada
   console.warn(
-    '[Google Sheets Warning] No se encontraron credenciales de Google configuradas (GOOGLE_APPS_SCRIPT_URL o GOOGLE_SERVICE_ACCOUNT_*). ' +
-    'Los datos se resguardaron localmente en server/data/submissions.json.'
+    '[Google Sheets Warning] No se encontraron credenciales de Google configuradas (GOOGLE_APPS_SCRIPT_URL o GOOGLE_SERVICE_ACCOUNT_*).'
   )
 
   return {
     success: true,
     method: 'local-fallback',
-    warning: 'Datos resguardados localmente. Configura GOOGLE_APPS_SCRIPT_URL o GOOGLE_SERVICE_ACCOUNT en server/.env para sincronizar con Google Sheets.'
+    warning: 'Datos resguardados localmente. Configura GOOGLE_APPS_SCRIPT_URL en el panel de Netlify para sincronizar con Google Sheets.'
   }
 }
 
