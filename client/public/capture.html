@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Generador de Preview Open Graph (600x600) • Cata15Web</title>
+  
+  <!-- Fuentes oficiales del proyecto -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #09090b;
+      --card-bg: #121215;
+      --border: rgba(255, 255, 255, 0.12);
+      --accent: #ffffff;
+      --text-muted: rgba(255, 255, 255, 0.65);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: #fff;
+      font-family: 'Montserrat', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 16px 60px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    header h1 {
+      font-family: 'Cinzel', serif;
+      font-size: 26px;
+      letter-spacing: 0.14em;
+      margin-bottom: 6px;
+      color: #fff;
+    }
+
+    header p {
+      font-size: 13px;
+      color: var(--text-muted);
+      letter-spacing: 0.04em;
+    }
+
+    .app-layout {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 32px;
+      justify-content: center;
+      align-items: flex-start;
+      max-width: 1320px;
+      width: 100%;
+    }
+
+    /* Panel de controles */
+    .controls-panel {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      width: 100%;
+      max-width: 520px;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+    }
+
+    .section-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: #fff;
+      font-weight: 700;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 6px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+
+    .form-group:last-child {
+      margin-bottom: 0;
+    }
+
+    .form-group label {
+      font-size: 12px;
+      color: var(--text-muted);
+      letter-spacing: 0.04em;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .form-group label span.value-badge {
+      font-family: monospace;
+      color: #fff;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    input[type="text"], select {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 9px 12px;
+      color: #fff;
+      font-size: 13px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s;
+      width: 100%;
+    }
+
+    input[type="text"]:focus, select:focus {
+      border-color: #fff;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: #ffffff;
+      cursor: pointer;
+    }
+
+    .row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .text-control-card {
+      background: rgba(255, 255, 255, 0.025);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 8px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .text-control-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .text-control-header span.tag {
+      font-size: 11px;
+      font-weight: 600;
+      color: #fff;
+      letter-spacing: 0.05em;
+    }
+
+    .size-slider-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .size-slider-row span {
+      font-size: 11px;
+      color: var(--text-muted);
+      min-width: 52px;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 10px;
+    }
+
+    button {
+      flex: 1;
+      padding: 12px 16px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: #ffffff;
+      color: #000000;
+      border: 1px solid #ffffff;
+    }
+
+    .btn-primary:hover {
+      background: #e4e4e7;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: #ffffff;
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: #fff;
+    }
+
+    /* Video monitor en miniatura */
+    .video-monitor-container {
+      position: relative;
+      width: 100%;
+      height: 140px;
+      background: #000;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #sourceVideo {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .monitor-overlay {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background: rgba(0, 0, 0, 0.7);
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      font-weight: 600;
+      color: #4ade80;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      pointer-events: none;
+    }
+
+    .monitor-overlay::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      background: #4ade80;
+      border-radius: 50%;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.8); }
+    }
+
+    /* Contenedor del Preview */
+    .preview-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      position: sticky;
+      top: 24px;
+    }
+
+    .preview-container {
+      position: relative;
+      width: 600px;
+      height: 600px;
+      background: #000;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.95);
+    }
+
+    #outputCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .preview-footer {
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .badge-info {
+      background: rgba(255, 255, 255, 0.08);
+      padding: 4px 8px;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+    }
+
+    #notification {
+      position: fixed;
+      bottom: 24px;
+      background: #10b981;
+      color: #000;
+      font-weight: 600;
+      font-size: 13px;
+      padding: 10px 20px;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.3s;
+      pointer-events: none;
+      z-index: 100;
+    }
+
+    #notification.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Generador de Vista Previa Open Graph (600x600)</h1>
+    <p>Ajustá el frame del video, tamaños tipográficos individuales y filtros en tiempo real para WhatsApp.</p>
+  </header>
+
+  <div class="app-layout">
+    
+    <!-- PANEL DE CONTROLES -->
+    <div class="controls-panel">
+      
+      <!-- 1. Video y Posición de Tiempo -->
+      <div>
+        <div class="section-title">
+          <span>1. Video de Fondo</span>
+          <span id="videoDurationBadge" class="value-badge">--</span>
+        </div>
+        
+        <!-- Monitor en vivo del video -->
+        <div class="video-monitor-container">
+          <div class="monitor-overlay">MONITOR VIDEO</div>
+          <video id="sourceVideo" src="/assets/video/hero-bg4.mp4" crossorigin="anonymous" muted loop playsinline></video>
+        </div>
+
+        <div class="form-group">
+          <label for="videoSelect">Seleccionar Archivo de Video</label>
+          <select id="videoSelect" onchange="changeVideo(this.value)">
+            <option value="/assets/video/hero-bg4.mp4" selected>hero-bg4.mp4 (Bolas Espejadas Principal)</option>
+            <option value="/assets/video/hero-bg5.mp4">hero-bg5.mp4 (Alternativo 5)</option>
+            <option value="/assets/video/hero-bg2.mp4">hero-bg2.mp4 (Alternativo 2)</option>
+            <option value="/assets/video/hero-bg.mp4">hero-bg.mp4 (Alternativo 1)</option>
+            <option value="/assets/video/video4.mp4">video4.mp4 (Transición Fiesta)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="timeSlider">
+            <span>Segundo del Video (Cuadro)</span>
+            <span id="timeBadge" class="value-badge">2.2s</span>
+          </label>
+          <input type="range" id="timeSlider" min="0" max="10" step="0.05" value="2.2" oninput="onTimeChange(this.value)" />
+        </div>
+
+        <div class="btn-group" style="margin-top: 10px;">
+          <button type="button" class="btn-secondary" id="btnPlayPause" onclick="togglePlayPause()">
+            <span id="playIcon">▶</span> <span id="playText">Reproducir</span>
+          </button>
+          <button type="button" class="btn-secondary" onclick="seekRelative(-0.2)">-0.2s</button>
+          <button type="button" class="btn-secondary" onclick="seekRelative(0.2)">+0.2s</button>
+        </div>
+      </div>
+
+      <!-- 2. Filtros Visuales -->
+      <div>
+        <div class="section-title">2. Filtros Visuales y Fondo</div>
+        
+        <div class="row-2">
+          <div class="form-group">
+            <label for="contrastSlider">
+              <span>Contraste</span>
+              <span id="contrastBadge" class="value-badge">150%</span>
+            </label>
+            <input type="range" id="contrastSlider" min="100" max="250" step="5" value="150" oninput="updateRender()" />
+          </div>
+
+          <div class="form-group">
+            <label for="brightnessSlider">
+              <span>Brillo</span>
+              <span id="brightnessBadge" class="value-badge">100%</span>
+            </label>
+            <input type="range" id="brightnessSlider" min="50" max="150" step="5" value="100" oninput="updateRender()" />
+          </div>
+        </div>
+
+        <div class="row-2" style="margin-top: 6px;">
+          <div class="form-group">
+            <label for="overlayDarkness">
+              <span>Oscurecer Fondo</span>
+              <span id="overlayBadge" class="value-badge">85%</span>
+            </label>
+            <input type="range" id="overlayDarkness" min="30" max="95" step="5" value="85" oninput="updateRender()" />
+          </div>
+
+          <div class="form-group" style="justify-content: flex-end; padding-bottom: 6px;">
+            <label style="cursor: pointer; display: flex; align-items: center; gap: 8px;">
+              <input type="checkbox" id="grayscaleCheck" checked onchange="updateRender()" />
+              <span style="color:#fff;">Escala de Grises</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Textos y Tamaños Tipográficos Individuales -->
+      <div>
+        <div class="section-title">
+          <span>3. Textos y Tamaños Tipográficos</span>
+        </div>
+
+        <!-- Línea 1: Encabezado -->
+        <div class="text-control-card">
+          <div class="text-control-header">
+            <span class="tag">LÍNEA 1: ENCABEZADO SUPERIOR</span>
+            <span id="sizeHeaderBadge" class="value-badge">11 px</span>
+          </div>
+          <input type="text" id="txtHeader" value="BIENVENIDOS" oninput="updateRender()" />
+          <div class="size-slider-row">
+            <span>Tamaño:</span>
+            <input type="range" id="sizeHeader" min="8" max="24" step="1" value="11" oninput="updateRender()" />
+          </div>
+        </div>
+
+        <!-- Línea 2: Título Principal -->
+        <div class="text-control-card">
+          <div class="text-control-header">
+            <span class="tag">LÍNEA 2: TÍTULO PRINCIPAL</span>
+            <span id="sizeTitleBadge" class="value-badge">42 px</span>
+          </div>
+          <input type="text" id="txtTitle" value="MIS XV CATALINA" oninput="updateRender()" />
+          <div class="size-slider-row">
+            <span>Tamaño:</span>
+            <input type="range" id="sizeTitle" min="20" max="64" step="1" value="42" oninput="updateRender()" />
+          </div>
+
+          <!-- Controles de Margen Superior e Inferior -->
+          <div class="row-2" style="margin-top: 8px;">
+            <div class="form-group" style="margin-bottom: 0;">
+              <label for="marginTitleTop" style="font-size: 11px;">
+                <span>Margen Superior</span>
+                <span id="marginTitleTopBadge" class="value-badge">24 px</span>
+              </label>
+              <input type="range" id="marginTitleTop" min="0" max="80" step="1" value="24" oninput="updateRender()" />
+            </div>
+
+            <div class="form-group" style="margin-bottom: 0;">
+              <label for="marginTitleBottom" style="font-size: 11px;">
+                <span>Margen Inferior</span>
+                <span id="marginTitleBottomBadge" class="value-badge">24 px</span>
+              </label>
+              <input type="range" id="marginTitleBottom" min="0" max="80" step="1" value="24" oninput="updateRender()" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Línea 3: Fecha y Horario -->
+        <div class="text-control-card">
+          <div class="text-control-header">
+            <span class="tag">LÍNEA 3: FECHA Y HORARIO</span>
+            <span id="sizeDateBadge" class="value-badge">13 px</span>
+          </div>
+          <input type="text" id="txtDateTime" value="SÁBADO 28 DE NOVIEMBRE DE 2026 • 20:30 HS" oninput="updateRender()" />
+          <div class="size-slider-row">
+            <span>Tamaño:</span>
+            <input type="range" id="sizeDate" min="9" max="24" step="0.5" value="13" oninput="updateRender()" />
+          </div>
+        </div>
+
+        <!-- Línea 4 / 5: Lugar / Salón -->
+        <div class="text-control-card">
+          <div class="text-control-header">
+            <span class="tag">LÍNEA 4/5: LUGAR / DIRECCIÓN</span>
+            <span id="sizeVenueBadge" class="value-badge">13 px</span>
+          </div>
+          <input type="text" id="txtVenue" value="QUINTANA 30, CHACABUCO, BUENOS AIRES" oninput="updateRender()" />
+          <div class="size-slider-row">
+            <span>Tamaño:</span>
+            <input type="range" id="sizeVenue" min="8" max="24" step="0.5" value="13" oninput="updateRender()" />
+          </div>
+        </div>
+
+        <!-- Ajuste Vertical Global y Ornamento -->
+        <div class="row-2" style="margin-top: 8px;">
+          <div class="form-group">
+            <label for="verticalOffset">
+              <span>Posición Vertical (Offset Y)</span>
+              <span id="offsetBadge" class="value-badge">0 px</span>
+            </label>
+            <input type="range" id="verticalOffset" min="-60" max="60" step="2" value="0" oninput="updateRender()" />
+          </div>
+
+          <div class="form-group" style="justify-content: flex-end; padding-bottom: 6px;">
+            <label style="cursor: pointer; display: flex; align-items: center; gap: 8px;">
+              <input type="checkbox" id="showOrnament" checked onchange="updateRender()" />
+              <span style="color:#fff;">Separador Ornamental ✦</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. Exportar Imagen -->
+      <div>
+        <div class="section-title">4. Exportar Imagen</div>
+        <div class="btn-group">
+          <button type="button" class="btn-primary" onclick="downloadImage()">
+            📥 Descargar og-preview.jpg
+          </button>
+          <button type="button" class="btn-secondary" onclick="copyToClipboard()">
+            📋 Copiar Imagen
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- SECCIÓN DE PREVIEW (CANVAS 600x600) -->
+    <div class="preview-section">
+      <div class="preview-container">
+        <canvas id="outputCanvas" width="600" height="600"></canvas>
+      </div>
+
+      <div class="preview-footer">
+        <span class="badge-info">Resolución: <strong>600 x 600 px</strong></span>
+        <span class="badge-info">Proporción: <strong>1:1 Cuadrada</strong></span>
+        <span class="badge-info" id="fileSizeBadge">Peso: ~52 KB</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Notificación toast -->
+  <div id="notification">Imagen copiada al portapapeles con éxito</div>
+
+  <script>
+    const video = document.getElementById('sourceVideo');
+    const canvas = document.getElementById('outputCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // Controles de tiempo
+    const timeSlider = document.getElementById('timeSlider');
+    const timeBadge = document.getElementById('timeBadge');
+    const contrastSlider = document.getElementById('contrastSlider');
+    const contrastBadge = document.getElementById('contrastBadge');
+    const brightnessSlider = document.getElementById('brightnessSlider');
+    const brightnessBadge = document.getElementById('brightnessBadge');
+    const overlayDarkness = document.getElementById('overlayDarkness');
+    const overlayBadge = document.getElementById('overlayBadge');
+    const grayscaleCheck = document.getElementById('grayscaleCheck');
+
+    // Textos
+    const txtHeader = document.getElementById('txtHeader');
+    const txtTitle = document.getElementById('txtTitle');
+    const txtDateTime = document.getElementById('txtDateTime');
+    const txtVenue = document.getElementById('txtVenue');
+
+    // Sliders de tamaño tipográfico individual
+    const sizeHeader = document.getElementById('sizeHeader');
+    const sizeTitle = document.getElementById('sizeTitle');
+    const sizeDate = document.getElementById('sizeDate');
+    const sizeVenue = document.getElementById('sizeVenue');
+    const verticalOffset = document.getElementById('verticalOffset');
+    const showOrnament = document.getElementById('showOrnament');
+
+    // Margen superior e inferior para Línea 2
+    const marginTitleTop = document.getElementById('marginTitleTop');
+    const marginTitleBottom = document.getElementById('marginTitleBottom');
+    const marginTitleTopBadge = document.getElementById('marginTitleTopBadge');
+    const marginTitleBottomBadge = document.getElementById('marginTitleBottomBadge');
+
+    // Badges de tamaño
+    const sizeHeaderBadge = document.getElementById('sizeHeaderBadge');
+    const sizeTitleBadge = document.getElementById('sizeTitleBadge');
+    const sizeDateBadge = document.getElementById('sizeDateBadge');
+    const sizeVenueBadge = document.getElementById('sizeVenueBadge');
+    const offsetBadge = document.getElementById('offsetBadge');
+
+    let isPlaying = false;
+    let animFrameId = null;
+
+    async function init() {
+      try {
+        await Promise.all([
+          document.fonts.load('500 13px Montserrat'),
+          document.fonts.load('600 11px Montserrat'),
+          document.fonts.load('bold 42px Cinzel'),
+          document.fonts.ready
+        ]);
+      } catch (e) {
+        console.warn('Font load warning:', e);
+      }
+
+      video.addEventListener('loadedmetadata', () => {
+        timeSlider.max = video.duration || 10;
+        document.getElementById('videoDurationBadge').textContent = (video.duration || 0).toFixed(1) + 's';
+        video.currentTime = parseFloat(timeSlider.value);
+      });
+
+      video.addEventListener('loadeddata', () => {
+        updateRender();
+      });
+
+      video.addEventListener('seeked', () => {
+        updateRender();
+      });
+
+      video.addEventListener('timeupdate', () => {
+        if (isPlaying) {
+          timeSlider.value = video.currentTime;
+          timeBadge.textContent = video.currentTime.toFixed(2) + 's';
+          updateRender();
+        }
+      });
+
+      // Asegurar primera carga
+      video.currentTime = 2.2;
+      setTimeout(updateRender, 300);
+      setTimeout(updateRender, 800);
+    }
+
+    function changeVideo(newSrc) {
+      pauseVideo();
+      video.src = newSrc;
+      video.load();
+      timeSlider.value = 1.0;
+      timeBadge.textContent = '1.0s';
+    }
+
+    function onTimeChange(val) {
+      timeBadge.textContent = parseFloat(val).toFixed(2) + 's';
+      video.currentTime = parseFloat(val);
+      updateRender();
+    }
+
+    function seekRelative(delta) {
+      let next = Math.max(0, Math.min(parseFloat(timeSlider.max), video.currentTime + delta));
+      timeSlider.value = next;
+      onTimeChange(next);
+    }
+
+    function togglePlayPause() {
+      if (isPlaying) {
+        pauseVideo();
+      } else {
+        playVideo();
+      }
+    }
+
+    function playVideo() {
+      isPlaying = true;
+      document.getElementById('playIcon').textContent = '⏸';
+      document.getElementById('playText').textContent = 'Pausar';
+      video.play().catch(e => console.warn('Autoplay prevented:', e));
+      loopRender();
+    }
+
+    function pauseVideo() {
+      isPlaying = false;
+      document.getElementById('playIcon').textContent = '▶';
+      document.getElementById('playText').textContent = 'Reproducir';
+      video.pause();
+      if (animFrameId) cancelAnimationFrame(animFrameId);
+      updateRender();
+    }
+
+    function loopRender() {
+      if (!isPlaying) return;
+      updateRender();
+      animFrameId = requestAnimationFrame(loopRender);
+    }
+
+    function updateRender() {
+      // 1. Actualizar badges en interfaz
+      contrastBadge.textContent = contrastSlider.value + '%';
+      brightnessBadge.textContent = brightnessSlider.value + '%';
+      overlayBadge.textContent = overlayDarkness.value + '%';
+      sizeHeaderBadge.textContent = sizeHeader.value + ' px';
+      sizeTitleBadge.textContent = sizeTitle.value + ' px';
+      sizeDateBadge.textContent = sizeDate.value + ' px';
+      sizeVenueBadge.textContent = sizeVenue.value + ' px';
+      marginTitleTopBadge.textContent = marginTitleTop.value + ' px';
+      marginTitleBottomBadge.textContent = marginTitleBottom.value + ' px';
+      offsetBadge.textContent = (verticalOffset.value > 0 ? '+' : '') + verticalOffset.value + ' px';
+
+      // 2. Limpiar Canvas
+      ctx.clearRect(0, 0, 600, 600);
+
+      // 3. Dibujar video con escala de grises y filtros
+      ctx.save();
+      const gray = grayscaleCheck.checked ? 'grayscale(100%)' : 'grayscale(0%)';
+      const contrast = `contrast(${contrastSlider.value}%)`;
+      const bright = `brightness(${brightnessSlider.value}%)`;
+      ctx.filter = `${gray} ${contrast} ${bright}`;
+
+      // Extraer proporciones reales del video (fallback si aún no cargó metadata)
+      const vw = video.videoWidth || 1920;
+      const vh = video.videoHeight || 1080;
+      
+      // Proporción 1:1 recortada centrada
+      const sw = vh; // Relación cuadrada tomando el alto total
+      const sx = Math.max(0, (vw - sw) / 2);
+      
+      try {
+        ctx.drawImage(video, sx, 0, sw, vh, 0, 0, 600, 600);
+      } catch (err) {
+        // En caso de que el video aún no esté listo para ser dibujado
+        ctx.fillStyle = '#0a0a0a';
+        ctx.fillRect(0, 0, 600, 600);
+      }
+      ctx.restore();
+
+      // 4. Gradiente oscuro de contraste
+      const alphaBottom = parseInt(overlayDarkness.value) / 100;
+      const alphaTop = Math.min(0.95, alphaBottom - 0.05);
+      const alphaMid = Math.max(0.15, alphaBottom - 0.38);
+
+      const grad = ctx.createLinearGradient(0, 0, 0, 600);
+      grad.addColorStop(0, `rgba(5, 5, 5, ${alphaTop})`);
+      grad.addColorStop(0.5, `rgba(5, 5, 5, ${alphaMid})`);
+      grad.addColorStop(1, `rgba(5, 5, 5, ${alphaBottom})`);
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 600, 600);
+
+      // 5. Configuración de Textos y Posicionamiento Dinámico
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+
+      const offset = parseInt(verticalOffset.value);
+      const sH = parseFloat(sizeHeader.value);
+      const sT = parseFloat(sizeTitle.value);
+      const sD = parseFloat(sizeDate.value);
+      const sV = parseFloat(sizeVenue.value);
+
+      // Márgenes parametrizables para Línea 2
+      const mTTop = parseFloat(marginTitleTop.value);
+      const mTBottom = parseFloat(marginTitleBottom.value);
+
+      // Coordenadas Y calculadas armoniosamente en base a tamaños y márgenes
+      const yHeader = 195 + offset;
+      const yTitle = yHeader + (sH / 2) + mTTop + (sT / 2);
+      const yDate = yTitle + (sT / 2) + mTBottom + (sD / 2);
+      const yVenue = yDate + (sD / 2) + 12 + (sV / 2);
+      const yOrnament = yVenue + (sV / 2) + 24;
+
+      // Helper para medir y dibujar texto con letter-spacing exacto (0.22em) y soporte cross-browser
+      function drawSpacedText(text, x, y, letterSpacingEm, fontSize, isCentered = true) {
+        const upper = text.toUpperCase();
+        const spacingPx = fontSize * letterSpacingEm;
+
+        if ('letterSpacing' in ctx) {
+          ctx.letterSpacing = `${letterSpacingEm}em`;
+          ctx.textAlign = isCentered ? 'center' : 'left';
+          ctx.fillText(upper, x, y);
+          return;
+        }
+
+        // Fallback garantizado por caracteres si el contexto no soporta ctx.letterSpacing
+        const chars = Array.from(upper);
+        let totalW = 0;
+        for (let i = 0; i < chars.length; i++) {
+          totalW += ctx.measureText(chars[i]).width;
+          if (i < chars.length - 1) totalW += spacingPx;
+        }
+
+        let currX = isCentered ? x - (totalW / 2) : x;
+        ctx.textAlign = 'left';
+        for (let i = 0; i < chars.length; i++) {
+          ctx.fillText(chars[i], currX, y);
+          currX += ctx.measureText(chars[i]).width + spacingPx;
+        }
+      }
+
+      function measureSpacedText(text, letterSpacingEm, fontSize) {
+        const upper = text.toUpperCase();
+        if ('letterSpacing' in ctx) {
+          ctx.letterSpacing = `${letterSpacingEm}em`;
+          return ctx.measureText(upper).width;
+        }
+        const spacingPx = fontSize * letterSpacingEm;
+        const chars = Array.from(upper);
+        let totalW = 0;
+        for (let i = 0; i < chars.length; i++) {
+          totalW += ctx.measureText(chars[i]).width;
+          if (i < chars.length - 1) totalW += spacingPx;
+        }
+        return totalW;
+      }
+
+      // 5.1 Línea 1: Encabezado Superior (BIENVENIDOS)
+      // Estilo: Montserrat, 500, letter-spacing 0.22em, uppercase, color: rgba(255, 255, 255, 0.92)
+      const headerStr = txtHeader.value.trim().toUpperCase();
+      if (headerStr) {
+        ctx.save();
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.92)';
+        ctx.font = `500 ${sH}px Montserrat, sans-serif`;
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.85)';
+        ctx.shadowBlur = 8;
+        ctx.shadowOffsetY = 2;
+
+        drawSpacedText(headerStr, 300, yHeader, 0.22, sH, true);
+
+        const w = measureSpacedText(headerStr, 0.22, sH);
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.40)';
+        ctx.lineWidth = 1;
+        
+        // Línea izquierda
+        ctx.beginPath();
+        ctx.moveTo(300 - (w / 2) - 14 - 32, yHeader);
+        ctx.lineTo(300 - (w / 2) - 14, yHeader);
+        ctx.stroke();
+
+        // Línea derecha
+        ctx.beginPath();
+        ctx.moveTo(300 + (w / 2) + 14, yHeader);
+        ctx.lineTo(300 + (w / 2) + 14 + 32, yHeader);
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      // 5.2 Línea 2: Título Principal (MIS XV CATALINA)
+      const titleStr = txtTitle.value.trim().toUpperCase();
+      if (titleStr) {
+        ctx.save();
+        ctx.fillStyle = '#ffffff';
+        ctx.font = `bold ${sT}px Cinzel, serif`;
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.95)';
+        ctx.shadowBlur = Math.round(sT * 0.45);
+        ctx.shadowOffsetY = Math.round(sT * 0.14);
+        ctx.letterSpacing = '0.14em';
+        ctx.fillText(titleStr, 300, yTitle);
+        ctx.restore();
+      }
+
+      // 5.3 Línea 3: Fecha y Horario
+      // Estilo exacto .date-time: Montserrat, 500, letter-spacing: 0.22em, uppercase, color: rgba(255, 255, 255, 0.92)
+      const dtStr = txtDateTime.value.trim().toUpperCase();
+      if (dtStr) {
+        ctx.save();
+        ctx.font = `500 ${sD}px Montserrat, sans-serif`;
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.92)';
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.85)';
+        ctx.shadowBlur = 8;
+        ctx.shadowOffsetY = 2;
+
+        if (dtStr.includes('•')) {
+          const parts = dtStr.split('•');
+          const p1 = parts[0].trim();
+          const p2 = parts[1].trim();
+          const w1 = measureSpacedText(p1, 0.22, sD);
+          const w2 = measureSpacedText(p2, 0.22, sD);
+          const gap = Math.round(sD * 1.8);
+          const totalW = w1 + gap + w2;
+          const startX = 300 - (totalW / 2);
+
+          // Texto parte 1 con letter-spacing 0.22em
+          drawSpacedText(p1, startX, yDate, 0.22, sD, false);
+
+          // Punto central •
+          const dotRadius = Math.max(1.6, sD * 0.16);
+          ctx.beginPath();
+          ctx.arc(startX + w1 + (gap / 2), yDate, dotRadius, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+          ctx.fill();
+
+          // Texto parte 2 con letter-spacing 0.22em
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.92)';
+          drawSpacedText(p2, startX + w1 + gap, yDate, 0.22, sD, false);
+        } else {
+          drawSpacedText(dtStr, 300, yDate, 0.22, sD, true);
+        }
+        ctx.restore();
+      }
+
+      // 5.4 Línea 4 / 5: Dirección / Lugar
+      // Estilo exacto .date-time: Montserrat, 500, letter-spacing: 0.22em, uppercase, color: rgba(255, 255, 255, 0.92)
+      const venueStr = txtVenue.value.trim().toUpperCase();
+      if (venueStr) {
+        ctx.save();
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.92)';
+        ctx.font = `500 ${sV}px Montserrat, sans-serif`;
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.85)';
+        ctx.shadowBlur = 8;
+        ctx.shadowOffsetY = 2;
+
+        drawSpacedText(venueStr, 300, yVenue, 0.22, sV, true);
+        ctx.restore();
+      }
+
+      // 5.5 Separador Ornamental con estrella ✦
+      if (showOrnament.checked) {
+        ctx.save();
+        ctx.textAlign = 'center';
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.50)';
+        ctx.font = '13px Montserrat, sans-serif';
+        ctx.fillText("✦", 300, yOrnament);
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
+        ctx.lineWidth = 1;
+        
+        // Línea izquierda
+        ctx.beginPath();
+        ctx.moveTo(300 - 16 - 64, yOrnament);
+        ctx.lineTo(300 - 16, yOrnament);
+        ctx.stroke();
+
+        // Línea derecha
+        ctx.beginPath();
+        ctx.moveTo(300 + 16, yOrnament);
+        ctx.lineTo(300 + 16 + 64, yOrnament);
+        ctx.stroke();
+        ctx.restore();
+      }
+    }
+
+    function downloadImage() {
+      updateRender();
+      canvas.toBlob((blob) => {
+        if (!blob) return;
+        const link = document.createElement('a');
+        link.download = 'og-preview.jpg';
+        link.href = URL.createObjectURL(blob);
+        link.click();
+        showNotification('Imagen descargada con éxito (og-preview.jpg)');
+      }, 'image/jpeg', 0.92);
+    }
+
+    async function copyToClipboard() {
+      updateRender();
+      try {
+        canvas.toBlob(async (blob) => {
+          if (!blob) return;
+          const imgBitmap = await createImageBitmap(blob);
+          const pngCanvas = document.createElement('canvas');
+          pngCanvas.width = 600;
+          pngCanvas.height = 600;
+          const pCtx = pngCanvas.getContext('2d');
+          pCtx.drawImage(imgBitmap, 0, 0);
+          
+          pngCanvas.toBlob(async (pngBlob) => {
+            await navigator.clipboard.write([
+              new ClipboardItem({ 'image/png': pngBlob })
+            ]);
+            showNotification('¡Imagen copiada al portapapeles!');
+          }, 'image/png');
+        }, 'image/png');
+      } catch (err) {
+        alert('Para copiar al portapapeles el navegador requiere permisos o podés usar el botón Descargar.');
+      }
+    }
+
+    function showNotification(msg) {
+      const el = document.getElementById('notification');
+      el.textContent = msg;
+      el.classList.add('show');
+      setTimeout(() => el.classList.remove('show'), 3000);
+    }
+
+    init();
+  </script>
+</body>
+</html>

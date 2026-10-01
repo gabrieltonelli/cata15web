@@ -12,6 +12,8 @@ Aplicación Web de Invitación a Evento (15 años) con arquitectura **Monorepo l
 cata15web/
 ├── client/                      # Frontend autónomo (SPA React + Vite)
 │   ├── public/                  # Multimedia (videos, fotos, audio Rihanna-Diamonds.mp3, favicon)
+│   │   ├── capture.html         # Mini-app generadora de imágenes Open Graph (600x600 WhatsApp preview)
+│   │   └── assets/              # icons, photos, mp3, video
 │   ├── src/
 │   │   ├── components/          # WelcomeHero, Countdown, InfoCards, RSVP, Footer, etc.
 │   │   ├── config/              # eventData.js (parametrización)
@@ -154,6 +156,10 @@ Documentadas con comentarios y ejemplos en [client/.env.template](file:///c:/Use
 - `VITE_RSVP_ENDPOINT`: Endpoint hacia la API (por defecto `/api/rsvp`).
 - `VITE_WHATSAPP_PHONE`: Teléfono de contacto de WhatsApp.
 - `VITE_WHATSAPP_MESSAGE`: Mensaje preconfigurado al contactar.
+- VITE_SITE_URL: URL base pública del sitio desplegado (https://cata15.netlify.app).
+- VITE_OG_IMAGE: Ruta de la imagen para vista previa Open Graph / WhatsApp (/assets/photos/og-preview.jpg).
+- VITE_OG_TITLE: Título para la tarjeta de previsualización (CATALINA • MIS XV).
+- VITE_OG_DESCRIPTION: Descripción para la tarjeta de previsualización de WhatsApp y redes.
 
 ### Backend (`server/.env`)
 Documentadas con comentarios y ejemplos en [server/.env.template](file:///c:/Users/gabrielt/Documents/Proyectos/PROPIOS/cata15web/server/.env.template):
@@ -192,3 +198,29 @@ Documentadas con comentarios y ejemplos en [server/.env.template](file:///c:/Use
 - **Tarjetas Informativas:** Cuándo, Dónde, Regalos y Dress Code sin bordes innecesarios y con modal bancario.
 - **Formulario RSVP:** Campos condicionales (si no asiste, oculta menú y música), campo de observaciones y confirmación visual.
 - **Footer:** Sección "TE ESPERO" con fondo blanco puro y última banda de créditos con **icono de WhatsApp blanco**.
+
+---
+
+## 📸 Herramienta de Vista Previa Open Graph (WhatsApp Preview)
+
+El proyecto incluye una herramienta interactiva autónoma en **[client/public/capture.html](file:///c:/Users/gabrielt/Documents/Proyectos/PROPIOS/cata15web/client/public/capture.html)** diseñada para crear y exportar imágenes de previsualización (*link preview / rich card*) para WhatsApp, Facebook y redes sociales.
+
+### ¿Cómo usar la herramienta?
+
+1. Con el servidor de desarrollo activo (`npm run dev` en `client/`), abrí en tu navegador:
+   👉 **`http://localhost:5173/capture.html`**
+2. **Panel de Controles en tiempo real:**
+   - **Video de fondo:** Incluye monitor de video en tiempo real. Permite seleccionar cualquiera de los videos de `/assets/video/` y mover el cursor de tiempo para elegir el segundo exacto con las luces o bolas espejadas más llamativas. También permite reproducir/pausar en tiempo real.
+   - **Filtros visuales:** Ajustá contraste, brillo, opacidad del degradado oscuro y activá/desactivá escala de grises.
+   - **Textos y tamaños tipográficos individuales:**
+     - Modificá el contenido de cada línea en vivo.
+     - Controles deslizantes independientes para calibrar el tamaño exacto en píxeles de: Encabezado (*BIENVENIDOS*), Título principal (*MIS XV CATALINA*), Fecha y hora, y Dirección/Lugar.
+     - **Márgenes independientes para Línea 2 (Título):** Sliders para calibrar margen superior e inferior.
+     - Ajuste vertical global (*Offset Y*) para centrar o desplazar el bloque en el lienzo a voluntad.
+     - Activar/desactivar el separador ornamental `✦`.
+3. **Exportación:**
+   - Hacé clic en **📥 Descargar og-preview.jpg**: Genera automáticamente la imagen de **600 x 600 px** en formato JPG optimizado (~52 KB, cumpliendo holgadamente el límite de 300 KB que exige WhatsApp).
+   - O hacé clic en **📋 Copiar Imagen** para enviarla directamente por el portapapeles.
+4. **Ubicación final:**
+   - Guardá la imagen resultante en `client/public/assets/photos/og-preview.jpg` para que quede lista para ser referenciada por las etiquetas Open Graph del sitio.
+
