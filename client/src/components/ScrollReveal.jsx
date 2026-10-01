@@ -11,7 +11,7 @@ import { useEffect, useRef, useState } from 'react'
 const ScrollReveal = ({
   children,
   className = '',
-  delay = 0,
+  delay = 200,
   threshold = 0.12,
   yOffset = 24
 }) => {
@@ -46,15 +46,14 @@ const ScrollReveal = ({
     <div
       ref={ref}
       style={{
-        transitionDuration: '950ms',
+        transitionDuration: '1950ms',
         transitionDelay: `${delay}ms`,
         transitionTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)'
       }}
-      className={`transition-all will-change-transform ${
-        isVisible
-          ? 'opacity-100 translate-y-0 scale-100'
-          : 'opacity-0 translate-y-7 scale-[0.985]'
-      } ${className}`}
+      className={`transition-all will-change-transform ${isVisible
+        ? 'opacity-100 translate-y-0 scale-100'
+        : 'opacity-0 translate-y-7 scale-[0.985]'
+        } ${className}`}
     >
       {children}
     </div>
