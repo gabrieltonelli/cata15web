@@ -63,15 +63,25 @@ const RSVP = () => {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         })
-        const contentType = res.headers.get('content-type') || ''
-        if (!contentType.includes('application/json')) {
-          throw new Error(`El servidor devolvió contenido no JSON (${contentType || 'vacío'})`)
+
+        const rawText = await res.text()
+        let parsed = null
+        try {
+          parsed = JSON.parse(rawText)
+        } catch (e) {
+          // No es JSON
         }
+
         if (!res.ok) {
-          const errData = await res.json().catch(() => ({}))
-          throw new Error(errData.error || errData.details || `Error del servidor HTTP ${res.status}`)
+          const errMsg = parsed?.error || parsed?.details || rawText || `Error HTTP ${res.status}`
+          throw new Error(errMsg)
         }
-        return await res.json()
+
+        if (parsed && parsed.success === false) {
+          throw new Error(parsed.error || 'No se pudo guardar la confirmación en Google Sheets.')
+        }
+
+        return parsed || { success: true }
       }
 
       try {
