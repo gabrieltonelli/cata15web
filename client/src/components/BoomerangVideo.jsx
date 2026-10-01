@@ -15,6 +15,8 @@ const BoomerangVideo = ({
 }) => {
   const videoRef = useRef(null)
   const isReversingRef = useRef(false)
+  const isSeekingRef = useRef(false)
+  const seekTimeoutRef = useRef(null)
   const animFrameRef = useRef(null)
 
   useEffect(() => {
@@ -25,52 +27,81 @@ const BoomerangVideo = ({
     if (!boomerang) {
       video.loop = true
       isReversingRef.current = false
+      isSeekingRef.current = false
       if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current)
+      if (seekTimeoutRef.current) clearTimeout(seekTimeoutRef.current)
       video.play().catch(() => {})
       return
     }
 
     video.loop = false
-    let lastTimestamp = null
+    isReversingRef.current = false
+    isSeekingRef.current = false
 
-    // Función para rebobinar cuadro a cuadro a velocidad controlada
-    const rewind = (timestamp) => {
+    // Función para ejecutar el siguiente paso de retroceso
+    const stepBackward = () => {
       if (!isReversingRef.current) return
+      if (!video) return
 
-      if (lastTimestamp === null) {
-        lastTimestamp = timestamp
-      }
-
-      const deltaSeconds = (timestamp - lastTimestamp) / 1000
-      lastTimestamp = timestamp
-
-      // Disminuir tiempo según el delta y la velocidad
-      const newTime = video.currentTime - deltaSeconds * playbackSpeed
-
-      if (newTime <= 0.05) {
+      // Si ya llegamos al inicio, reiniciar marcha adelante
+      if (video.currentTime <= 0.06) {
         video.currentTime = 0
         isReversingRef.current = false
-        lastTimestamp = null
-        // Reanudar reproducción hacia adelante
+        isSeekingRef.current = false
+        if (seekTimeoutRef.current) clearTimeout(seekTimeoutRef.current)
         video.play().catch(() => {})
-      } else {
-        video.currentTime = newTime
-        animFrameRef.current = requestAnimationFrame(rewind)
+        return
       }
+
+      // Evitar acumular seeks simultáneos
+      if (isSeekingRef.current) return
+      isSeekingRef.current = true
+
+      // Paso de retroceso (aprox 30-40ms por cuadro según velocidad)
+      const step = 0.045 * playbackSpeed
+      const targetTime = Math.max(0, video.currentTime - step)
+
+      try {
+        video.currentTime = targetTime
+      } catch (e) {
+        isSeekingRef.current = false
+      }
+
+      // Timeout de seguridad en caso de que el navegador demore el evento seeked
+      if (seekTimeoutRef.current) clearTimeout(seekTimeoutRef.current)
+      seekTimeoutRef.current = setTimeout(() => {
+        if (isReversingRef.current && isSeekingRef.current) {
+          isSeekingRef.current = false
+          stepBackward()
+        }
+      }, 70)
     }
 
+    // Iniciar el ciclo de reversa
     const startRewind = () => {
       if (isReversingRef.current) return
       isReversingRef.current = true
       video.pause()
-      lastTimestamp = null
-      animFrameRef.current = requestAnimationFrame(rewind)
+      isSeekingRef.current = false
+      stepBackward()
+    }
+
+    // Al completarse el seek de un cuadro, el navegador ya lo pintó en pantalla.
+    // Programamos el siguiente cuadro hacia atrás en el próximo ciclo de render.
+    const handleSeeked = () => {
+      if (!isReversingRef.current) return
+      isSeekingRef.current = false
+      if (seekTimeoutRef.current) clearTimeout(seekTimeoutRef.current)
+
+      animFrameRef.current = requestAnimationFrame(() => {
+        stepBackward()
+      })
     }
 
     // Monitorear cuando se acerca al final del video
     const handleTimeUpdate = () => {
       if (isReversingRef.current) return
-      if (video.duration && video.currentTime >= video.duration - 0.08) {
+      if (video.duration && video.currentTime >= video.duration - 0.12) {
         startRewind()
       }
     }
@@ -81,6 +112,7 @@ const BoomerangVideo = ({
 
     video.addEventListener('timeupdate', handleTimeUpdate)
     video.addEventListener('ended', handleEnded)
+    video.addEventListener('seeked', handleSeeked)
 
     // Iniciar reproducción hacia adelante
     video.play().catch(() => {})
@@ -88,8 +120,12 @@ const BoomerangVideo = ({
     return () => {
       video.removeEventListener('timeupdate', handleTimeUpdate)
       video.removeEventListener('ended', handleEnded)
+      video.removeEventListener('seeked', handleSeeked)
       if (animFrameRef.current) {
         cancelAnimationFrame(animFrameRef.current)
+      }
+      if (seekTimeoutRef.current) {
+        clearTimeout(seekTimeoutRef.current)
       }
     }
   }, [src, playbackSpeed, boomerang])
