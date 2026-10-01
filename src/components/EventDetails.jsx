@@ -15,205 +15,162 @@ const EventDetails = () => {
     days: 0,
     hours: 0,
     minutes: 0,
-    seconds: 0
+    seconds: 0,
   })
 
   useEffect(() => {
-    // Calculate countdown to November 20, 2026 at 20:00
-    const targetDate = new Date('2026-11-20T20:00:00')
+    const target = new Date('2026-11-20T20:00:00')
 
-    const updateCountdown = () => {
-      const now = new Date()
-      const difference = targetDate - now
-
-      if (difference > 0) {
+    const update = () => {
+      const diff = target - new Date()
+      if (diff > 0) {
         setTimeLeft({
-          days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-          hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
-          minutes: Math.floor((difference / 1000 / 60) % 60),
-          seconds: Math.floor((difference / 1000) % 60)
+          days: Math.floor(diff / (1000 * 60 * 60 * 24)),
+          hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
+          minutes: Math.floor((diff / 1000 / 60) % 60),
+          seconds: Math.floor((diff / 1000) % 60),
         })
       }
     }
 
-    updateCountdown()
-    const interval = setInterval(updateCountdown, 1000)
-
+    update()
+    const interval = setInterval(update, 1000)
     return () => clearInterval(interval)
   }, [])
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Title animation
       gsap.from(titleRef.current, {
-        y: 80,
+        y: 60,
         opacity: 0,
-        duration: 1.2,
-        ease: 'power4.out',
+        duration: 1,
+        ease: 'power3.out',
         scrollTrigger: {
           trigger: sectionRef.current,
           start: 'top 70%',
-          toggleActions: 'play none none reverse'
-        }
+          toggleActions: 'play none none reverse',
+        },
       })
 
-      // Details cards stagger
-      const cards = detailsRef.current?.children
-      if (cards) {
-        gsap.from(Array.from(cards), {
-          y: 60,
-          opacity: 0,
-          duration: 0.8,
-          stagger: 0.2,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: detailsRef.current,
-            start: 'top 75%',
-            toggleActions: 'play none none reverse'
-          }
-        })
-      }
-
-      // Countdown animation
       gsap.from(countdownRef.current, {
-        scale: 0.9,
+        y: 40,
         opacity: 0,
         duration: 1,
-        ease: 'back.out(1.7)',
+        delay: 0.2,
+        ease: 'power3.out',
         scrollTrigger: {
           trigger: countdownRef.current,
           start: 'top 80%',
-          toggleActions: 'play none none reverse'
-        }
+          toggleActions: 'play none none reverse',
+        },
       })
 
-      // Map animation
+      const items = detailsRef.current?.children
+      if (items) {
+        gsap.from(Array.from(items), {
+          y: 40,
+          opacity: 0,
+          duration: 0.8,
+          stagger: 0.15,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: detailsRef.current,
+            start: 'top 80%',
+            toggleActions: 'play none none reverse',
+          },
+        })
+      }
+
       gsap.from(mapRef.current, {
-        y: 40,
+        y: 30,
         opacity: 0,
         duration: 1,
         ease: 'power3.out',
         scrollTrigger: {
           trigger: mapRef.current,
           start: 'top 85%',
-          toggleActions: 'play none none reverse'
-        }
+          toggleActions: 'play none none reverse',
+        },
       })
     }, sectionRef)
 
     return () => ctx.revert()
   }, [])
 
-  const CountdownBox = ({ value, label }) => (
-    <div className="glass p-4 md:p-6 rounded-xl text-center min-w-[80px] md:min-w-[100px]">
-      <div className="font-display text-4xl md:text-5xl text-gradient font-bold mb-2">
+  const CountdownBlock = ({ value, label }) => (
+    <div className="text-center">
+      <div className="countdown-digit text-4xl md:text-6xl font-light text-texto mb-2">
         {String(value).padStart(2, '0')}
       </div>
-      <div className="font-body text-xs md:text-sm text-white/60 uppercase tracking-wider">
+      <div className="font-mono text-[10px] tracking-[0.2em] uppercase text-gris">
         {label}
       </div>
     </div>
   )
 
   const details = [
-    {
-      icon: '📅',
-      title: 'Fecha',
-      content: '20 de Noviembre 2026',
-      subtext: 'Sábado'
-    },
-    {
-      icon: '🕗',
-      title: 'Horario',
-      content: '20:00 hs',
-      subtext: 'Abrimos puertas a las 19:30'
-    },
-    {
-      icon: '📍',
-      title: 'Lugar',
-      content: 'Quintana 30',
-      subtext: 'Chacabuco, Buenos Aires'
-    },
-    {
-      icon: '👗',
-      title: 'Dress Code',
-      content: 'Elegante',
-      subtext: 'Colores pasteles bienvenidos'
-    }
+    { label: 'Fecha', value: '20 de Noviembre 2026', sub: 'Sábado' },
+    { label: 'Horario', value: '20:00 hs', sub: 'Puertas 19:30' },
+    { label: 'Lugar', value: 'Quintana 30', sub: 'Chacabuco, Buenos Aires' },
+    { label: ' Dress Code', value: 'Elegante', sub: 'Colores libre' },
   ]
 
-  // Google Maps embed URL with custom marker
   const mapLat = -34.63026033819848
   const mapLng = -60.451379309634284
-  const mapEmbedUrl = `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3301.5!2d${mapLng}!3d${mapLat}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2sQuintana+30%2C+Chacabuco!5e0!3m2!1ses!2sar!4v1234567890`
-  const mapStaticUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${mapLat},${mapLng}&zoom=16&size=800x400&maptype=roadmap&markers=color:red%7Clabel:C%7C${mapLat},${mapLng}&key=`
 
   return (
     <section
       ref={sectionRef}
-      className="relative min-h-screen section-padding overflow-hidden"
+      className="relative py-32 px-6"
     >
-      {/* Background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-oscuro via-oscuro-claro to-oscuro" />
-
-      {/* Decorative elements */}
-      <div className="absolute top-20 right-20 text-dorado/10 text-9xl animate-float">✦</div>
-      <div className="absolute bottom-20 left-20 text-rosa/10 text-7xl animate-float" style={{ animationDelay: '3s' }}>✦</div>
-
-      <div className="relative z-10 max-w-6xl mx-auto">
-        {/* Section title */}
-        <div ref={titleRef} className="text-center mb-16">
-          <p className="font-script text-2xl text-rosa-claro mb-4">Los detalles del</p>
-          <h2 className="font-display text-5xl md:text-7xl lg:text-8xl text-gradient font-bold">
+      <div className="max-w-5xl mx-auto">
+        {/* Title */}
+        <div ref={titleRef} className="mb-20">
+          <p className="font-display text-sm tracking-[0.25em] uppercase text-gris mb-4">
+            Los detalles del
+          </p>
+          <h2 className="font-display text-5xl md:text-7xl lg:text-8xl font-light text-texto">
             Evento
           </h2>
         </div>
 
         {/* Countdown */}
-        <div
-          ref={countdownRef}
-          className="mb-16"
-        >
-          <p className="text-center font-body text-lg text-white/60 mb-6">
+        <div ref={countdownRef} className="mb-24">
+          <p className="text-center font-body text-sm text-gris mb-8 tracking-widest uppercase">
             Faltan
           </p>
-          <div className="flex justify-center gap-3 md:gap-4 flex-wrap">
-            <CountdownBox value={timeLeft.days} label="Días" />
-            <CountdownBox value={timeLeft.hours} label="Horas" />
-            <CountdownBox value={timeLeft.minutes} label="Minutos" />
-            <CountdownBox value={timeLeft.seconds} label="Segundos" />
+          <div className="flex justify-center gap-4 sm:gap-6 md:gap-12">
+            <CountdownBlock value={timeLeft.days} label="Días" />
+            <div className="text-gris/30 text-3xl font-light self-start mt-2">:</div>
+            <CountdownBlock value={timeLeft.hours} label="Horas" />
+            <div className="text-gris/30 text-3xl font-light self-start mt-2">:</div>
+            <CountdownBlock value={timeLeft.minutes} label="Min" />
+            <div className="text-gris/30 text-3xl font-light self-start mt-2">:</div>
+            <CountdownBlock value={timeLeft.seconds} label="Seg" />
           </div>
         </div>
 
-        {/* Event details grid */}
+        {/* Details */}
         <div
           ref={detailsRef}
-          className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12"
+          className="grid md:grid-cols-2 lg:grid-cols-4 gap-px bg-gris/10 mb-16"
         >
-          {details.map((detail, index) => (
-            <div
-              key={index}
-              className="glass rounded-2xl p-6 text-center hover:shadow-lg hover:shadow-rosa/10 transition-all duration-300 group"
-            >
-              <div className="text-5xl mb-4 group-hover:scale-110 transition-transform duration-300">
-                {detail.icon}
-              </div>
-              <h3 className="font-display text-xl text-white mb-2">
-                {detail.title}
-              </h3>
-              <p className="font-body text-lg text-gradient font-semibold mb-2">
-                {detail.content}
+          {details.map((d, i) => (
+            <div key={i} className="bg-fondo p-8">
+              <p className="font-mono text-[10px] tracking-[0.2em] uppercase text-gris mb-3">
+                {d.label}
               </p>
-              <p className="font-body text-sm text-white/50">
-                {detail.subtext}
+              <p className="font-display text-xl md:text-2xl font-light text-texto mb-1">
+                {d.value}
               </p>
+              <p className="font-body text-sm text-gris">{d.sub}</p>
             </div>
           ))}
         </div>
 
-        {/* Google Maps */}
-        <div ref={mapRef} className="glass rounded-2xl p-4 md:p-6">
-          <div className="aspect-video rounded-xl overflow-hidden relative">
+        {/* Map */}
+        <div ref={mapRef}>
+          <div className="aspect-video bg-gris/5 overflow-hidden relative">
             <iframe
               src={`https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3301.5!2d${mapLng}!3d${mapLat}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2sQuintana+30,+Chacabuco,+Buenos+Aires!5e0!3m2!1ses!2sar!4v1700000000000!5m2!1ses!2sar`}
               width="100%"
@@ -222,23 +179,21 @@ const EventDetails = () => {
               allowFullScreen=""
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
-              title="Ubicación del evento - Quintana 30, Chacabuco"
+              title="Ubicación del evento"
             />
           </div>
-          <div className="mt-4 text-center">
-            <p className="font-display text-lg text-white">
-              📍 Quintana 30, Chacabuco
-            </p>
-            <p className="font-body text-sm text-white/50 mt-1">
-              Buenos Aires, Argentina
-            </p>
+          <div className="mt-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div>
+              <p className="font-display text-lg text-texto">Quintana 30</p>
+              <p className="font-body text-sm text-gris">Chacabuco, Buenos Aires, Argentina</p>
+            </div>
             <a
               href={`https://www.google.com/maps?q=${mapLat},${mapLng}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-block mt-3 px-6 py-2 glass rounded-full font-body text-sm text-rosa hover:bg-rosa/20 transition-colors"
+              className="font-mono text-xs tracking-widest uppercase text-magenta hover:text-texto transition-colors"
             >
-              Abrir en Google Maps →
+              Abrir en Maps →
             </a>
           </div>
         </div>

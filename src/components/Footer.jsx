@@ -6,26 +6,20 @@ gsap.registerPlugin(ScrollTrigger)
 
 const Footer = () => {
   const footerRef = useRef(null)
-  const heartsRef = useRef([])
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Hearts animation
-      heartsRef.current.forEach((heart, index) => {
-        if (!heart) return
-
-        gsap.from(heart, {
-          scale: 0,
-          opacity: 0,
-          duration: 0.6,
-          delay: index * 0.1,
-          ease: 'back.out(1.7)',
-          scrollTrigger: {
-            trigger: footerRef.current,
-            start: 'top 90%',
-            toggleActions: 'play none none reverse'
-          }
-        })
+      gsap.from(footerRef.current.children, {
+        y: 20,
+        opacity: 0,
+        duration: 0.8,
+        stagger: 0.1,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: footerRef.current,
+          start: 'top 90%',
+          toggleActions: 'play none none reverse',
+        },
       })
     }, footerRef)
 
@@ -35,88 +29,41 @@ const Footer = () => {
   return (
     <footer
       ref={footerRef}
-      className="relative py-16 overflow-hidden"
+      className="relative py-20 px-6 border-t border-gris/10"
     >
-      {/* Background */}
-      <div className="absolute inset-0 bg-gradient-to-t from-oscuro via-oscuro-claro to-transparent" />
-
-      <div className="relative z-10 max-w-4xl mx-auto text-center px-4">
-        {/* Hearts */}
-        <div className="flex justify-center gap-4 mb-8">
-          {['❤️', '💖', '💕', '💗', '💖', '❤️'].map((heart, index) => (
-            <span
-              key={index}
-              ref={el => heartsRef.current[index] = el}
-              className="text-2xl md:text-3xl"
-            >
-              {heart}
-            </span>
-          ))}
-        </div>
-
+      <div className="max-w-4xl mx-auto text-center space-y-8">
         {/* Quote */}
-        <blockquote className="mb-8">
-          <p className="font-script text-2xl md:text-3xl text-rosa-claro italic">
-            "La vida no se mide por las veces que respiras,
-            sino por los momentos que te dejan sin aliento"
-          </p>
-        </blockquote>
+        <p className="font-display text-xl md:text-2xl font-light italic text-gris leading-relaxed max-w-lg mx-auto">
+          La vida no se mide por las veces que respiras, sino por los momentos
+          que te dejan sin aliento
+        </p>
 
-        {/* Names */}
-        <div className="mb-8">
-          <p className="font-body text-white/60 mb-2">Con amor,</p>
-          <p className="font-display text-2xl text-white">
-            <span className="text-gradient">Catalina</span>
-          </p>
+        {/* Signature */}
+        <div>
+          <p className="font-body text-sm text-gris mb-1">Con amor,</p>
+          <p className="font-display text-2xl font-light text-texto">Catalina</p>
         </div>
 
         {/* Contact */}
-        <div className="flex flex-wrap justify-center gap-6 mb-8">
+        <div className="flex flex-wrap justify-center gap-6">
           <a
             href="mailto:contacto@cata15.com"
-            className="glass px-6 py-3 rounded-full font-body text-white/80 hover:bg-white/10 transition-colors flex items-center gap-2"
+            className="font-mono text-xs tracking-widest uppercase text-gris hover:text-magenta transition-colors"
           >
-            <span>📧</span>
-            <span>contacto@cata15.com</span>
+            contacto@cata15.com
           </a>
           <a
             href="tel:+541234567890"
-            className="glass px-6 py-3 rounded-full font-body text-white/80 hover:bg-white/10 transition-colors flex items-center gap-2"
+            className="font-mono text-xs tracking-widest uppercase text-gris hover:text-magenta transition-colors"
           >
-            <span>📱</span>
-            <span>+54 123 456 7890</span>
-          </a>
-        </div>
-
-        {/* Social */}
-        <div className="flex justify-center gap-4 mb-8">
-          <a
-            href="#"
-            className="w-12 h-12 glass rounded-full flex items-center justify-center text-xl hover:bg-white/10 transition-colors"
-          >
-            📷
-          </a>
-          <a
-            href="#"
-            className="w-12 h-12 glass rounded-full flex items-center justify-center text-xl hover:bg-white/10 transition-colors"
-          >
-            📱
-          </a>
-          <a
-            href="#"
-            className="w-12 h-12 glass rounded-full flex items-center justify-center text-xl hover:bg-white/10 transition-colors"
-          >
-            💬
+            +54 123 456 7890
           </a>
         </div>
 
         {/* Copyright */}
-        <div className="border-t border-white/10 pt-8">
-          <p className="font-body text-sm text-white/40">
-            © 2026 Catalina's XV | Diseñado con ❤️
-          </p>
-          <p className="font-body text-xs text-white/30 mt-2">
-            #Cata15 #QuinceañeraCatalina
+        <div className="pt-8 border-t border-gris/10">
+          <p className="font-mono text-[10px] tracking-widest text-gris/50">
+            © 2026 Catalina · XV Años
           </p>
         </div>
       </div>

@@ -1,83 +1,82 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
-import { gsap } from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { ScrollSmoother } from 'gsap/ScrollSmoother'
+import Lenis from 'lenis'
 
-// Components
 import LoadingScreen from './components/LoadingScreen'
 import Hero from './components/Hero'
 import Invitation from './components/Invitation'
 import CatalinaBio from './components/CatalinaBio'
+import ElBrillo from './components/ElBrillo'
 import EventDetails from './components/EventDetails'
 import MusicSuggestions from './components/MusicSuggestions'
 import RSVP from './components/RSVP'
 import PreviaGallery from './components/PreviaGallery'
 import Footer from './components/Footer'
 
-gsap.registerPlugin(ScrollTrigger, ScrollSmoother)
-
 function App() {
-  const mainRef = useRef(null)
-  const smoothRef = useRef(null)
   const [isLoading, setIsLoading] = useState(true)
-  const [smoother, setSmoother] = useState(null)
+  const lenisRef = useRef(null)
 
   const handleLoadingComplete = useCallback(() => {
     setIsLoading(false)
   }, [])
 
   useEffect(() => {
-    if (!isLoading && mainRef.current && smoothRef.current) {
-      // Small delay to ensure DOM is ready
-      const timer = setTimeout(() => {
-        const sm = ScrollSmoother.create({
-          wrapper: smoothRef.current,
-          content: mainRef.current,
-          smooth: 1.5,
-          effects: true,
-          smoothTouch: 0.1,
-        })
-        setSmoother(sm)
+    if (isLoading) return
 
-        // Refresh ScrollTrigger after everything is loaded
-        setTimeout(() => {
-          ScrollTrigger.refresh()
-        }, 100)
-      }, 100)
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      touchMultiplier: 1.5,
+    })
+    lenisRef.current = lenis
 
-      return () => {
-        clearTimeout(timer)
-        if (smoother) {
-          smoother.kill()
-        }
-      }
+    function raf(time) {
+      lenis.raf(time)
+      requestAnimationFrame(raf)
+    }
+    requestAnimationFrame(raf)
+
+    return () => {
+      lenis.destroy()
     }
   }, [isLoading])
 
   return (
-    <div className="relative">
-      {/* Loading Screen */}
+    <div className="relative bg-fondo">
       <LoadingScreen onComplete={handleLoadingComplete} />
 
-      {/* Main content - only rendered after loading */}
       {!isLoading && (
         <>
-          {/* Grain overlay for texture */}
-          <div className="grain-overlay" />
-          
-          {/* Smooth scroll wrapper */}
-          <div ref={smoothRef} className="overflow-hidden">
-            <main ref={mainRef}>
-              <Hero />
-              <Invitation />
-              <CatalinaBio />
-              <EventDetails />
-              <MusicSuggestions />
-              <RSVP />
-              <PreviaGallery />
-              <Footer />
-            </main>
+          {/* Disco grid floor */}
+          <div className="disco-grid" aria-hidden="true" />
+
+          {/* Grid sparkles */}
+          <div className="fixed inset-0 z-0 pointer-events-none" aria-hidden="true">
+            {[...Array(20)].map((_, i) => (
+              <div
+                key={i}
+                className="grid-sparkle"
+                style={{
+                  left: `${Math.random() * 100}%`,
+                  top: `${40 + Math.random() * 55}%`,
+                  animationDelay: `${Math.random() * 5}s`,
+                  animationDuration: `${2 + Math.random() * 4}s`,
+                }}
+              />
+            ))}
           </div>
+
+          <main className="relative z-10">
+            <Hero />
+            <Invitation />
+            <CatalinaBio />
+            <ElBrillo />
+            <EventDetails />
+            <MusicSuggestions />
+            <RSVP />
+            <PreviaGallery />
+            <Footer />
+          </main>
         </>
       )}
     </div>

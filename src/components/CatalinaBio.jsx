@@ -12,70 +12,44 @@ const CatalinaBio = () => {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Title animation
       gsap.from(titleRef.current, {
-        y: 80,
-        opacity: 0,
-        duration: 1.2,
-        ease: 'power4.out',
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: 'top 70%',
-          toggleActions: 'play none none reverse'
-        }
-      })
-
-      // Bio text animation
-      gsap.from(bioRef.current, {
         y: 60,
         opacity: 0,
         duration: 1,
-        delay: 0.3,
         ease: 'power3.out',
         scrollTrigger: {
           trigger: sectionRef.current,
-          start: 'top 60%',
-          toggleActions: 'play none none reverse'
-        }
+          start: 'top 70%',
+          toggleActions: 'play none none reverse',
+        },
       })
 
-      // Photos stagger animation
-      photosRef.current.forEach((photo, index) => {
-        if (!photo) return
+      gsap.from(bioRef.current, {
+        y: 40,
+        opacity: 0,
+        duration: 1,
+        delay: 0.2,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: bioRef.current,
+          start: 'top 80%',
+          toggleActions: 'play none none reverse',
+        },
+      })
 
+      photosRef.current.forEach((photo, i) => {
+        if (!photo) return
         gsap.from(photo, {
-          scale: 0.8,
+          y: 50,
           opacity: 0,
-          rotation: index % 2 === 0 ? -5 : 5,
           duration: 0.8,
-          delay: index * 0.15,
-          ease: 'back.out(1.7)',
+          delay: i * 0.1,
+          ease: 'power3.out',
           scrollTrigger: {
             trigger: photo,
-            start: 'top 85%',
-            toggleActions: 'play none none reverse'
-          }
-        })
-
-        // Hover effect
-        photo.addEventListener('mouseenter', () => {
-          gsap.to(photo, {
-            scale: 1.05,
-            rotation: 0,
-            zIndex: 10,
-            duration: 0.3,
-            ease: 'power2.out'
-          })
-        })
-
-        photo.addEventListener('mouseleave', () => {
-          gsap.to(photo, {
-            scale: 1,
-            rotation: index % 2 === 0 ? -5 : 5,
-            zIndex: 1,
-            duration: 0.3,
-            ease: 'power2.out'
-          })
+            start: 'top 88%',
+            toggleActions: 'play none none reverse',
+          },
         })
       })
     }, sectionRef)
@@ -84,102 +58,78 @@ const CatalinaBio = () => {
   }, [])
 
   const photos = [
-    { id: 1, src: '/assets/photos/catalina-01.jpg', alt: 'Catalina - Momento especial 1' },
-    { id: 2, src: '/assets/photos/catalina-02.jpg', alt: 'Catalina - Momento especial 2' },
-    { id: 3, src: '/assets/photos/catalina-03.jpg', alt: 'Catalina - Momento especial 3' },
-    { id: 4, src: '/assets/photos/catalina-04.jpg', alt: 'Catalina - Momento especial 4' },
-    { id: 5, src: '/assets/photos/catalina-05.jpg', alt: 'Catalina - Momento especial 5' },
-    { id: 6, src: '/assets/photos/catalina-06.jpg', alt: 'Catalina - Momento especial 6' },
+    '/assets/photos/catalina-01.jpg',
+    '/assets/photos/catalina-02.jpg',
+    '/assets/photos/catalina-03.jpg',
+    '/assets/photos/catalina-04.jpg',
+    '/assets/photos/catalina-05.jpg',
+    '/assets/photos/catalina-06.jpg',
   ]
 
   return (
     <section
       ref={sectionRef}
-      className="relative min-h-screen section-padding overflow-hidden"
+      className="relative py-32 px-6"
     >
-      {/* Background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-oscuro via-oscuro-claro to-oscuro" />
-
-      <div className="relative z-10 max-w-7xl mx-auto">
-        {/* Section title */}
-        <div ref={titleRef} className="text-center mb-16">
-          <p className="font-script text-2xl text-rosa-claro mb-4">Algo sobre mí</p>
-          <h2 className="font-display text-5xl md:text-7xl lg:text-8xl text-gradient font-bold">
+      <div className="max-w-6xl mx-auto">
+        {/* Title */}
+        <div ref={titleRef} className="mb-20">
+          <p className="font-display text-sm tracking-[0.25em] uppercase text-gris mb-4">
+            Algo sobre mí
+          </p>
+          <h2 className="font-display text-5xl md:text-7xl lg:text-8xl font-light text-texto">
             Catalina
           </h2>
         </div>
 
-        {/* Bio content */}
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center mb-20">
+        {/* Bio + main photo */}
+        <div
+          ref={bioRef}
+          className="grid md:grid-cols-2 gap-16 items-center mb-20"
+        >
           {/* Main photo */}
-          <div className="relative">
-            <div className="aspect-[3/4] rounded-2xl overflow-hidden glass p-2">
+          <div className="order-2 md:order-1">
+            <div className="aspect-[3/4] bg-gris/5 overflow-hidden">
               <img
                 src="/assets/photos/catalina-main.jpg"
-                alt="Foto principal de Catalina"
-                className="w-full h-full object-cover rounded-xl"
+                alt="Catalina"
+                className="w-full h-full object-cover"
               />
             </div>
-            {/* Decorative elements */}
-            <div className="absolute -top-4 -right-4 text-4xl animate-float">✨</div>
-            <div className="absolute -bottom-4 -left-4 text-3xl animate-float" style={{ animationDelay: '1s' }}>🌸</div>
           </div>
 
           {/* Bio text */}
-          <div ref={bioRef}>
-            <h3 className="font-display text-3xl md:text-4xl text-white mb-6">
-              Hola, soy <span className="text-gradient">Catalina</span>
+          <div className="order-1 md:order-2">
+            <h3 className="font-display text-2xl md:text-3xl font-light text-texto mb-8">
+              Hola, soy{' '}
+              <span className="font-medium text-magenta">Catalina</span>
             </h3>
 
-            <div className="space-y-4 font-body text-lg text-white/80 leading-relaxed">
+            <div className="space-y-5 font-body text-base text-gris leading-relaxed">
               <p>
-                Soy una chica apasionada por la vida, la música y los buenos momentos.
-                Me encanta pasar tiempo con mis amigos y familia, y siempre estoy
-                buscando nuevas aventuras.
-              </p>
-              <p>
-                Mi pasión por la [música/arte/deporte] comenzó cuando era pequeña,
-                y desde entonces no he parado de explorar todo lo que el mundo tiene
-                para ofrecer.
+                Soy una chica apasionada por la vida, la música y los buenos
+                momentos. Me encanta pasar tiempo con mis amigos y familia, y
+                siempre estoy buscando nuevas aventuras.
               </p>
               <p>
                 Estos 15 años son el comienzo de una nueva etapa llena de sueños
-                y posibilidades. ¡Los invito a celebrar conmigo!
+                y posibilidades. Los invito a celebrar conmigo.
               </p>
-            </div>
-
-            <div className="mt-8 flex flex-wrap gap-4">
-              <div className="glass px-4 py-2 rounded-full">
-                <span className="text-dorado">🎵</span>
-                <span className="ml-2 font-body text-white/80">Música</span>
-              </div>
-              <div className="glass px-4 py-2 rounded-full">
-                <span className="text-dorado">📚</span>
-                <span className="ml-2 font-body text-white/80">Lectura</span>
-              </div>
-              <div className="glass px-4 py-2 rounded-full">
-                <span className="text-dorado">🎨</span>
-                <span className="ml-2 font-body text-white/80">Arte</span>
-              </div>
-              <div className="glass px-4 py-2 rounded-full">
-                <span className="text-dorado">✈️</span>
-                <span className="ml-2 font-body text-white/80">Viajar</span>
-              </div>
             </div>
           </div>
         </div>
 
         {/* Photo grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
-          {photos.map((photo, index) => (
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+          {photos.map((src, i) => (
             <div
-              key={photo.id}
-              ref={el => photosRef.current[index] = el}
-              className={`aspect-square rounded-xl overflow-hidden glass cursor-pointer transition-shadow hover:shadow-lg hover:shadow-rosa/20`}
+              key={i}
+              ref={el => (photosRef.current[i] = el)}
+              className="aspect-square bg-gris/5 overflow-hidden"
             >
               <img
-                src={photo.src}
-                alt={photo.alt}
+                src={src}
+                alt={`Catalina ${i + 1}`}
                 className="w-full h-full object-cover"
                 loading="lazy"
               />

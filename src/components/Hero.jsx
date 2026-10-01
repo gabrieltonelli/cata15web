@@ -5,166 +5,134 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 gsap.registerPlugin(ScrollTrigger)
 
 const Hero = () => {
-  const heroRef = useRef(null)
-  const titleRef = useRef(null)
-  const subtitleRef = useRef(null)
-  const dateRef = useRef(null)
-  const scrollIndicatorRef = useRef(null)
-  const particlesRef = useRef(null)
+  const sectionRef = useRef(null)
+  const bgRef = useRef(null)
+  const ballRef = useRef(null)
+  const textRef = useRef(null)
+  const mouseTarget = useRef({ x: 0, y: 0 })
+  const mouseCurrent = useRef({ x: 0, y: 0 })
 
   useEffect(() => {
-    const ctx = gsap.context(() => {
-      // Initial entrance animation
-      const tl = gsap.timeline({ delay: 0.5 })
+    const section = sectionRef.current
+    const bg = bgRef.current
+    const ball = ballRef.current
+    const text = textRef.current
 
-      tl.from(titleRef.current, {
-        y: 100,
-        opacity: 0,
-        duration: 1.2,
-        ease: 'power4.out'
-      })
-        .from(subtitleRef.current, {
-          y: 50,
-          opacity: 0,
-          duration: 1,
-          ease: 'power3.out'
-        }, '-=0.6')
-        .from(dateRef.current, {
-          scale: 0.8,
-          opacity: 0,
-          duration: 0.8,
-          ease: 'back.out(1.7)'
-        }, '-=0.4')
-        .from(scrollIndicatorRef.current, {
-          y: 30,
-          opacity: 0,
-          duration: 0.6,
-          ease: 'power2.out'
-        }, '-=0.2')
+    // Parallax: background slow, ball medium
+    gsap.to(bg, {
+      yPercent: 30,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: section,
+        start: 'top top',
+        end: 'bottom top',
+        scrub: 1.5,
+      },
+    })
 
-      // Scroll indicator bounce
-      gsap.to(scrollIndicatorRef.current, {
-        y: 10,
-        duration: 1.5,
-        repeat: -1,
-        yoyo: true,
-        ease: 'power1.inOut'
-      })
+    gsap.to(ball, {
+      yPercent: 15,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: section,
+        start: 'top top',
+        end: 'bottom top',
+        scrub: 0.8,
+      },
+    })
 
-      // Create floating particles
-      createParticles()
-    }, heroRef)
+    gsap.to(text, {
+      yPercent: -10,
+      opacity: 0,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: section,
+        start: 'top top',
+        end: '60% top',
+        scrub: 1,
+      },
+    })
 
-    return () => ctx.revert()
-  }, [])
-
-  const createParticles = () => {
-    const container = particlesRef.current
-    if (!container) return
-
-    for (let i = 0; i < 50; i++) {
-      const particle = document.createElement('div')
-      particle.className = 'particle'
-
-      const size = Math.random() * 6 + 2
-      const colors = ['#FF6B9D', '#C44DFF', '#FFD93D', '#FFB3CC']
-      const color = colors[Math.floor(Math.random() * colors.length)]
-
-      particle.style.cssText = `
-        width: ${size}px;
-        height: ${size}px;
-        background: ${color};
-        left: ${Math.random() * 100}%;
-        top: ${Math.random() * 100}%;
-        opacity: ${Math.random() * 0.5 + 0.2};
-      `
-
-      container.appendChild(particle)
-
-      gsap.to(particle, {
-        y: -window.innerHeight,
-        x: `random(-100, 100)`,
-        duration: `random(8, 15)`,
-        repeat: -1,
-        delay: Math.random() * 5,
-        ease: 'none'
-      })
+    // Mouse parallax on ball
+    const handleMouseMove = (e) => {
+      const { innerWidth, innerHeight } = window
+      mouseTarget.current.x = ((e.clientX / innerWidth) - 0.5) * 20
+      mouseTarget.current.y = ((e.clientY / innerHeight) - 0.5) * 20
     }
-  }
+
+    window.addEventListener('mousemove', handleMouseMove)
+
+    let raf
+    const animate = () => {
+      mouseCurrent.current.x += (mouseTarget.current.x - mouseCurrent.current.x) * 0.08
+      mouseCurrent.current.y += (mouseTarget.current.y - mouseCurrent.current.y) * 0.08
+
+      if (ball) {
+        ball.style.transform = `translate(${mouseCurrent.current.x}px, ${mouseCurrent.current.y}px)`
+      }
+      raf = requestAnimationFrame(animate)
+    }
+    raf = requestAnimationFrame(animate)
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove)
+      cancelAnimationFrame(raf)
+      ScrollTrigger.getAll().forEach(t => t.kill())
+    }
+  }, [])
 
   return (
     <section
-      ref={heroRef}
-      className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden pb-20"
+      ref={sectionRef}
+      className="relative h-screen overflow-hidden"
     >
-      {/* Background video */}
-      <video
-        autoPlay
-        muted
-        loop
-        playsInline
-        className="absolute inset-0 w-full h-full object-cover z-0"
+      {/* Background layer: ball photo 16:9, darkened + blurred */}
+      <div
+        ref={bgRef}
+        className="absolute inset-0 z-0"
       >
-        <source src="/assets/video/hero-bg.mp4" type="video/mp4" />
-      </video>
-
-      {/* Background gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-oscuro/70 via-oscuro/40 to-oscuro/80" />
-
-      {/* Animated background circles */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-rosa/10 rounded-full blur-3xl animate-float" />
-        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-pupura/10 rounded-full blur-3xl animate-float" style={{ animationDelay: '2s' }} />
-        <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-dorado/10 rounded-full blur-3xl animate-float" style={{ animationDelay: '4s' }} />
+        <div className="absolute inset-0 bg-fondo/70 z-10" />
+        <img
+          src="/assets/photos/bola-espejada-16-9.webp"
+          alt=""
+          className="absolute inset-0 w-full h-full object-cover"
+          style={{ filter: 'blur(2px)' }}
+        />
       </div>
 
-      {/* Particles container */}
-      <div ref={particlesRef} className="absolute inset-0 pointer-events-none" />
+      {/* Foreground layer: ball cutout, sharp */}
+      <div
+        ref={ballRef}
+        className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none"
+      >
+        <img
+          src="/assets/photos/bola-espejada-cutout.webp"
+          alt="Bola espejada de discoteca"
+          className="w-[200px] h-[300px] sm:w-[280px] sm:h-[420px] md:w-[350px] md:h-[520px] lg:w-[400px] lg:h-[600px] object-contain"
+        />
+      </div>
 
-      {/* Content */}
-      <div className="relative z-10 text-center px-4 mb-16">
-        <p className="font-script text-2xl md:text-3xl text-rosa-claro mb-6 animate-float" style={{ margin: '30px 0 0 0' }}>
-          ¡Celebramos mis
+      {/* Text content */}
+      <div
+        ref={textRef}
+        className="absolute inset-0 z-30 flex flex-col items-center justify-center text-center px-4"
+      >
+        <p className="font-display text-lg md:text-xl tracking-[0.2em] uppercase text-gris mb-4">
+          Celebramos mis
         </p>
-
-        <h1
-          ref={titleRef}
-          className="font-display text-8xl md:text-9xl lg:text-[12rem] font-bold text-gradient leading-none mb-4"
-        >
+        <h1 className="font-display text-[7rem] md:text-[10rem] lg:text-[13rem] font-light leading-none text-texto mb-4">
           15
         </h1>
-
-        <p
-          ref={subtitleRef}
-          className="font-display text-4xl md:text-6xl lg:text-7xl text-white mb-10 text-glow"
-        >
-          años!
+        <p className="font-display text-2xl md:text-3xl lg:text-4xl font-light text-texto mb-8">
+          años
         </p>
-
-        <div
-          ref={dateRef}
-          className="glass inline-block px-8 py-4 rounded-full mb-10"
-        >
-          <p className="font-body text-xl md:text-2xl text-dorado tracking-widest">
-            20 DE NOVIEMBRE 2026
-          </p>
-        </div>
-
-        <p className="font-script text-3xl md:text-4xl text-rosa-claro">
-          Acompañame en este día tan especial
+        <p className="font-mono text-xs md:text-sm tracking-[0.25em] uppercase text-magenta">
+          20 · 11 · 2026
         </p>
       </div>
 
-      {/* Scroll indicator */}
-      <div
-        ref={scrollIndicatorRef}
-        className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col items-center z-10"
-      >
-        <p className="font-body text-sm text-white/60 mb-3 tracking-widest">DESCUBRÍ MÁS</p>
-        <div className="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center pt-2">
-          <div className="w-1 h-3 bg-rosa rounded-full animate-bounce" />
-        </div>
-      </div>
+      {/* Bottom fade */}
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-fondo to-transparent z-40" />
     </section>
   )
 }

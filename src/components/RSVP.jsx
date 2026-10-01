@@ -8,122 +8,90 @@ const RSVP = () => {
   const sectionRef = useRef(null)
   const titleRef = useRef(null)
   const formRef = useRef(null)
-  const particlesRef = useRef(null)
+  const flashRef = useRef(null)
 
   const [formData, setFormData] = useState({
     name: '',
-    email: '',
-    attending: null,
     guests: 1,
-    dietary: '',
-    message: ''
+    message: '',
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Title animation
       gsap.from(titleRef.current, {
-        y: 80,
-        opacity: 0,
-        duration: 1.2,
-        ease: 'power4.out',
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: 'top 70%',
-          toggleActions: 'play none none reverse'
-        }
-      })
-
-      // Form animation
-      gsap.from(formRef.current, {
         y: 60,
         opacity: 0,
         duration: 1,
         ease: 'power3.out',
         scrollTrigger: {
-          trigger: formRef.current,
-          start: 'top 80%',
-          toggleActions: 'play none none reverse'
-        }
+          trigger: sectionRef.current,
+          start: 'top 70%',
+          toggleActions: 'play none none reverse',
+        },
       })
 
-      // Create particles
-      createParticles()
+      gsap.from(formRef.current, {
+        y: 40,
+        opacity: 0,
+        duration: 1,
+        delay: 0.2,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: formRef.current,
+          start: 'top 80%',
+          toggleActions: 'play none none reverse',
+        },
+      })
     }, sectionRef)
 
     return () => ctx.revert()
   }, [])
 
-  const createParticles = () => {
-    const container = particlesRef.current
-    if (!container) return
+  const triggerFlash = () => {
+    const flash = flashRef.current
+    if (!flash) return
 
-    for (let i = 0; i < 30; i++) {
-      const particle = document.createElement('div')
-      particle.className = 'particle'
+    // Create 4 color layers
+    flash.innerHTML = ''
+    const colors = ['flash-magenta', 'flash-azul', 'flash-violeta', 'flash-plata']
+    colors.forEach(cls => {
+      const div = document.createElement('div')
+      div.className = `absolute inset-0 ${cls}`
+      flash.appendChild(div)
+    })
 
-      const size = Math.random() * 4 + 2
-      const colors = ['#FF6B9D', '#C44DFF', '#FFD93D', '#FFB3CC']
-      const color = colors[Math.floor(Math.random() * colors.length)]
-
-      particle.style.cssText = `
-        width: ${size}px;
-        height: ${size}px;
-        background: ${color};
-        left: ${Math.random() * 100}%;
-        top: ${Math.random() * 100}%;
-        opacity: ${Math.random() * 0.4 + 0.1};
-      `
-
-      container.appendChild(particle)
-
-      gsap.to(particle, {
-        y: -window.innerHeight * 0.5,
-        x: `random(-50, 50)`,
-        duration: `random(10, 20)`,
-        repeat: -1,
-        delay: Math.random() * 5,
-        ease: 'none'
-      })
-    }
+    // Remove after animation
+    setTimeout(() => {
+      flash.innerHTML = ''
+    }, 1500)
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setIsSubmitting(true)
 
-    // Submit to Netlify Forms
     try {
-      const response = await fetch('/', {
+      await fetch('/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: new URLSearchParams({
           'form-name': 'rsvp',
-          ...formData,
-          attending: formData.attending ? 'Sí' : 'No',
-          guests: String(formData.guests)
-        }).toString()
+          name: formData.name,
+          guests: String(formData.guests),
+          message: formData.message,
+        }).toString(),
       })
+    } catch {}
 
-      if (response.ok) {
-        setIsSubmitted(true)
-        // Save to localStorage as backup
-        const submissions = JSON.parse(localStorage.getItem('rsvp-submissions') || '[]')
-        submissions.push({ ...formData, timestamp: new Date().toISOString() })
-        localStorage.setItem('rsvp-submissions', JSON.stringify(submissions))
-      } else {
-        throw new Error('Form submission failed')
-      }
-    } catch (error) {
-      // Fallback to localStorage only
-      const submissions = JSON.parse(localStorage.getItem('rsvp-submissions') || '[]')
-      submissions.push({ ...formData, timestamp: new Date().toISOString() })
-      localStorage.setItem('rsvp-submissions', JSON.stringify(submissions))
-      setIsSubmitted(true)
-    }
+    // localStorage backup
+    const submissions = JSON.parse(localStorage.getItem('rsvp-submissions') || '[]')
+    submissions.push({ ...formData, timestamp: new Date().toISOString() })
+    localStorage.setItem('rsvp-submissions', JSON.stringify(submissions))
 
+    triggerFlash()
+    setIsSubmitted(true)
     setIsSubmitting(false)
   }
 
@@ -134,51 +102,40 @@ const RSVP = () => {
   return (
     <section
       ref={sectionRef}
-      className="relative min-h-screen section-padding overflow-hidden"
+      className="relative py-32 px-6"
     >
-      {/* Background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-oscuro via-oscuro-claro to-oscuro" />
+      {/* Flash overlay */}
+      <div
+        ref={flashRef}
+        className="absolute inset-0 z-0 pointer-events-none"
+      />
 
-      {/* Particles container */}
-      <div ref={particlesRef} className="absolute inset-0 pointer-events-none" />
-
-      <div className="relative z-10 max-w-4xl mx-auto">
-        {/* Section title */}
-        <div ref={titleRef} className="text-center mb-16">
-          <p className="font-script text-2xl text-rosa-claro mb-4">Confirmá tu</p>
-          <h2 className="font-display text-5xl md:text-7xl lg:text-8xl text-gradient font-bold">
+      <div className="relative z-10 max-w-2xl mx-auto">
+        {/* Title */}
+        <div ref={titleRef} className="mb-20">
+          <p className="font-display text-sm tracking-[0.25em] uppercase text-gris mb-4">
+            Confirmá tu
+          </p>
+          <h2 className="font-display text-5xl md:text-7xl lg:text-8xl font-light text-texto">
             Asistencia
           </h2>
-          <p className="font-body text-lg text-white/60 mt-4 max-w-xl mx-auto">
-            Haznos saber si podrás acompañarnos en este día tan especial
-          </p>
         </div>
 
         {/* Form */}
-        <div
-          ref={formRef}
-          className="glass rounded-2xl p-8 md:p-12"
-        >
+        <div ref={formRef}>
           {isSubmitted ? (
-            <div className="text-center py-12">
-              <div className="text-8xl mb-6 animate-float">🎉</div>
-              <h3 className="font-display text-3xl text-white mb-4">
-                ¡Gracias, {formData.name}!
+            <div className="py-16 text-center">
+              <h3 className="font-display text-3xl md:text-4xl font-light text-texto mb-4">
+                Gracias, {formData.name}
               </h3>
-              <p className="font-body text-lg text-white/80 max-w-md mx-auto">
-                Hemos registrado tu respuesta. ¡Estamos emocionados de celebrar contigo!
+              <p className="font-body text-base text-gris">
+                Hemos registrado tu respuesta. Te esperamos.
               </p>
-              <div className="mt-8 flex justify-center gap-4">
-                <div className="glass px-6 py-3 rounded-full">
-                  <span className="text-dorado">✨</span>
-                  <span className="ml-2 font-body text-white/80">Te esperamos</span>
-                </div>
-              </div>
             </div>
           ) : (
-            <form 
-              onSubmit={handleSubmit} 
-              className="space-y-8"
+            <form
+              onSubmit={handleSubmit}
+              className="space-y-10"
               name="rsvp"
               method="POST"
               data-netlify="true"
@@ -186,147 +143,73 @@ const RSVP = () => {
             >
               <input type="hidden" name="form-name" value="rsvp" />
               <p className="hidden">
-                <label>No fill this: <input name="bot-field" /></label>
+                <label>
+                  No fill: <input name="bot-field" />
+                </label>
               </p>
+
               {/* Name */}
               <div>
-                <label className="block font-body text-sm text-white/60 mb-2">
-                  Nombre completo
+                <label className="block font-mono text-[10px] tracking-[0.2em] uppercase text-gris mb-2">
+                  Nombre
                 </label>
                 <input
                   type="text"
                   value={formData.name}
-                  onChange={(e) => handleChange('name', e.target.value)}
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 font-body text-white placeholder-white/30 focus:outline-none focus:border-rosa/50 transition-colors"
-                  placeholder="Tu nombre"
+                  onChange={e => handleChange('name', e.target.value)}
+                  className="w-full bg-transparent border-b border-gris/30 px-0 py-3 font-body text-texto placeholder-gris/40 focus:outline-none focus:border-magenta transition-colors"
+                  placeholder="Tu nombre completo"
                   required
                 />
               </div>
 
-              {/* Email */}
+              {/* Guests */}
               <div>
-                <label className="block font-body text-sm text-white/60 mb-2">
-                  Email
+                <label className="block font-mono text-[10px] tracking-[0.2em] uppercase text-gris mb-3">
+                  Cantidad de personas
                 </label>
-                <input
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => handleChange('email', e.target.value)}
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 font-body text-white placeholder-white/30 focus:outline-none focus:border-rosa/50 transition-colors"
-                  placeholder="tu@email.com"
-                  required
-                />
-              </div>
-
-              {/* Attending */}
-              <div>
-                <label className="block font-body text-sm text-white/60 mb-4">
-                  ¿Podrás acompañarnos?
-                </label>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="flex items-center gap-6">
                   <button
                     type="button"
-                    onClick={() => handleChange('attending', true)}
-                    className={`p-4 rounded-xl border-2 transition-all duration-300 ${formData.attending === true
-                        ? 'border-rosa bg-rosa/20 text-white'
-                        : 'border-white/10 hover:border-white/30 text-white/60'
-                      }`}
+                    onClick={() => handleChange('guests', Math.max(1, formData.guests - 1))}
+                    className="w-10 h-10 border border-gris/30 flex items-center justify-center text-gris hover:text-texto hover:border-texto transition-colors font-mono text-lg"
                   >
-                    <span className="text-3xl block mb-2">🎉</span>
-                    <span className="font-body">¡Sí, allí estaré!</span>
+                    −
                   </button>
+                  <span className="font-mono text-2xl text-texto w-8 text-center">
+                    {formData.guests}
+                  </span>
                   <button
                     type="button"
-                    onClick={() => handleChange('attending', false)}
-                    className={`p-4 rounded-xl border-2 transition-all duration-300 ${formData.attending === false
-                        ? 'border-pupura bg-pupura/20 text-white'
-                        : 'border-white/10 hover:border-white/30 text-white/60'
-                      }`}
+                    onClick={() => handleChange('guests', Math.min(10, formData.guests + 1))}
+                    className="w-10 h-10 border border-gris/30 flex items-center justify-center text-gris hover:text-texto hover:border-texto transition-colors font-mono text-lg"
                   >
-                    <span className="text-3xl block mb-2">😢</span>
-                    <span className="font-body">No podré ir</span>
+                    +
                   </button>
                 </div>
               </div>
-
-              {/* Number of guests */}
-              {formData.attending === true && (
-                <div className="animate-fadeIn">
-                  <label className="block font-body text-sm text-white/60 mb-2">
-                    ¿Cuántos asistirán?
-                  </label>
-                  <div className="flex items-center gap-4">
-                    <button
-                      type="button"
-                      onClick={() => handleChange('guests', Math.max(1, formData.guests - 1))}
-                      className="w-12 h-12 rounded-full glass flex items-center justify-center text-white hover:bg-white/10 transition-colors"
-                    >
-                      -
-                    </button>
-                    <span className="font-display text-3xl text-white w-12 text-center">
-                      {formData.guests}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => handleChange('guests', Math.min(5, formData.guests + 1))}
-                      className="w-12 h-12 rounded-full glass flex items-center justify-center text-white hover:bg-white/10 transition-colors"
-                    >
-                      +
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {/* Dietary restrictions */}
-              {formData.attending === true && (
-                <div className="animate-fadeIn">
-                  <label className="block font-body text-sm text-white/60 mb-2">
-                    Restricciones alimentarias
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.dietary}
-                    onChange={(e) => handleChange('dietary', e.target.value)}
-                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 font-body text-white placeholder-white/30 focus:outline-none focus:border-rosa/50 transition-colors"
-                    placeholder="Ej: Vegetariano, sin gluten..."
-                  />
-                </div>
-              )}
 
               {/* Message */}
               <div>
-                <label className="block font-body text-sm text-white/60 mb-2">
-                  Mensaje para Catalina (opcional)
+                <label className="block font-mono text-[10px] tracking-[0.2em] uppercase text-gris mb-2">
+                  Mensaje (opcional)
                 </label>
                 <textarea
                   value={formData.message}
-                  onChange={(e) => handleChange('message', e.target.value)}
-                  rows={4}
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 font-body text-white placeholder-white/30 focus:outline-none focus:border-rosa/50 transition-colors resize-none"
-                  placeholder="Escribe un mensaje de felicitación..."
+                  onChange={e => handleChange('message', e.target.value)}
+                  rows={3}
+                  className="w-full bg-transparent border-b border-gris/30 px-0 py-3 font-body text-texto placeholder-gris/40 focus:outline-none focus:border-magenta transition-colors resize-none"
+                  placeholder="Un mensaje para Catalina..."
                 />
               </div>
 
-              {/* Submit button */}
+              {/* Submit — the only button text on the whole page */}
               <button
                 type="submit"
-                disabled={isSubmitting || formData.attending === null}
-                className="w-full bg-gradient-to-r from-rosa to-pupura text-white font-body font-semibold py-4 rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2 text-lg"
+                disabled={isSubmitting}
+                className="font-mono text-xs tracking-[0.2em] uppercase text-magenta hover:text-texto transition-colors disabled:opacity-40"
               >
-                {isSubmitting ? (
-                  <>
-                    <svg className="animate-spin h-6 w-6" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                    </svg>
-                    Enviando...
-                  </>
-                ) : (
-                  <>
-                    <span>💌</span>
-                    Confirmar asistencia
-                  </>
-                )}
+                {isSubmitting ? 'Enviando...' : 'Confirmar asistencia'}
               </button>
             </form>
           )}
