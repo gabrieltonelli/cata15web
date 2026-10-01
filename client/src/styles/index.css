@@ -1,0 +1,78 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background-color: #0A0A0A;
+    color: #FAFAFA;
+  }
+
+  body {
+    font-family: 'Montserrat', sans-serif;
+    background-color: #0A0A0A;
+    color: #FAFAFA;
+    overflow-x: hidden;
+  }
+}
+
+/* Custom minimal scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0A0A0A;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2E2E2E;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #4A4A4A;
+}
+
+/* Text Selection */
+::selection {
+  background-color: #FFFFFF;
+  color: #0A0A0A;
+}
+
+/* Luxury border utilities */
+.border-subtle {
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.border-subtle-dark {
+  border-color: rgba(0, 0, 0, 0.12);
+}
+
+/* Glassmorphism sutil */
+.glass-dark {
+  background: rgba(10, 10, 10, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-light {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+/* Filtro CSS exclusivo para el video de la sección "Una Noche Inolvidable" */
+.video-noche-inolvidable {
+  filter: grayscale(100%) contrast(150%);
+}
+

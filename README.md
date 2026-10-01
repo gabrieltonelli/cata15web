@@ -1,417 +1,173 @@
-# 🎀 Cata15Web - Página de Quinceañera de Catalina
+# ✦ Cata15Web - Monorepo (Client + Server)
 
-Sitio web interactivo con animaciones de scroll para celebrar los 15 años de Catalina.
-
-**Repo:** [github.com/gabrieltonelli/cata15web](https://github.com/gabrieltonelli/cata15web)
-
----
-
-## ✨ Características
-
-- **Hero con parallax** y partículas flotantes animadas
-- **Scroll reveal** línea por línea en secciones de texto
-- **Horizontal scroll** en galería de fotos
-- **Countdown animado** para el evento
-- **Formulario de sugerencias musicales** con votación
-- **RSVP interactivo** con partículas reactivas
-- **Scroll suave** con GSAP ScrollSmoother
-- **Diseño responsive** (mobile-first)
-- **Tema personalizado** con colores rosa, púrpura y dorado
-
----
-
-## 🛠️ Stack Tecnológico
-
-| Tecnología | Versión | Uso |
-|------------|---------|-----|
-| React | 19.x | Framework UI |
-| Vite | 6.x | Bundler y dev server |
-| GSAP | 3.x | Animaciones y scroll |
-| ScrollTrigger | - | Animaciones basadas en scroll |
-| ScrollSmoother | - | Scroll suave |
-| Tailwind CSS | 3.x | Estilos utility-first |
-
----
-
-## 📋 Prerrequisitos
-
-- **Node.js** >= 18.0.0 ([descargar](https://nodejs.org/))
-- **npm** >= 9.0.0 (viene con Node.js)
-- Git (opcional, para clonar)
-
----
-
-## 🚀 Instalación y Ejecución Local
-
-### 1. Clonar el repositorio
-
-```bash
-git clone https://github.com/gabrieltonelli/cata15web.git
-cd cata15web
-```
-
-### 2. Instalar dependencias
-
-```bash
-npm install
-```
-
-### 3. Iniciar servidor de desarrollo
-
-```bash
-npm run dev
-```
-
-### 4. Abrir en el navegador
-
-```
-http://localhost:5173
-```
-
-> El servidor se reinicia automáticamente al guardar cambios (Hot Module Replacement).
-
----
-
-## 📦 Comandos Disponibles
-
-| Comando | Descripción |
-|---------|-------------|
-| `npm run dev` | Inicia servidor de desarrollo |
-| `npm run build` | Genera build de producción |
-| `npm run preview` | Vista previa del build |
-| `npm run lint` | Ejecuta linter (ESLint) |
+Aplicación Web de Invitación a Evento (15 años) con arquitectura **Monorepo limpia**:
+- **Frontend (`client/`)**: Desarrollado con **React 19 + Vite + Tailwind CSS**, bajo un concepto estético de alto contraste (*Dark Mode / Blanco / Negro*), tipografía editorial y transiciones de video fluidas. Maneja sus propias dependencias y su propio archivo de entorno `client/.env`.
+- **Backend (`server/`)**: API REST con **Express y Netlify Functions** para procesar las confirmaciones de asistencia (RSVP) y persistirlas en **Google Sheets** sin exponer credenciales en el cliente web. Maneja sus propias dependencias y su propio archivo de entorno `server/.env`.
 
 ---
 
 ## 📁 Estructura del Proyecto
 
-```
+```text
 cata15web/
-├── public/
-│   └── favicon.svg          # Icono personalizado
-├── src/
-│   ├── components/
-│   │   ├── Hero.jsx         # Sección principal con parallax
-│   │   ├── Invitation.jsx   # Invitación con scroll reveal
-│   │   ├── CatalinaBio.jsx  # Bio de la quinceañera
-│   │   ├── PreviaGallery.jsx # Galería horizontal scroll
-│   │   ├── EventDetails.jsx # Detalles del evento + countdown
-│   │   ├── MusicSuggestions.jsx # Sugerencias musicales
-│   │   ├── RSVP.jsx         # Confirmación de asistencia
-│   │   └── Footer.jsx       # Pie de página
-│   ├── styles/
-│   │   └── index.css        # Estilos globales + Tailwind
-│   ├── App.jsx              # Componente principal
-│   └── main.jsx             # Entry point
-├── index.html
-├── package.json
-├── vite.config.js
-├── tailwind.config.js
-├── postcss.config.js
-└── README.md
+├── client/                      # Frontend autónomo (SPA React + Vite)
+│   ├── public/                  # Multimedia (videos, fotos, audio Rihanna-Diamonds.mp3, favicon)
+│   ├── src/
+│   │   ├── components/          # WelcomeHero, Countdown, InfoCards, RSVP, Footer, etc.
+│   │   ├── config/              # eventData.js (parametrización)
+│   │   └── styles/              # index.css (Tailwind & custom utilities)
+│   ├── .env                     # Variables de entorno locales del cliente (ignorado en git)
+│   ├── .env.template            # Plantilla documentada de variables del cliente
+│   ├── package.json             # Dependencias y scripts de React/Vite
+│   └── vite.config.js           # Configuración con proxy hacia http://localhost:3002/api
+│
+├── server/                      # Backend autónomo (Node.js + Express + Netlify Functions)
+│   ├── data/                    # submissions.json (resguardo local de seguridad)
+│   ├── functions/
+│   │   └── api.js               # Handler serverless para Netlify Functions
+│   ├── src/
+│   │   ├── config/env.js        # Carga de server/.env y validación
+│   │   ├── services/
+│   │   │   └── sheetsService.js # Persistencia en Google Sheets (Apps Script / Service Account / Local)
+│   │   ├── app.js               # Express application (/api/health, /api/rsvp)
+│   │   └── server.js            # Servidor local Express
+│   ├── .env                     # Variables y credenciales del servidor (ignorado en git)
+│   ├── .env.template            # Plantilla documentada de variables del servidor
+│   └── package.json             # Dependencias y scripts del backend
+│
+├── docs/
+│   ├── google-apps-script.js    # Código listo para pegar en Google Sheets Apps Script
+│   └── gu_a_de_diseño_y_requerimientos_refactorizacion_de_invitacion.md
+├── netlify.toml                 # Configuración de despliegue para Netlify (build & functions)
+└── README.md                    # Documentación del proyecto
 ```
 
 ---
 
-## 📸 Guía de Assets Multimedia
+## 🚀 Cómo Levantar el Proyecto Localmente
 
-### 📊 Resumen General
+Tanto el backend como el frontend son completamente autónomos. Abrí dos terminales:
 
-| Categoría | Cantidad | Formato | Directorio |
-|-----------|----------|---------|------------|
-| Videos | 1 | MP4/WebM | `public/assets/video/` |
-| Fotos principales | 1 | JPG/PNG | `public/assets/photos/` |
-| Fotos galería | 6 | JPG/PNG | `public/assets/photos/` |
-| Fotos previa | 8 | JPG/PNG | `public/assets/photos/` |
-| Mapa del lugar | 1 | JPG/PNG | `public/assets/photos/` |
-| Iconos SVG | 5 | SVG | `public/assets/icons/` |
-| **TOTAL** | **22 archivos** | | |
-
-### 🎬 Video Hero (1 archivo)
-
-| Campo | Valor |
-|-------|-------|
-| **Archivo** | `hero-bg.mp4` |
-| **Formato** | MP4 (H.264) + WebM (fallback) |
-| **Resolución** | 1920x1080 (Full HD) |
-| **Duración** | 10-30 segundos (loop) |
-| **Tamaño máx** | 5-10 MB |
-| **Dir** | `public/assets/video/` |
-| **Uso** | Fondo animado en Hero section |
-
-### 👩 Foto Principal de Catalina (1 archivo)
-
-| Campo | Valor |
-|-------|-------|
-| **Archivo** | `catalina-main.jpg` |
-| **Formato** | JPG (calidad 85%) |
-| **Resolución** | 800x1067 (3:4) |
-| **Tamaño máx** | 200-400 KB |
-| **Dir** | `public/assets/photos/` |
-| **Uso** | Sección Bio - Foto principal |
-
-### 📸 Fotos Galería Bio (6 archivos)
-
-| # | Archivo | Resolución | Uso |
-|---|---------|------------|-----|
-| 1 | `catalina-01.jpg` | 600x600 (1:1) | Grid galería |
-| 2 | `catalina-02.jpg` | 600x600 (1:1) | Grid galería |
-| 3 | `catalina-03.jpg` | 600x600 (1:1) | Grid galería |
-| 4 | `catalina-04.jpg` | 600x600 (1:1) | Grid galería |
-| 5 | `catalina-05.jpg` | 600x600 (1:1) | Grid galería |
-| 6 | `catalina-06.jpg` | 600x600 (1:1) | Grid galería |
-
-**Formato:** JPG | **Tamaño máx:** 100-200 KB c/u | **Dir:** `public/assets/photos/`
-
-### 🎀 Fotos Horizontal Scroll - La Previa (8 archivos)
-
-| # | Archivo | Resolución | Uso |
-|---|---------|------------|-----|
-| 1 | `previa-01-preparativos.jpg` | 450x600 (3:4) | Scroll horizontal |
-| 2 | `previa-02-vestido.jpg` | 450x600 (3:4) | Scroll horizontal |
-| 3 | `previa-03-maquillaje.jpg` | 450x600 (3:4) | Scroll horizontal |
-| 4 | `previa-04-pelo.jpg` | 450x600 (3:4) | Scroll horizontal |
-| 5 | `previa-05-accesorios.jpg` | 450x600 (3:4) | Scroll horizontal |
-| 6 | `previa-06-familia.jpg` | 450x600 (3:4) | Scroll horizontal |
-| 7 | `previa-07-amigas.jpg` | 450x600 (3:4) | Scroll horizontal |
-| 8 | `previa-08-momentos.jpg` | 450x600 (3:4) | Scroll horizontal |
-
-**Formato:** JPG | **Tamaño máx:** 100-150 KB c/u | **Dir:** `public/assets/photos/`
-
-### 🗺️ Mapa del Evento (1 archivo)
-
-| Campo | Valor |
-|-------|-------|
-| **Archivo** | `venue-map.jpg` |
-| **Formato** | JPG |
-| **Resolución** | 1200x600 (2:1) |
-| **Tamaño máx** | 200-300 KB |
-| **Dir** | `public/assets/photos/` |
-| **Uso** | Sección Event Details |
-
-### 🎨 Iconos SVG (5 archivos)
-
-| # | Archivo | Uso |
-|---|---------|-----|
-| 1 | `envelope.svg` | Icono de invitación |
-| 2 | `sparkle.svg` | Estrella decorativa |
-| 3 | `note-music.svg` | Nota musical |
-| 4 | `heart.svg` | Corazón |
-| 5 | `star.svg` | Estrella |
-
-**Dir:** `public/assets/icons/`
-
-### 📁 Estructura de Directorios
-
-```
-public/
-└── assets/
-    ├── video/
-    │   ├── hero-bg.mp4
-    │   └── hero-bg.webm
-    ├── photos/
-    │   ├── catalina-main.jpg
-    │   ├── catalina-01.jpg
-    │   ├── catalina-02.jpg
-    │   ├── catalina-03.jpg
-    │   ├── catalina-04.jpg
-    │   ├── catalina-05.jpg
-    │   ├── catalina-06.jpg
-    │   ├── previa-01-preparativos.jpg
-    │   ├── previa-02-vestido.jpg
-    │   ├── previa-03-maquillaje.jpg
-    │   ├── previa-04-pelo.jpg
-    │   ├── previa-05-accesorios.jpg
-    │   ├── previa-06-familia.jpg
-    │   ├── previa-07-amigas.jpg
-    │   ├── previa-08-momentos.jpg
-    │   └── venue-map.jpg
-    └── icons/
-        ├── envelope.svg
-        ├── sparkle.svg
-        ├── note-music.svg
-        ├── heart.svg
-        └── star.svg
-```
-
-### 📋 Guía de Nomenclatura
-
-```
-[categoria]-[numero]-[descriptor].[formato]
-
-Ejemplos:
-- catalina-main.jpg
-- catalina-01.jpg
-- previa-01-preparativos.jpg
-- hero-bg.mp4
-- venue-map.jpg
-```
-
-### ⚙️ Especificaciones Técnicas
-
-| Tipo | Formato | Compresión | Color Profile |
-|------|---------|------------|---------------|
-| Fotos JPG | .jpg | Calidad 80-85% | sRGB |
-| Video MP4 | .mp4 | H.264, CRF 23 | - |
-| Video WebM | .webm | VP9 | - |
-| Iconos | .svg | Optimizado | - |
-
-### 🔄 Checklist de Reemplazo
-
-| Componente | Placeholder | Reemplazar con |
-|------------|-------------|----------------|
-| `Hero.jsx` | Gradiente animado | `hero-bg.mp4` |
-| `CatalinaBio.jsx` | `👩` emoji | `catalina-main.jpg` |
-| `CatalinaBio.jsx` | Gradientes color | `catalina-01.jpg` a `catalina-06.jpg` |
-| `PreviaGallery.jsx` | Emojis | `previa-01.jpg` a `previa-08.jpg` |
-| `EventDetails.jsx` | `🗺️` emoji | `venue-map.jpg` |
-
-### 🤖 Generar Imágenes de Ejemplo
-
-El proyecto incluye un script para generar imágenes de ejemplo usando **Pollinations.ai** (gratis, sin API key):
-
+### 1. Iniciar el Servidor Backend (`server/`)
 ```bash
-node scripts/generate-assets.js
+cd server
+npm install    # (solo la primera vez)
+npm run dev
 ```
+El backend iniciará en **`http://localhost:3002`** (parametrizable vía `PORT` en `server/.env`) con los endpoints:
+- Comprobación de estado: `http://localhost:3002/api/health`
+- Recepción de confirmaciones: `http://localhost:3002/api/rsvp`
 
-Esto creará imágenes de ejemplo en `public/assets/photos/`. Luego reemplázalas con fotos reales.
+### 2. Iniciar el Cliente Frontend (`client/`)
+```bash
+cd client
+npm install    # (solo la primera vez)
+npm run dev
+```
+El cliente iniciará en **`http://localhost:5173`**. Las llamadas a `/api/*` son reenviadas automáticamente por el proxy de Vite hacia el servidor en `http://localhost:3002`.
 
-### 📝 Notas de Optimización
+---
 
-1. **Herramientas de compresión:**
-   - [Squoosh](https://squoosh.app/) - Compresión inteligente
-   - [TinyPNG](https://tinypng.com/) - Compresión JPG/PNG
-   - [Cloudinary](https://cloudinary.com/) - CDN con transformaciones
+## 📊 Persistencia en Google Sheets
 
-2. **Responsive:** Las fotos se redimensionan automáticamente con CSS
+Planilla de destino:
+👉 **[Ver Planilla de Google Sheets](https://docs.google.com/spreadsheets/d/1u7LT_cZn-SUzWxPNg1MZfPi0wsJNZfeUgEoilp0wemo/edit?usp=sharing)**
+*(ID: `1u7LT_cZn-SUzWxPNg1MZfPi0wsJNZfeUgEoilp0wemo`)*
 
-3. **Lazy loading:** Agregar `loading="lazy"` a imágenes no críticas:
-   ```jsx
-   <img src="/assets/foto.jpg" loading="lazy" alt="..." />
+El backend soporta **dos métodos de conexión** sin exponer credenciales en el cliente:
+
+### Método 1: Google Apps Script Webhook (Recomendado - 2 minutos)
+Es la forma más sencilla, segura y directa ya que no requiere dar de alta un proyecto en Google Cloud Console:
+1. Abrí la planilla en tu navegador.
+2. Hacé clic en **Extensiones** ➔ **Apps Script**.
+3. Copiá el código completo que se encuentra en [docs/google-apps-script.js](file:///c:/Users/gabrielt/Documents/Proyectos/PROPIOS/cata15web/docs/google-apps-script.js) y reemplazá el contenido del editor.
+4. Hacé clic en **Guardar** (ícono de disquete).
+5. Hacé clic en **Implementar** ➔ **Nueva implementación**.
+6. Seleccioná el tipo **Aplicación web**:
+   - *Descripción*: `Webhook RSVP Mis XV`
+   - *Ejecutar como*: `Yo` (tu cuenta)
+   - *Quién tiene acceso*: `Cualquier persona` (Anyone)
+7. Hacé clic en **Implementar** y autorizá los permisos.
+8. Copiá la **URL de la aplicación web** generada (termina en `/exec`).
+9. Pegá dicha URL en `server/.env`:
+   ```env
+   GOOGLE_APPS_SCRIPT_URL=https://script.google.com/macros/s/AKfycb.../exec
    ```
 
-4. **Formatos modernos:** Considerar WebP para mejor compresión:
-   ```html
-   <picture>
-     <source srcset="/assets/foto.webp" type="image/webp">
-     <img src="/assets/foto.jpg" alt="...">
-   </picture>
+### Método 2: Google Cloud Service Account (API Oficial v4)
+Si preferís utilizar una cuenta de servicio de Google Cloud:
+1. En Google Cloud Console, habilitá la **Google Sheets API**.
+2. Creá una **Cuenta de Servicio** y generá una clave en formato JSON.
+3. Compartí la planilla de Google Sheets con el correo de la cuenta de servicio con permisos de **Editor**.
+4. Configurá las variables en `server/.env`:
+   ```env
+   GOOGLE_SERVICE_ACCOUNT_EMAIL=tu-servicio@proyecto.iam.gserviceaccount.com
+   GOOGLE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
    ```
 
----
-
-## 🎨 Personalización
-
-### Colores
-
-Edita `tailwind.config.js` para cambiar la paleta:
-
-```js
-colors: {
-  'rosa': '#FF6B9D',        // Rosa principal
-  'rosa-claro': '#FFB3CC',  // Rosa claro
-  'pupura': '#C44DFF',      // Púrpura
-  'dorado': '#FFD93D',      // Dorado
-  'oscuro': '#1A1A2E',      // Fondo oscuro
-}
-```
-
-### Fuentes
-
-Las fuentes están configuradas en `index.html` y `tailwind.config.js`:
-
-- **Playfair Display** - Títulos elegantes
-- **Montserrat** - Texto general
-- **Dancing Script** - Texto manuscrito
-
-### Contenido
-
-Cada componente tiene placeholders para:
-
-- Fotos de Catalina (reemplazar con imágenes reales)
-- Video de fondo en Hero
-- Dirección y detalles del evento
-- Información de contacto en Footer
+### Resguardo Local de Seguridad (Fallback)
+Si aún no configuraste ninguna credencial de Google, el backend **resguarda automáticamente las confirmaciones** en el archivo local `server/data/submissions.json` y avisa por consola. De esta forma:
+- El formulario web nunca falla de cara al invitado.
+- Los datos nunca se pierden durante pruebas locales o antes del despliegue final.
 
 ---
 
-## 🖼️ Agregar Imagenes
+## 🌐 Despliegue en Netlify
 
-1. Coloca las imágenes en `public/assets/`
-2. Referencia en componentes:
+El archivo [netlify.toml](file:///c:/Users/gabrielt/Documents/Proyectos/PROPIOS/cata15web/netlify.toml) compila el frontend e instala las dependencias de la función backend sin requerir dependencias en la raíz:
 
-```jsx
-<img src="/assets/foto-catalina.jpg" alt="Catalina" />
+```toml
+[build]
+  command = "cd client && npm install && npm run build && cd ../server && npm install"
+  publish = "client/dist"
+  functions = "server/functions"
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
 ```
 
-Para el video de fondo en Hero, agrega en `Hero.jsx`:
-
-```jsx
-<video autoPlay muted loop className="absolute inset-0 w-full h-full object-cover">
-  <source src="/assets/video-bg.mp4" type="video/mp4" />
-</video>
-```
+1. **Variables de entorno en el panel de Netlify** (*Site configuration* ➔ *Environment variables*):
+   - `GOOGLE_SHEET_ID`: `1u7LT_cZn-SUzWxPNg1MZfPi0wsJNZfeUgEoilp0wemo`
+   - `GOOGLE_APPS_SCRIPT_URL`: (la URL de tu Webhook de Apps Script)
+   - *(Opcional)* `GOOGLE_SERVICE_ACCOUNT_EMAIL` y `GOOGLE_PRIVATE_KEY` si usás Service Account.
 
 ---
 
-## 🚢 Deploy
+## ⚙️ Variables de Entorno y Parametrización
 
-### Vercel (Recomendado)
+### Frontend (`client/.env`)
+Documentadas con comentarios y ejemplos en [client/.env.template](file:///c:/Users/gabrielt/Documents/Proyectos/PROPIOS/cata15web/client/.env.template):
+- `VITE_EVENT_MAIN_TITLE`: Título principal (`MIS XV CATALINA`).
+- `VITE_EVENT_TARGET_DATE`: Fecha y hora para la cuenta regresiva.
+- `VITE_RSVP_ENDPOINT`: Endpoint hacia la API (por defecto `/api/rsvp`).
+- `VITE_WHATSAPP_PHONE`: Teléfono de contacto de WhatsApp.
+- `VITE_WHATSAPP_MESSAGE`: Mensaje preconfigurado al contactar.
 
-```bash
-npm i -g vercel
-vercel
-```
-
-### Netlify
-
-1. Push a GitHub
-2. Conecta el repo en Netlify
-3. Build command: `npm run build`
-4. Publish directory: `dist`
-
-### GitHub Pages
-
-```bash
-npm run build
-# Subir carpeta dist/ a gh-pages
-```
+### Backend (`server/.env`)
+Documentadas con comentarios y ejemplos en [server/.env.template](file:///c:/Users/gabrielt/Documents/Proyectos/PROPIOS/cata15web/server/.env.template):
+- `PORT`: Puerto del servidor local (`3002`).
+- `CORS_ORIGIN`: Origen permitido para CORS (`*`).
+- `GOOGLE_SHEET_ID`: ID del documento de Google Sheets.
+- `GOOGLE_SHEET_NAME`: Nombre de la pestaña de respuestas (`Respuestas`).
+- `GOOGLE_APPS_SCRIPT_URL`: URL del Webhook de Apps Script.
+- `GOOGLE_SERVICE_ACCOUNT_EMAIL`: Email de la cuenta de servicio de Google.
+- `GOOGLE_PRIVATE_KEY`: Clave privada RSA de la cuenta de servicio.
 
 ---
 
-## 🐛 Solución de Problemas
+## 🎨 Aspectos Visuales Destacados
 
-### Error: "npm not found"
-
-Instala Node.js desde [nodejs.org](https://nodejs.org/)
-
-### Error: "port 5173 already in use"
-
-```bash
-# Usa otro puerto
-npm run dev -- --port 3000
-```
-
-### Animaciones no funcionan
-
-- Verifica que GSAP esté instalado: `npm list gsap`
-- Abre consola del navegador (F12) para ver errores
-
-### Estilos no se aplican
-
-```bash
-# Reinicia el servidor de desarrollo
-# Ctrl+C y luego npm run dev
-```
-
----
-
-## 📄 Licencia
-
-Proyecto personal - Uso privado
-
----
-
-## 👨‍💻 Autor
-
-Gabriel Tonelli - [GitHub](https://github.com/gabrieltonelli)
+- **Pantalla de Entrada:** Portada de lujo con precarga multimedia y botón dinámico `INGRESAR` con contraste adaptativo.
+- **Hero:** Video en bucle con filtro CSS en escala de grises y alto contraste (`grayscale(100%) contrast(150%)`).
+- **Countdown:** Título principal de gran tamaño con contador reescalado (-30%).
+- **Una Noche Inolvidable:** Sección sin márgenes ni bordes con video en bucle boomerang (avance y retroceso continuo).
+- **Tarjetas Informativas:** Cuándo, Dónde, Regalos y Dress Code sin bordes innecesarios y con modal bancario.
+- **Formulario RSVP:** Campos condicionales (si no asiste, oculta menú y música), campo de observaciones y confirmación visual.
+- **Footer:** Sección "TE ESPERO" con fondo blanco puro y última banda de créditos con **icono de WhatsApp blanco**.

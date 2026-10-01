@@ -1,9 +1,22 @@
 [build]
-  command = "npm run build"
-  publish = "dist"
+  command = "cd client && npm install && npm run build && cd ../server && npm install"
+  publish = "client/dist"
+  functions = "server/functions"
 
 [build.environment]
-  NODE_VERSION = "18"
+  NODE_VERSION = "20"
+
+# Redirigir llamadas al endpoint API backend hacia la función serverless de Netlify
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api/:splat"
+  status = 200
+
+# Redirigir todas las demás rutas al SPA index.html
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
 
 [[headers]]
   for = "/*"
@@ -17,14 +30,3 @@
   for = "/assets/*"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
-
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
-
-[[forms]]
-  name = "rsvp"
-  
-[[forms]]
-  name = "music-suggestions"
