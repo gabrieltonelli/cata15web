@@ -23,22 +23,6 @@ const WelcomeHero = ({ onEnter }) => {
       img.src = eventConfig.discoBallsImage
     }
 
-    // Precalentamiento sutil de videos y audio mediante elementos ocultos (streaming nativo del browser)
-    const warmupMedia = (url, isVideo = true) => {
-      if (!url) return
-      try {
-        const el = document.createElement(isVideo ? 'video' : 'audio')
-        el.preload = 'metadata'
-        el.src = url
-      } catch (e) {
-        // Silencioso
-      }
-    }
-
-    warmupMedia(eventConfig.heroVideo, true)
-    warmupMedia(eventConfig.transitionVideo, true)
-    warmupMedia(eventConfig.audioUrl, false)
-
     // Animación suave, constante y fluida de la barra de progreso (duración total: ~2.2 segundos)
     const startTime = Date.now()
     const targetDuration = 2200 // 2.2 segundos en total

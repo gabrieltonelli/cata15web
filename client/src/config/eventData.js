@@ -74,6 +74,8 @@ export const eventConfig = {
     enabled: import.meta.env.VITE_SCROLL_HINT_ENABLED !== 'false',
     initialDelayMs: Number(import.meta.env.VITE_SCROLL_HINT_INITIAL_DELAY_MS) || 3000,
     repeatDelayMs: Number(import.meta.env.VITE_SCROLL_HINT_REPEAT_DELAY_MS) || 10000,
+    durationMs: Number(import.meta.env.VITE_SCROLL_HINT_DURATION_MS) || 2800,
+    dismissThresholdPx: Number(import.meta.env.VITE_SCROLL_HINT_DISMISS_THRESHOLD_PX) || 120,
     peekDistance: Number(import.meta.env.VITE_SCROLL_HINT_PEEK_DISTANCE) || 140,
     mobileOnly: import.meta.env.VITE_SCROLL_HINT_MOBILE_ONLY !== 'false',
   },

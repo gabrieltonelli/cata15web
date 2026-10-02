@@ -138,7 +138,7 @@ const BoomerangVideo = ({
       muted
       loop={!boomerang}
       playsInline
-      preload="auto"
+      preload="metadata"
       className={className}
       style={style}
     />

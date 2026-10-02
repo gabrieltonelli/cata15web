@@ -26,9 +26,14 @@ const ScrollHint = ({ hasEntered = false }) => {
     enabled: true,
     initialDelayMs: 3000,
     repeatDelayMs: 10000,
+    durationMs: 2800,
+    dismissThresholdPx: 120,
     peekDistance: 140,
     mobileOnly: true,
   }
+
+  const dismissThreshold = config.dismissThresholdPx || 120
+  const visibleDuration = Math.max(1500, config.durationMs || 2800)
 
   // Limpiar todos los timeouts de animación y repetición
   const clearAllTimers = useCallback(() => {
@@ -53,8 +58,8 @@ const ScrollHint = ({ hasEntered = false }) => {
     if (!config.enabled) return false
     if (hasUserScrolled.current) return false
     
-    // Si ya scrolleó por debajo del Hero, no ejecutar
-    if (window.scrollY > 40) {
+    // Si ya scrolleó por encima del umbral configurado, no ejecutar
+    if (window.scrollY > dismissThreshold) {
       hasUserScrolled.current = true
       return false
     }
@@ -67,17 +72,17 @@ const ScrollHint = ({ hasEntered = false }) => {
     }
 
     return true
-  }, [config])
+  }, [config, dismissThreshold])
 
   // Ciclo completo de animación de la mano y peek de la pantalla
   const runSwipeAnimationCycle = useCallback(() => {
     if (!checkShouldRun()) return
 
-    // 1. Fade-in de la mano en posición de inicio
+    // 1. Fade-in de la mano en posición de inicio (t = 0)
     setIsVisible(true)
     setIsSwiping(false)
 
-    // 2. A los 450ms: iniciar movimiento de swipe hacia arriba y peek de la pantalla
+    // 2. A los 400ms: iniciar movimiento de swipe hacia arriba y peek de la pantalla
     const t1 = setTimeout(() => {
       if (hasUserScrolled.current) return
       setIsSwiping(true)
@@ -92,9 +97,10 @@ const ScrollHint = ({ hasEntered = false }) => {
       } catch {
         window.scrollTo(0, config.peekDistance)
       }
-    }, 450)
+    }, 400)
 
-    // 3. A los 1350ms: retornar suavemente la pantalla a su posición original
+    // 3. A la mitad de la permanencia: retornar suavemente la pantalla a su posición original
+    const returnTime = Math.max(1000, Math.round(visibleDuration * 0.5))
     const t2 = setTimeout(() => {
       if (hasUserScrolled.current) return
       try {
@@ -105,29 +111,29 @@ const ScrollHint = ({ hasEntered = false }) => {
       } catch {
         window.scrollTo(0, 0)
       }
-    }, 1350)
+    }, returnTime)
 
-    // 4. A los 1950ms: finalizar peek y comenzar fade-out de la mano
+    // 4. Al cumplirse el tiempo de permanencia: finalizar peek y comenzar fade-out de la mano
     const t3 = setTimeout(() => {
       isPeeking.current = false
       if (hasUserScrolled.current) return
       setIsVisible(false)
-    }, 1950)
+    }, visibleDuration)
 
-    // 5. A los 2500ms: resetear estado de swipe y programar repetición en M segundos
+    // 5. Al concluir el desvanecimiento: resetear estado de swipe y programar repetición en M segundos
     const t4 = setTimeout(() => {
       setIsSwiping(false)
       if (hasUserScrolled.current) return
 
       repeatTimer.current = setTimeout(() => {
-        if (!hasUserScrolled.current && window.scrollY <= 40) {
+        if (!hasUserScrolled.current && window.scrollY <= dismissThreshold) {
           runSwipeAnimationCycle()
         }
       }, config.repeatDelayMs)
-    }, 2500)
+    }, visibleDuration + 500)
 
     animTimeouts.current = [t1, t2, t3, t4]
-  }, [checkShouldRun, config.peekDistance, config.repeatDelayMs])
+  }, [checkShouldRun, config.peekDistance, config.repeatDelayMs, visibleDuration, dismissThreshold])
 
   // Listener para detectar EXCLUSIVAMENTE cuando el usuario hace scroll por su cuenta
   useEffect(() => {
@@ -136,7 +142,7 @@ const ScrollHint = ({ hasEntered = false }) => {
 
     // Detección de scroll nativo de la ventana
     const handleScroll = () => {
-      if (!isPeeking.current && window.scrollY > 30) {
+      if (!isPeeking.current && window.scrollY > dismissThreshold) {
         dismissPermanently()
       }
     }
@@ -152,16 +158,16 @@ const ScrollHint = ({ hasEntered = false }) => {
       if (isPeeking.current) return
       if (e.touches && e.touches[0]) {
         const deltaY = Math.abs(e.touches[0].clientY - touchStartY.current)
-        // Si el usuario arrastró más de 20px, es un gesto de scroll genuino
-        if (deltaY > 20) {
+        // Desactivar solo si el arrastre supera el umbral configurado en píxeles
+        if (deltaY > dismissThreshold || window.scrollY > dismissThreshold) {
           dismissPermanently()
         }
       }
     }
 
     // Detección de rueda del mouse (en simulación o desktop)
-    const handleWheel = (e) => {
-      if (!isPeeking.current && Math.abs(e.deltaY) > 8) {
+    const handleWheel = () => {
+      if (!isPeeking.current && window.scrollY > dismissThreshold) {
         dismissPermanently()
       }
     }
@@ -186,14 +192,14 @@ const ScrollHint = ({ hasEntered = false }) => {
       window.removeEventListener('wheel', handleWheel)
       window.removeEventListener('keydown', handleKeyDown)
     }
-  }, [hasEntered, config.enabled, dismissPermanently])
+  }, [hasEntered, config.enabled, dismissThreshold, dismissPermanently])
 
   // Iniciar la primera ayuda tras N segundos de entrar al Hero
   useEffect(() => {
     if (!config.enabled || !hasEntered) return
 
     const initialTimer = setTimeout(() => {
-      if (!hasUserScrolled.current && window.scrollY <= 40) {
+      if (!hasUserScrolled.current && window.scrollY <= dismissThreshold) {
         runSwipeAnimationCycle()
       }
     }, config.initialDelayMs)
@@ -202,7 +208,7 @@ const ScrollHint = ({ hasEntered = false }) => {
       clearTimeout(initialTimer)
       clearAllTimers()
     }
-  }, [hasEntered, config.enabled, config.initialDelayMs, runSwipeAnimationCycle, clearAllTimers])
+  }, [hasEntered, config.enabled, config.initialDelayMs, dismissThreshold, runSwipeAnimationCycle, clearAllTimers])
 
   if (!config.enabled || hasUserScrolled.current) return null
 

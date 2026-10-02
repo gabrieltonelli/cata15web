@@ -163,6 +163,8 @@ Documentadas con comentarios y ejemplos en [client/.env.template](file:///c:/Use
 - `VITE_SCROLL_HINT_ENABLED`: Activar o desactivar ayuda visual animada de scroll (`true` o `false`).
 - `VITE_SCROLL_HINT_INITIAL_DELAY_MS`: Tiempo de espera en milisegundos tras entrar al Hero para mostrar la primera ayuda (por defecto `3000` = 3s).
 - `VITE_SCROLL_HINT_REPEAT_DELAY_MS`: Intervalo en milisegundos para repetir la ayuda si continúa sin scrollear (por defecto `10000` = 10s).
+- `VITE_SCROLL_HINT_DURATION_MS`: Tiempo de permanencia de la ayuda visual en pantalla antes del fade-out (en milisegundos, por defecto `2800` = 2.8s).
+- `VITE_SCROLL_HINT_DISMISS_THRESHOLD_PX`: Umbral mínimo en píxeles de scroll o arrastre vertical para considerar que el usuario scrolleó y desactivar la ayuda (por defecto `120` px, previene cancelaciones accidentales por micro-desplazamientos de 1 o 2 px).
 - `VITE_SCROLL_HINT_PEEK_DISTANCE`: Desplazamiento en píxeles del peek automático hacia abajo y retorno (por defecto `140`).
 - `VITE_SCROLL_HINT_MOBILE_ONLY`: Limitar la visualización exclusivamente a móviles y pantallas táctiles (`true` o `false`).
 
