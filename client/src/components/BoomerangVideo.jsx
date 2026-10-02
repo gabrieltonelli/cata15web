@@ -1,134 +1,76 @@
 import { useRef, useEffect } from 'react'
+import eventConfig from '../config/eventData'
 
 /**
- * Componente BoomerangVideo
- * Reproduce un video en bucle continuo:
- * - Si boomerang = true: Al llegar al final se reproduce en sentido inverso hasta el inicio, y repite indefinidamente.
- * - Si boomerang = false: Utiliza el bucle infinito tradicional (loop nativo de HTML5 hacia adelante).
+ * Componente BoomerangVideo (Reproductor de Video Optimizado para Móviles)
+ * 
+ * Optimizaciones de rendimiento clave:
+ * 1. Reproducción en bucle nativa HTML5 con aceleración por hardware (MediaCodec / AVPlayer).
+ *    Elimina el overhead de JavaScript (sin timeupdate, sin seeking manual hacia atrás).
+ * 2. Auto-pausa inteligente mediante IntersectionObserver:
+ *    Si el video no está visible en el viewport, se pausa automáticamente para liberar la GPU,
+ *    la RAM y el decodificador de video de smartphones de pocos recursos.
+ * 3. Composición en capa de hardware dedicada (GPU layer: translateZ(0), will-change: transform).
+ * 4. Control de filtros CSS pesados mediante VITE_VIDEO_CSS_FILTERS.
  */
 const BoomerangVideo = ({
   src,
   className = '',
-  playbackSpeed = 1,
   style = {},
-  boomerang = true
+  boomerang = false
 }) => {
   const videoRef = useRef(null)
-  const isReversingRef = useRef(false)
-  const isSeekingRef = useRef(false)
-  const seekTimeoutRef = useRef(null)
-  const animFrameRef = useRef(null)
 
   useEffect(() => {
     const video = videoRef.current
-    if (!video) return
+    if (!video || !src) return
 
-    // Si boomerang está desactivado, reproducir en loop estándar nativo
-    if (!boomerang) {
-      video.loop = true
-      isReversingRef.current = false
-      isSeekingRef.current = false
-      if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current)
-      if (seekTimeoutRef.current) clearTimeout(seekTimeoutRef.current)
+    // Si autoPause está desactivado, simplemente reproducir en bucle continuo
+    if (!eventConfig.videoAutoPause) {
       video.play().catch(() => {})
       return
     }
 
-    video.loop = false
-    isReversingRef.current = false
-    isSeekingRef.current = false
-
-    // Función para ejecutar el siguiente paso de retroceso
-    const stepBackward = () => {
-      if (!isReversingRef.current) return
-      if (!video) return
-
-      // Si ya llegamos al inicio, reiniciar marcha adelante
-      if (video.currentTime <= 0.06) {
-        video.currentTime = 0
-        isReversingRef.current = false
-        isSeekingRef.current = false
-        if (seekTimeoutRef.current) clearTimeout(seekTimeoutRef.current)
-        video.play().catch(() => {})
-        return
+    // IntersectionObserver para pausar cuando no está visible en pantalla
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            // El video está visible: reanudar reproducción
+            video.play().catch(() => {})
+          } else {
+            // El video salió de la pantalla: pausar para ahorrar recursos críticos
+            video.pause()
+          }
+        })
+      },
+      {
+        threshold: 0.05,
+        rootMargin: '100px 0px 100px 0px', // Precargar 100px antes de entrar
       }
+    )
 
-      // Evitar acumular seeks simultáneos
-      if (isSeekingRef.current) return
-      isSeekingRef.current = true
-
-      // Paso de retroceso (aprox 30-40ms por cuadro según velocidad)
-      const step = 0.045 * playbackSpeed
-      const targetTime = Math.max(0, video.currentTime - step)
-
-      try {
-        video.currentTime = targetTime
-      } catch (e) {
-        isSeekingRef.current = false
-      }
-
-      // Timeout de seguridad en caso de que el navegador demore el evento seeked
-      if (seekTimeoutRef.current) clearTimeout(seekTimeoutRef.current)
-      seekTimeoutRef.current = setTimeout(() => {
-        if (isReversingRef.current && isSeekingRef.current) {
-          isSeekingRef.current = false
-          stepBackward()
-        }
-      }, 70)
-    }
-
-    // Iniciar el ciclo de reversa
-    const startRewind = () => {
-      if (isReversingRef.current) return
-      isReversingRef.current = true
-      video.pause()
-      isSeekingRef.current = false
-      stepBackward()
-    }
-
-    // Al completarse el seek de un cuadro, el navegador ya lo pintó en pantalla.
-    // Programamos el siguiente cuadro hacia atrás en el próximo ciclo de render.
-    const handleSeeked = () => {
-      if (!isReversingRef.current) return
-      isSeekingRef.current = false
-      if (seekTimeoutRef.current) clearTimeout(seekTimeoutRef.current)
-
-      animFrameRef.current = requestAnimationFrame(() => {
-        stepBackward()
-      })
-    }
-
-    // Monitorear cuando se acerca al final del video
-    const handleTimeUpdate = () => {
-      if (isReversingRef.current) return
-      if (video.duration && video.currentTime >= video.duration - 0.12) {
-        startRewind()
-      }
-    }
-
-    const handleEnded = () => {
-      startRewind()
-    }
-
-    video.addEventListener('timeupdate', handleTimeUpdate)
-    video.addEventListener('ended', handleEnded)
-    video.addEventListener('seeked', handleSeeked)
-
-    // Iniciar reproducción hacia adelante
-    video.play().catch(() => {})
+    observer.observe(video)
 
     return () => {
-      video.removeEventListener('timeupdate', handleTimeUpdate)
-      video.removeEventListener('ended', handleEnded)
-      video.removeEventListener('seeked', handleSeeked)
-      if (animFrameRef.current) {
-        cancelAnimationFrame(animFrameRef.current)
-      }
-      if (seekTimeoutRef.current) {
-        clearTimeout(seekTimeoutRef.current)
-      }
+      observer.disconnect()
     }
-  }, [src, playbackSpeed, boomerang])
+  }, [src])
+
+  // Estilos de aceleración por hardware dedicados
+  const hardwareAcceleratedStyle = {
+    transform: 'translateZ(0)',
+    WebkitTransform: 'translateZ(0)',
+    willChange: 'transform',
+    backfaceVisibility: 'hidden',
+    WebkitBackfaceVisibility: 'hidden',
+    ...style,
+  }
+
+  // Si los filtros CSS están desactivados para ahorrar GPU, limpiar el filter
+  if (eventConfig.videoCssFilters === false && hardwareAcceleratedStyle.filter) {
+    delete hardwareAcceleratedStyle.filter
+  }
 
   return (
     <video
@@ -136,11 +78,11 @@ const BoomerangVideo = ({
       src={src}
       autoPlay
       muted
-      loop={!boomerang}
+      loop
       playsInline
       preload="metadata"
       className={className}
-      style={style}
+      style={hardwareAcceleratedStyle}
     />
   )
 }

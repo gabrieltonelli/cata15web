@@ -12,11 +12,15 @@ export const eventConfig = {
 
   // Video de fondo para el Hero
   heroVideo: import.meta.env.VITE_HERO_VIDEO || '/assets/video/hero-bg2.mp4',
-  heroVideoBoomerang: import.meta.env.VITE_HERO_VIDEO_BOOMERANG !== 'false', // Activar/desactivar boomerang en el Hero (true/false)
+  heroVideoBoomerang: import.meta.env.VITE_HERO_VIDEO_BOOMERANG === 'true', // Desactivado por defecto para rendimiento
 
-  // Video de transición para la sección Una Noche Inolvidable (efecto boomerang)
+  // Video de transición para la sección Una Noche Inolvidable
   transitionVideo: import.meta.env.VITE_TRANSITION_VIDEO || '/assets/video/video2.mp4',
-  transitionVideoBoomerang: import.meta.env.VITE_TRANSITION_VIDEO_BOOMERANG !== 'false', // Activar/desactivar boomerang en transición
+  transitionVideoBoomerang: import.meta.env.VITE_TRANSITION_VIDEO_BOOMERANG === 'true', // Desactivado por defecto
+
+  // Optimizaciones de rendimiento para video en móviles de bajos recursos
+  videoAutoPause: import.meta.env.VITE_VIDEO_AUTO_PAUSE !== 'false', // Pausa el video si sale del viewport
+  videoCssFilters: import.meta.env.VITE_VIDEO_CSS_FILTERS !== 'false', // Activar/desactivar filtros CSS pesados (grayscale/contrast)
 
   // Imagen de bolas espejadas para transiciones
   discoBallsImage: import.meta.env.VITE_DISCO_BALLS_IMAGE || '/assets/photos/a2c632e4-3d7f-434f-831a-6cfb07fc3aef.jpg',

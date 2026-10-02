@@ -149,9 +149,11 @@ El archivo [netlify.toml](file:///c:/Users/gabrielt/Documents/Proyectos/PROPIOS/
 Documentadas con comentarios y ejemplos en [client/.env.template](file:///c:/Users/gabrielt/Documents/Proyectos/PROPIOS/cata15web/client/.env.template):
 - `VITE_EVENT_MAIN_TITLE`: Título principal (`MIS XV CATALINA`).
 - `VITE_HERO_VIDEO`: Ruta del video de fondo del Hero (`/assets/video/hero-bg2.mp4`).
-- `VITE_HERO_VIDEO_BOOMERANG`: Activar o desactivar efecto boomerang en el Hero (`true` o `false`).
+- `VITE_HERO_VIDEO_BOOMERANG`: Activar o desactivar efecto boomerang en el Hero (`true` o `false`, recomendado `false` para móviles).
 - `VITE_TRANSITION_VIDEO`: Ruta del video de la sección Una Noche Inolvidable.
-- `VITE_TRANSITION_VIDEO_BOOMERANG`: Activar o desactivar efecto boomerang en transición (`true` o `false`).
+- `VITE_TRANSITION_VIDEO_BOOMERANG`: Activar o desactivar efecto boomerang en transición (`true` o `false`, recomendado `false`).
+- `VITE_VIDEO_AUTO_PAUSE`: Pausa automática con `IntersectionObserver` cuando el video sale de pantalla para liberar GPU/RAM (`true` o `false`, default: `true`).
+- `VITE_VIDEO_CSS_FILTERS`: Habilitar o desactivar filtros CSS en tiempo real (grayscale/contrast) para teléfonos de baja gama (`true` o `false`, default: `true`).
 - `VITE_EVENT_TARGET_DATE`: Fecha y hora para la cuenta regresiva.
 - `VITE_RSVP_ENDPOINT`: Endpoint hacia la API (por defecto `/api/rsvp`).
 - `VITE_WHATSAPP_PHONE`: Teléfono de contacto de WhatsApp.
@@ -182,9 +184,12 @@ Documentadas con comentarios y ejemplos en [server/.env.template](file:///c:/Use
 
 ## 🎨 Aspectos Visuales y Experiencia de Usuario
 
-- **Hero con Video Boomerang:**
-  - El video de fondo [client/src/components/FixedBackground.jsx](file:///c:/Users/gabrielt/Documents/Proyectos/PROPIOS/cata15web/client/src/components/FixedBackground.jsx) utiliza `BoomerangVideo` con reproducción reversible continua (al llegar al final se rebobina suavemente hacia el inicio de forma fluida).
-  - Puede activarse/desactivarse vía variable de entorno `VITE_HERO_VIDEO_BOOMERANG="true"`/`"false"` o desde el código en [client/src/config/eventData.js](file:///c:/Users/gabrielt/Documents/Proyectos/PROPIOS/cata15web/client/src/config/eventData.js).
+- **Video de Fondo y Transición de Alto Rendimiento (Optimizado para Móviles):**
+  - **Loop Nativo HTML5:** Reproducción directa acelerada por hardware de los codecs nativos del dispositivo (`MediaCodec` en Android / `AVPlayer` en iOS), prescindiendo del reverso por software (efecto boomerang) para eliminar el consumo innecesario de CPU y saltos de fotogramas.
+  - **Eliminación de Videos Duplicados Ocultos:** Se optimizó [client/src/components/FixedBackground.jsx](file:///c:/Users/gabrielt/Documents/Proyectos/PROPIOS/cata15web/client/src/components/FixedBackground.jsx) para ser un fondo base liviano con gradiente y textura, eliminando la segunda instancia redundante de video que corría por debajo del Hero.
+  - **Auto-Pausa con IntersectionObserver:** [client/src/components/BoomerangVideo.jsx](file:///c:/Users/gabrielt/Documents/Proyectos/PROPIOS/cata15web/client/src/components/BoomerangVideo.jsx) pausa automáticamente el video tan pronto sale del viewport y lo reanuda al entrar, garantizando que el smartphone decodifique **un único video a la vez**.
+  - **Composición en GPU (Hardware Layer):** Directivas CSS (`translateZ(0)`, `will-change: transform`) que aislan el video en su propia capa de renderizado, evitando repintados continuos del resto de la página.
+  - **Control de Filtros CSS:** Parametrizables vía `VITE_VIDEO_CSS_FILTERS="true"`/`"false"` para dispositivos con GPUs muy limitadas.
 - **Efecto de Entrada Progresivo (Scroll Reveal):**
   - Implementación con `IntersectionObserver` de alto rendimiento (`threshold: 0.12`, `rootMargin: '0px 0px -40px 0px'`).
   - Transición fluida con curva de desaceleración editorial de lujo `cubic-bezier(0.16, 1, 0.3, 1)`.
