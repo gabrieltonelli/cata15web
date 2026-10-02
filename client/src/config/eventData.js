@@ -68,6 +68,15 @@ export const eventConfig = {
   creatorCredit: import.meta.env.VITE_CREATOR_CREDIT || 'Creado con amor by AncleGaby',
   whatsappPhone: import.meta.env.VITE_WHATSAPP_PHONE || '5492352440495',
   whatsappMessage: import.meta.env.VITE_WHATSAPP_MESSAGE || 'Hola, me interesaría crear una página de invitación a mi evento',
+
+  // Ayuda visual de scroll (Mobile Swipe Down-Up Hint)
+  scrollHint: {
+    enabled: import.meta.env.VITE_SCROLL_HINT_ENABLED !== 'false',
+    initialDelayMs: Number(import.meta.env.VITE_SCROLL_HINT_INITIAL_DELAY_MS) || 3000,
+    repeatDelayMs: Number(import.meta.env.VITE_SCROLL_HINT_REPEAT_DELAY_MS) || 10000,
+    peekDistance: Number(import.meta.env.VITE_SCROLL_HINT_PEEK_DISTANCE) || 140,
+    mobileOnly: import.meta.env.VITE_SCROLL_HINT_MOBILE_ONLY !== 'false',
+  },
 }
 
 export default eventConfig

@@ -156,10 +156,15 @@ Documentadas con comentarios y ejemplos en [client/.env.template](file:///c:/Use
 - `VITE_RSVP_ENDPOINT`: Endpoint hacia la API (por defecto `/api/rsvp`).
 - `VITE_WHATSAPP_PHONE`: Teléfono de contacto de WhatsApp.
 - `VITE_WHATSAPP_MESSAGE`: Mensaje preconfigurado al contactar.
-- VITE_SITE_URL: URL base pública del sitio desplegado (https://cata15.netlify.app).
-- VITE_OG_IMAGE: Ruta de la imagen para vista previa Open Graph / WhatsApp (/assets/photos/og-preview.jpg).
-- VITE_OG_TITLE: Título para la tarjeta de previsualización (CATALINA • MIS XV).
-- VITE_OG_DESCRIPTION: Descripción para la tarjeta de previsualización de WhatsApp y redes.
+- `VITE_SITE_URL`: URL base pública del sitio desplegado (`https://cata15.netlify.app`).
+- `VITE_OG_IMAGE`: Ruta de la imagen para vista previa Open Graph / WhatsApp (`/assets/photos/og-preview.jpg`).
+- `VITE_OG_TITLE`: Título para la tarjeta de previsualización (`CATALINA • MIS XV`).
+- `VITE_OG_DESCRIPTION`: Descripción para la tarjeta de previsualización de WhatsApp y redes.
+- `VITE_SCROLL_HINT_ENABLED`: Activar o desactivar ayuda visual animada de scroll (`true` o `false`).
+- `VITE_SCROLL_HINT_INITIAL_DELAY_MS`: Tiempo de espera en milisegundos tras entrar al Hero para mostrar la primera ayuda (por defecto `3000` = 3s).
+- `VITE_SCROLL_HINT_REPEAT_DELAY_MS`: Intervalo en milisegundos para repetir la ayuda si continúa sin scrollear (por defecto `10000` = 10s).
+- `VITE_SCROLL_HINT_PEEK_DISTANCE`: Desplazamiento en píxeles del peek automático hacia abajo y retorno (por defecto `140`).
+- `VITE_SCROLL_HINT_MOBILE_ONLY`: Limitar la visualización exclusivamente a móviles y pantallas táctiles (`true` o `false`).
 
 ### Backend (`server/.env`)
 Documentadas con comentarios y ejemplos en [server/.env.template](file:///c:/Users/gabrielt/Documents/Proyectos/PROPIOS/cata15web/server/.env.template):
@@ -196,7 +201,13 @@ Documentadas con comentarios y ejemplos en [server/.env.template](file:///c:/Use
 - **Countdown:** Título principal de gran tamaño con contador reescalado (-30%).
 - **Una Noche Inolvidable:** Sección sin márgenes ni bordes con video en bucle boomerang reversible (controlable vía `VITE_TRANSITION_VIDEO_BOOMERANG`).
 - **Tarjetas Informativas:** Cuándo, Dónde, Regalos y Dress Code sin bordes innecesarios y con modal bancario.
-- **Formulario RSVP:** Campos condicionales (si no asiste, oculta menú y música), campo de observaciones y confirmación visual.
+- **Ayuda Visual de Scroll para Mobile (Swipe Down-Up Hint):**
+  - Desarrollada en [client/src/components/ScrollHint.jsx](file:///c:/Users/gabrielt/Documents/Proyectos/PROPIOS/cata15web/client/src/components/ScrollHint.jsx). Diseñada para guiar intuitivamente a los usuarios en dispositivos móviles y pantallas táctiles que permanecen en el Hero sin percatarse de que deben deslizar hacia arriba.
+  - **Mano Esquemática (Síntesis de Línea):** Iconografía vectorial SVG minimalista con trazo fino (`strokeWidth={1.75}`), pulso de contacto en la yema del dedo índice y estela vertical que simula el movimiento natural de arrastre táctil *down-to-up*.
+  - **Peek Scroll Sincronizado:** Durante el gesto de la mano, la pantalla realiza un suave asomo hacia abajo (por defecto 140px) y retorna a la posición superior.
+  - **Temporizador Inteligente y No Invasivo:** Aparece tras N segundos (por defecto 3s) de ingresar al sitio. Si a los M segundos (por defecto 10s) el usuario continúa sin scrollear, la ayuda reaparece en loop.
+  - **Desactivación Inmediata:** En cuanto se detecta cualquier interacción nativa del usuario (scroll manual, toque táctil, rueda del ratón o teclado), la ayuda se desvanece de inmediato y se desactiva permanentemente para no interrumpir la navegación.
+  - **Parametrización Completa:** Tiempos, distancias, activación y filtro móvil configurables mediante variables de entorno `VITE_SCROLL_HINT_*`.
 - **Footer:** Sección "TE ESPERO" con fondo blanco puro y última banda de créditos con **icono de WhatsApp blanco**.
 
 ---

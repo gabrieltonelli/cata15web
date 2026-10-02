@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useState, useRef } from 'react'
 
 // Componentes refactorizados según la guía de diseño
 import FixedBackground from './components/FixedBackground'
@@ -8,11 +8,14 @@ import InfoCards from './components/InfoCards'
 import RSVP from './components/RSVP'
 import Footer from './components/Footer'
 import AudioPlayer from './components/AudioPlayer'
+import ScrollHint from './components/ScrollHint'
 
 function App() {
   const audioPlayerRef = useRef(null)
+  const [hasEntered, setHasEntered] = useState(false)
 
   const handleEnterEvent = () => {
+    setHasEntered(true)
     // Al interactuar con el botón INGRESAR, activamos el audio ambiental
     if (audioPlayerRef.current) {
       audioPlayerRef.current.startAudio()
@@ -44,6 +47,9 @@ function App() {
 
       {/* Reproductor de Audio Flotante y Discreto */}
       <AudioPlayer ref={audioPlayerRef} />
+
+      {/* Ayuda visual animada para scroll en mobile */}
+      <ScrollHint hasEntered={hasEntered} />
     </div>
   )
 }
