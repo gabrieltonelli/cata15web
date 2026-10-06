@@ -38,6 +38,8 @@ export const eventConfig = {
   locationTitle: '¿DÓNDE?',
   venueName: import.meta.env.VITE_VENUE_NAME || 'Salón de Eventos',
   address: import.meta.env.VITE_VENUE_ADDRESS || 'Quintana 30, Chacabuco, Buenos Aires',
+  venueLatitude: import.meta.env.VITE_VENUE_LATITUDE || '-34.63593752114469',
+  venueLongitude: import.meta.env.VITE_VENUE_LONGITUDE || '-60.52186821548052',
   mapsUrl: import.meta.env.VITE_MAPS_URL || 'https://www.google.com/maps/search/?api=1&query=Quintana+30,+Chacabuco,+Buenos+Aires',
   mapsEmbedUrl: import.meta.env.VITE_MAPS_EMBED_URL || 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3301.5!2d-60.451379309634284!3d-34.63026033819848!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2sQuintana+30%2C+Chacabuco!5e0!3m2!1ses!2sar!4v1700000000000',
 

@@ -155,6 +155,7 @@ Documentadas con comentarios y ejemplos en [client/.env.template](file:///c:/Use
 - `VITE_VIDEO_AUTO_PAUSE`: Pausa automática con `IntersectionObserver` cuando el video sale de pantalla para liberar GPU/RAM (`true` o `false`, default: `true`).
 - `VITE_VIDEO_CSS_FILTERS`: Habilitar o desactivar filtros CSS en tiempo real (grayscale/contrast) para teléfonos de baja gama (`true` o `false`, default: `true`).
 - `VITE_EVENT_TARGET_DATE`: Fecha y hora para la cuenta regresiva.
+- `VITE_VENUE_LATITUDE` y `VITE_VENUE_LONGITUDE`: Coordenadas mostradas en la sección “Dónde”.
 - `VITE_RSVP_ENDPOINT`: Endpoint hacia la API (por defecto `/api/rsvp`).
 - `VITE_WHATSAPP_PHONE`: Teléfono de contacto de WhatsApp.
 - `VITE_WHATSAPP_MESSAGE`: Mensaje preconfigurado al contactar.

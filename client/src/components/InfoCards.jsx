@@ -127,6 +127,9 @@ const InfoCards = () => {
             <p className="font-sans text-sm sm:text-base tracking-wider text-dark-700">
               {eventConfig.address}
             </p>
+            <p className="font-sans text-xs tracking-wider text-dark-600">
+              Latitud: {eventConfig.venueLatitude}, Longitud: {eventConfig.venueLongitude}
+            </p>
           </div>
 
           <div className="pt-2">
