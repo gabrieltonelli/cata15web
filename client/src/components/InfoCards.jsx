@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import eventConfig from '../config/eventData'
 import GiftModal from './GiftModal'
 import BoomerangVideo from './BoomerangVideo'
@@ -24,9 +24,37 @@ import {
  */
 const InfoCards = () => {
   const [isGiftModalOpen, setIsGiftModalOpen] = useState(false)
+  const [copyToast, setCopyToast] = useState('')
+  const copyToastTimeout = useRef(null)
+  const venueLatitude = eventConfig.venueLatitude.trim()
+  const venueLongitude = eventConfig.venueLongitude.trim()
+  const hasVenueCoordinates = venueLatitude !== '' && venueLongitude !== ''
+  const venueCoordinates = `${venueLatitude}, ${venueLongitude}`
+
+  useEffect(() => () => window.clearTimeout(copyToastTimeout.current), [])
+
+  const handleCopyCoordinates = async () => {
+    try {
+      await navigator.clipboard.writeText(venueCoordinates)
+      setCopyToast('Copiado al portapapeles')
+    } catch {
+      setCopyToast('No se pudieron copiar las coordenadas')
+    }
+
+    window.clearTimeout(copyToastTimeout.current)
+    copyToastTimeout.current = window.setTimeout(() => setCopyToast(''), 2500)
+  }
 
   return (
     <div className="relative z-10 w-full flex flex-col">
+      {copyToast && (
+        <div
+          role={copyToast === 'Copiado al portapapeles' ? 'status' : 'alert'}
+          className="fixed bottom-6 left-1/2 z-[60] -translate-x-1/2 border border-dark-900 bg-dark-950 px-5 py-3 font-sans text-xs tracking-wider text-white shadow-xl"
+        >
+          {copyToast}
+        </div>
+      )}
       {/* ========================================================= */}
       {/* TARJETA A: FECHA Y HORA (¿CUÁNDO?) */}
       {/* ========================================================= */}
@@ -127,9 +155,23 @@ const InfoCards = () => {
             <p className="font-sans text-sm sm:text-base tracking-wider text-dark-700">
               {eventConfig.address}
             </p>
-            <p className="font-sans text-xs tracking-wider text-dark-600">
-              Latitud: {eventConfig.venueLatitude}, Longitud: {eventConfig.venueLongitude}
-            </p>
+            {hasVenueCoordinates && (
+              <>
+                <p className="font-sans text-sm tracking-wider text-dark-700">
+                  Latitud y Longitud
+                </p>
+                <p className="font-mono text-sm sm:text-base tracking-wider text-dark-600">
+                  {venueCoordinates}
+                </p>
+                <button
+                  type="button"
+                  onClick={handleCopyCoordinates}
+                  className="inline-flex items-center justify-center px-4 py-2 border border-dark-900 text-dark-950 font-sans text-xs tracking-luxury uppercase font-semibold transition-all duration-300 hover:bg-dark-950 hover:text-white cursor-pointer"
+                >
+                  Copiar
+                </button>
+              </>
+            )}
           </div>
 
           <div className="pt-2">
