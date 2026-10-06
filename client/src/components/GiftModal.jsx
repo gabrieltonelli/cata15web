@@ -43,7 +43,7 @@ const GiftModal = ({ isOpen, onClose }) => {
             TRANSFERENCIA
           </h3>
           <p className="font-sans text-xs text-white/70 pt-1 leading-relaxed">
-            Agradecemos de corazón tu gesto y cariño.
+            Agradezco de corazón tu gesto y cariño.
           </p>
         </div>
 
@@ -64,7 +64,7 @@ const GiftModal = ({ isOpen, onClose }) => {
           {/* CBU */}
           <div className="p-3 bg-white/5 border border-white/10 flex items-center justify-between gap-2">
             <div className="min-w-0 flex-1">
-              <span className="block text-[10px] tracking-luxury text-white/50 uppercase">CBU</span>
+              <span className="block text-[10px] tracking-luxury text-white/50 uppercase">CBU / CVU</span>
               <span className="font-mono text-xs sm:text-sm text-white truncate block">{bankDetails.cbu}</span>
             </div>
             <button
