@@ -6,10 +6,10 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
 
   // Valores con fallback seguro para metadatos Open Graph / WhatsApp
-  const siteUrl = (process.env.VITE_SITE_URL || env.VITE_SITE_URL || 'https://cata15.netlify.app').replace(/\/+$/, '')
+  const siteUrl = (process.env.VITE_SITE_URL || env.VITE_SITE_URL || '').replace(/\/+$/, '')
   const ogImage = process.env.VITE_OG_IMAGE || env.VITE_OG_IMAGE || '/assets/photos/og-preview.jpg'
   const ogTitle = process.env.VITE_OG_TITLE || env.VITE_OG_TITLE || 'CATALINA • MIS XV'
-  const ogDesc = process.env.VITE_OG_DESCRIPTION || env.VITE_OG_DESCRIPTION || 'Invitación formal al festejo de 15 años de Catalina. Sábado 28 de Noviembre de 2026 • 20:30 hs. Salón Quintana, Chacabuco.'
+  const ogDesc = process.env.VITE_OG_DESCRIPTION || env.VITE_OG_DESCRIPTION || 'Invitación Digital Especial. Sábado 28 de Noviembre de 2026 • 20:30 hs. Ruta 7 Km 214,5 • Chacabuco • Buenos Aires'
   const eventMainTitle = process.env.VITE_EVENT_MAIN_TITLE || env.VITE_EVENT_MAIN_TITLE || 'MIS XV CATALINA'
 
   return {
