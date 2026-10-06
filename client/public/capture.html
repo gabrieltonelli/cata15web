@@ -452,7 +452,7 @@
             <span class="tag">LÍNEA 1: ENCABEZADO SUPERIOR</span>
             <span id="sizeHeaderBadge" class="value-badge">11 px</span>
           </div>
-          <input type="text" id="txtHeader" value="BIENVENIDOS" oninput="updateRender()" />
+          <input type="text" id="txtHeader" value="INVITACIÓN DIGITAL ESPECIAL" oninput="updateRender()" />
           <div class="size-slider-row">
             <span>Tamaño:</span>
             <input type="range" id="sizeHeader" min="8" max="24" step="1" value="11" oninput="updateRender()" />
@@ -504,16 +504,29 @@
           </div>
         </div>
 
-        <!-- Línea 4 / 5: Lugar / Salón -->
+        <!-- Línea 4: Lugar / Dirección -->
         <div class="text-control-card">
           <div class="text-control-header">
-            <span class="tag">LÍNEA 4/5: LUGAR / DIRECCIÓN</span>
+            <span class="tag">LÍNEA 4: LUGAR / DIRECCIÓN</span>
             <span id="sizeVenueBadge" class="value-badge">13 px</span>
           </div>
-          <input type="text" id="txtVenue" value="QUINTANA 30, CHACABUCO, BUENOS AIRES" oninput="updateRender()" />
+          <input type="text" id="txtVenue" value="CASAQUINTA RURA 7 KM 214,5" oninput="updateRender()" />
           <div class="size-slider-row">
             <span>Tamaño:</span>
             <input type="range" id="sizeVenue" min="8" max="24" step="0.5" value="13" oninput="updateRender()" />
+          </div>
+        </div>
+
+        <!-- Línea 5: Texto opcional -->
+        <div class="text-control-card">
+          <div class="text-control-header">
+            <span class="tag">LÍNEA 5: TEXTO OPCIONAL</span>
+            <span id="sizeVenue2Badge" class="value-badge">13 px</span>
+          </div>
+          <input type="text" id="txtVenue2" value="CHACABUCO • BUENOS AIRES" placeholder="Dejá vacío para no mostrar" oninput="updateRender()" />
+          <div class="size-slider-row">
+            <span>Tamaño:</span>
+            <input type="range" id="sizeVenue2" min="8" max="24" step="0.5" value="13" oninput="updateRender()" />
           </div>
         </div>
 
@@ -590,12 +603,14 @@
     const txtTitle = document.getElementById('txtTitle');
     const txtDateTime = document.getElementById('txtDateTime');
     const txtVenue = document.getElementById('txtVenue');
+    const txtVenue2 = document.getElementById('txtVenue2');
 
     // Sliders de tamaño tipográfico individual
     const sizeHeader = document.getElementById('sizeHeader');
     const sizeTitle = document.getElementById('sizeTitle');
     const sizeDate = document.getElementById('sizeDate');
     const sizeVenue = document.getElementById('sizeVenue');
+    const sizeVenue2 = document.getElementById('sizeVenue2');
     const verticalOffset = document.getElementById('verticalOffset');
     const showOrnament = document.getElementById('showOrnament');
 
@@ -610,6 +625,7 @@
     const sizeTitleBadge = document.getElementById('sizeTitleBadge');
     const sizeDateBadge = document.getElementById('sizeDateBadge');
     const sizeVenueBadge = document.getElementById('sizeVenueBadge');
+    const sizeVenue2Badge = document.getElementById('sizeVenue2Badge');
     const offsetBadge = document.getElementById('offsetBadge');
 
     let isPlaying = false;
@@ -715,6 +731,7 @@
       sizeTitleBadge.textContent = sizeTitle.value + ' px';
       sizeDateBadge.textContent = sizeDate.value + ' px';
       sizeVenueBadge.textContent = sizeVenue.value + ' px';
+      sizeVenue2Badge.textContent = sizeVenue2.value + ' px';
       marginTitleTopBadge.textContent = marginTitleTop.value + ' px';
       marginTitleBottomBadge.textContent = marginTitleBottom.value + ' px';
       offsetBadge.textContent = (verticalOffset.value > 0 ? '+' : '') + verticalOffset.value + ' px';
@@ -767,6 +784,7 @@
       const sT = parseFloat(sizeTitle.value);
       const sD = parseFloat(sizeDate.value);
       const sV = parseFloat(sizeVenue.value);
+      const sV2 = parseFloat(sizeVenue2.value);
 
       // Márgenes parametrizables para Línea 2
       const mTTop = parseFloat(marginTitleTop.value);
@@ -777,7 +795,11 @@
       const yTitle = yHeader + (sH / 2) + mTTop + (sT / 2);
       const yDate = yTitle + (sT / 2) + mTBottom + (sD / 2);
       const yVenue = yDate + (sD / 2) + 12 + (sV / 2);
-      const yOrnament = yVenue + (sV / 2) + 24;
+      const venue2Str = txtVenue2.value.trim().toUpperCase();
+      const yVenue2 = yVenue + (sV / 2) + 8 + (sV2 / 2);
+      const yOrnament = venue2Str
+        ? yVenue2 + (sV2 / 2) + 24
+        : yVenue + (sV / 2) + 24;
 
       // Helper para medir y dibujar texto con letter-spacing exacto (0.22em) y soporte cross-browser
       function drawSpacedText(text, x, y, letterSpacingEm, fontSize, isCentered = true) {
@@ -908,7 +930,7 @@
         ctx.restore();
       }
 
-      // 5.4 Línea 4 / 5: Dirección / Lugar
+      // 5.4 Línea 4: Dirección / Lugar
       // Estilo exacto .date-time: Montserrat, 500, letter-spacing: 0.22em, uppercase, color: rgba(255, 255, 255, 0.92)
       const venueStr = txtVenue.value.trim().toUpperCase();
       if (venueStr) {
@@ -923,7 +945,20 @@
         ctx.restore();
       }
 
-      // 5.5 Separador Ornamental con estrella ✦
+      // 5.5 Línea 5 opcional
+      if (venue2Str) {
+        ctx.save();
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.92)';
+        ctx.font = `500 ${sV2}px Montserrat, sans-serif`;
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.85)';
+        ctx.shadowBlur = 8;
+        ctx.shadowOffsetY = 2;
+
+        drawSpacedText(venue2Str, 300, yVenue2, 0.22, sV2, true);
+        ctx.restore();
+      }
+
+      // 5.6 Separador Ornamental con estrella ✦
       if (showOrnament.checked) {
         ctx.save();
         ctx.textAlign = 'center';

@@ -233,7 +233,8 @@ El proyecto incluye una herramienta interactiva autónoma en **[client/public/ca
    - **Filtros visuales:** Ajustá contraste, brillo, opacidad del degradado oscuro y activá/desactivá escala de grises.
    - **Textos y tamaños tipográficos individuales:**
      - Modificá el contenido de cada línea en vivo.
-     - Controles deslizantes independientes para calibrar el tamaño exacto en píxeles de: Encabezado (*BIENVENIDOS*), Título principal (*MIS XV CATALINA*), Fecha y hora, y Dirección/Lugar.
+     - Controles deslizantes independientes para calibrar el tamaño exacto en píxeles de: Encabezado (*BIENVENIDOS*), Título principal (*MIS XV CATALINA*), Fecha y hora, Línea 4 (Dirección/Lugar) y Línea 5 (opcional).
+     - La Línea 5 se omite de la imagen cuando su campo queda vacío.
      - **Márgenes independientes para Línea 2 (Título):** Sliders para calibrar margen superior e inferior.
      - Ajuste vertical global (*Offset Y*) para centrar o desplazar el bloque en el lienzo a voluntad.
      - Activar/desactivar el separador ornamental `✦`.
