@@ -11,11 +11,95 @@ import {
 } from './AnimatedSectionIcons'
 
 /**
+ * Bloque individual de información de locación (Locación principal o Plan B).
+ * Mantiene un diseño editorial consistente con tipografía y botones estandarizados.
+ */
+const LocationBlock = ({
+  title,
+  venueName,
+  address,
+  latitude,
+  longitude,
+  mapsUrl,
+  onCopy,
+  isDual = false,
+}) => {
+  const lat = (latitude || '').trim()
+  const lng = (longitude || '').trim()
+  const hasCoordinates = lat !== '' && lng !== ''
+  const coordinates = `${lat}, ${lng}`
+
+  return (
+    <div
+      className={`flex flex-col text-center ${
+        isDual
+          ? 'h-full justify-between p-6 sm:p-8 border border-dark-950/15 bg-dark-50/20 shadow-sm transition-all duration-300 hover:border-dark-950/40'
+          : 'space-y-6'
+      }`}
+    >
+      <div className="space-y-3">
+        <h3 className="font-serif text-2xl sm:text-3xl text-dark-900">
+          {title}
+        </h3>
+
+        {venueName && venueName !== title && (
+          <p className="font-sans text-xs sm:text-sm tracking-ultra-luxury uppercase text-dark-600 font-semibold">
+            {venueName}
+          </p>
+        )}
+
+        {address && (
+          <p className="font-sans text-sm sm:text-base tracking-wider text-dark-700">
+            {address}
+          </p>
+        )}
+
+        {hasCoordinates && (
+          <div className="pt-2 space-y-1">
+            <p className="font-sans text-xs tracking-wider uppercase text-dark-500 font-medium">
+              Latitud y Longitud
+            </p>
+            <p className="font-mono text-xs sm:text-sm tracking-wider text-dark-600">
+              {coordinates}
+            </p>
+            <div className="pt-2">
+              <button
+                type="button"
+                onClick={() => onCopy(coordinates, title)}
+                className="inline-flex items-center justify-center px-4 py-2 border border-dark-900 text-dark-950 font-sans text-xs tracking-luxury uppercase font-semibold transition-all duration-300 hover:bg-dark-950 hover:text-white cursor-pointer"
+              >
+                Copiar
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {mapsUrl && (
+        <div className="pt-6">
+          <a
+            href={mapsUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center px-6 py-3 border border-dark-900 text-dark-950 font-sans text-xs tracking-luxury uppercase font-semibold transition-all duration-300 hover:bg-dark-950 hover:text-white"
+          >
+            <span>CÓMO LLEGAR</span>
+            <svg className="ml-2 w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            </svg>
+          </a>
+        </div>
+      )}
+    </div>
+  )
+}
+
+/**
  * Componente 3: Tarjetas de Información (Info Cards)
  * Orden:
  * 1. Tarjeta A: Fecha y Horario (¿Cuándo?)
  * 2. Transición: Una Noche Inolvidable (Video Boomerang) [Sin márgenes ni bordes]
- * 3. Tarjeta B: Ubicación (¿Dónde?)
+ * 3. Tarjeta B: Ubicación (¿Dónde?) -> Soporta modo individual o modo dual (Plan B)
  * 4. Tarjeta C: Regalos [Sin márgenes ni bordes]
  * 5. Tarjeta D: Dress Code [Sin márgenes ni bordes]
  * 
@@ -26,17 +110,15 @@ const InfoCards = () => {
   const [isGiftModalOpen, setIsGiftModalOpen] = useState(false)
   const [copyToast, setCopyToast] = useState('')
   const copyToastTimeout = useRef(null)
-  const venueLatitude = eventConfig.venueLatitude.trim()
-  const venueLongitude = eventConfig.venueLongitude.trim()
-  const hasVenueCoordinates = venueLatitude !== '' && venueLongitude !== ''
-  const venueCoordinates = `${venueLatitude}, ${venueLongitude}`
+
+  const isDualLocation = Boolean(eventConfig.backupLocation?.enabled)
 
   useEffect(() => () => window.clearTimeout(copyToastTimeout.current), [])
 
-  const handleCopyCoordinates = async () => {
+  const handleCopyCoordinates = async (coordinates, label) => {
     try {
-      await navigator.clipboard.writeText(venueCoordinates)
-      setCopyToast('Copiado al portapapeles')
+      await navigator.clipboard.writeText(coordinates)
+      setCopyToast(label ? `Coordenadas (${label}) copiadas` : 'Copiado al portapapeles')
     } catch {
       setCopyToast('No se pudieron copiar las coordenadas')
     }
@@ -49,7 +131,7 @@ const InfoCards = () => {
     <div className="relative z-10 w-full flex flex-col">
       {copyToast && (
         <div
-          role={copyToast === 'Copiado al portapapeles' ? 'status' : 'alert'}
+          role={copyToast.startsWith('Coordenadas') || copyToast === 'Copiado al portapapeles' ? 'status' : 'alert'}
           className="fixed bottom-6 left-1/2 z-[60] -translate-x-1/2 border border-dark-900 bg-dark-950 px-5 py-3 font-sans text-xs tracking-wider text-white shadow-xl"
         >
           {copyToast}
@@ -133,7 +215,11 @@ const InfoCards = () => {
       {/* TARJETA B: UBICACIÓN (¿DÓNDE?) */}
       {/* ========================================================= */}
       <section className="w-full bg-white text-dark-950 py-16 sm:py-24 px-6 sm:px-12 shadow-md">
-        <ScrollReveal className="max-w-2xl mx-auto text-center space-y-6">
+        <ScrollReveal
+          className={`mx-auto text-center space-y-8 ${
+            isDualLocation ? 'max-w-4xl' : 'max-w-2xl'
+          }`}
+        >
           {/* Icono animado de ubicación */}
           <div className="flex justify-center">
             <LocationSectionIcon />
@@ -148,45 +234,42 @@ const InfoCards = () => {
             </h2>
           </div>
 
-          <div className="space-y-2 py-2">
-            <p className="font-serif text-2xl sm:text-3xl text-dark-900">
-              {eventConfig.venueName}
-            </p>
-            <p className="font-sans text-sm sm:text-base tracking-wider text-dark-700">
-              {eventConfig.address}
-            </p>
-            {hasVenueCoordinates && (
-              <>
-                <p className="font-sans text-sm tracking-wider text-dark-700">
-                  Latitud y Longitud
-                </p>
-                <p className="font-mono text-sm sm:text-base tracking-wider text-dark-600">
-                  {venueCoordinates}
-                </p>
-                <button
-                  type="button"
-                  onClick={handleCopyCoordinates}
-                  className="inline-flex items-center justify-center px-4 py-2 border border-dark-900 text-dark-950 font-sans text-xs tracking-luxury uppercase font-semibold transition-all duration-300 hover:bg-dark-950 hover:text-white cursor-pointer"
-                >
-                  Copiar
-                </button>
-              </>
-            )}
-          </div>
-
-          <div className="pt-2">
-            <a
-              href={eventConfig.mapsUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center px-8 py-3 border border-dark-900 text-dark-950 font-sans text-xs tracking-luxury uppercase font-semibold transition-all duration-300 hover:bg-dark-950 hover:text-white"
-            >
-              <span>CÓMO LLEGAR</span>
-              <svg className="ml-2 w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-              </svg>
-            </a>
-          </div>
+          {isDualLocation ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 items-stretch pt-2">
+              <LocationBlock
+                title={eventConfig.venueLabel || 'Si hay buen clima'}
+                venueName={eventConfig.venueName}
+                address={eventConfig.address}
+                latitude={eventConfig.venueLatitude}
+                longitude={eventConfig.venueLongitude}
+                mapsUrl={eventConfig.mapsUrl}
+                onCopy={handleCopyCoordinates}
+                isDual={true}
+              />
+              <LocationBlock
+                title={eventConfig.backupLocation?.label || 'Plan B'}
+                venueName={eventConfig.backupLocation?.venueName}
+                address={eventConfig.backupLocation?.address}
+                latitude={eventConfig.backupLocation?.venueLatitude}
+                longitude={eventConfig.backupLocation?.venueLongitude}
+                mapsUrl={eventConfig.backupLocation?.mapsUrl}
+                onCopy={handleCopyCoordinates}
+                isDual={true}
+              />
+            </div>
+          ) : (
+            <div className="space-y-2 py-2">
+              <LocationBlock
+                title={eventConfig.venueName}
+                address={eventConfig.address}
+                latitude={eventConfig.venueLatitude}
+                longitude={eventConfig.venueLongitude}
+                mapsUrl={eventConfig.mapsUrl}
+                onCopy={handleCopyCoordinates}
+                isDual={false}
+              />
+            </div>
+          )}
         </ScrollReveal>
       </section>
 

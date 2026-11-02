@@ -155,7 +155,19 @@ Documentadas con comentarios y ejemplos en [client/.env.template](file:///c:/Use
 - `VITE_VIDEO_AUTO_PAUSE`: Pausa automática con `IntersectionObserver` cuando el video sale de pantalla para liberar GPU/RAM (`true` o `false`, default: `true`).
 - `VITE_VIDEO_CSS_FILTERS`: Habilitar o desactivar filtros CSS en tiempo real (grayscale/contrast) para teléfonos de baja gama (`true` o `false`, default: `true`).
 - `VITE_EVENT_TARGET_DATE`: Fecha y hora para la cuenta regresiva.
-- `VITE_VENUE_LATITUDE` y `VITE_VENUE_LONGITUDE`: Coordenadas mostradas en la sección “Dónde”.
+- **Ubicación Principal:**
+  - `VITE_VENUE_LABEL`: Titular de la opción en modo dual (ej. `Si hay buen clima`).
+  - `VITE_VENUE_NAME`: Nombre del predio/quinta o salón (`Casaquinta`).
+  - `VITE_VENUE_ADDRESS`: Domicilio de la locación principal.
+  - `VITE_VENUE_LATITUDE` y `VITE_VENUE_LONGITUDE`: Coordenadas de latitud y longitud.
+  - `VITE_MAPS_URL`: Enlace directo de navegación en Google Maps.
+- **Locación Alternativa / Plan B (en caso de lluvia o mal tiempo):**
+  - `VITE_BACKUP_LOCATION_ENABLED`: Flag booleano (`true` o `false`) para activar la visualización del Plan B en 2 columnas en desktop y apiladas en móvil. Si está en `false`, solo se muestra la locación principal centrada.
+  - `VITE_BACKUP_VENUE_LABEL`: Titular de la alternativa (`Plan B`).
+  - `VITE_BACKUP_VENUE_NAME`: Nombre del salón alternativo (`Salón Quintana`).
+  - `VITE_BACKUP_VENUE_ADDRESS`: Domicilio del Plan B.
+  - `VITE_BACKUP_VENUE_LATITUDE` y `VITE_BACKUP_VENUE_LONGITUDE`: Coordenadas del Plan B.
+  - `VITE_BACKUP_MAPS_URL`: Enlace directo de Google Maps para el Plan B.
 - `VITE_RSVP_ENDPOINT`: Endpoint hacia la API (por defecto `/api/rsvp`).
 - `VITE_WHATSAPP_PHONE`: Teléfono de contacto de WhatsApp.
 - `VITE_WHATSAPP_MESSAGE`: Mensaje preconfigurado al contactar.
@@ -208,7 +220,9 @@ Documentadas con comentarios y ejemplos en [server/.env.template](file:///c:/Use
 - **Hero:** Video en bucle con filtro CSS en escala de grises y alto contraste (`grayscale(100%) contrast(150%)`).
 - **Countdown:** Título principal de gran tamaño con contador reescalado (-30%).
 - **Una Noche Inolvidable:** Sección sin márgenes ni bordes con video en bucle boomerang reversible (controlable vía `VITE_TRANSITION_VIDEO_BOOMERANG`).
-- **Tarjetas Informativas:** Cuándo, Dónde, Regalos y Dress Code sin bordes innecesarios y con modal bancario.
+- **Tarjetas Informativas:**
+  - **¿Dónde? con Soporte para Plan B:** Permite mostrar en simultáneo la locación original al aire libre ("Si hay buen clima") y la sede alternativa techada ("Plan B"). En desktop se organiza en 2 columnas simétricas (`grid-cols-1 md:grid-cols-2`) y en móviles se apila verticalmente. Cada opción cuenta con su propio nombre de salón, domicilio, latitud/longitud con botón de copiado independiente y botón directo "CÓMO LLEGAR" a Google Maps. Todo controlable mediante `VITE_BACKUP_LOCATION_ENABLED`.
+  - **¿Cuándo?, Regalos y Dress Code:** Diseño tipográfico editorial de alto contraste sin bordes pesados innecesarios y con modal bancario para transferencias.
 - **Ayuda Visual de Scroll para Mobile (Swipe Down-Up Hint):**
   - Desarrollada en [client/src/components/ScrollHint.jsx](file:///c:/Users/gabrielt/Documents/Proyectos/PROPIOS/cata15web/client/src/components/ScrollHint.jsx). Diseñada para guiar intuitivamente a los usuarios en dispositivos móviles y pantallas táctiles que permanecen en el Hero sin percatarse de que deben deslizar hacia arriba.
   - **Mano Esquemática (Síntesis de Línea):** Iconografía vectorial SVG minimalista con trazo fino (`strokeWidth={1.75}`), pulso de contacto en la yema del dedo índice y estela vertical que simula el movimiento natural de arrastre táctil *down-to-up*.
@@ -243,4 +257,3 @@ El proyecto incluye una herramienta interactiva autónoma en **[client/public/ca
    - O hacé clic en **📋 Copiar Imagen** para enviarla directamente por el portapapeles.
 4. **Ubicación final:**
    - Guardá la imagen resultante en `client/public/assets/photos/og-preview.jpg` para que quede lista para ser referenciada por las etiquetas Open Graph del sitio.
-
