@@ -16,10 +16,10 @@
   <style>
     :root {
       --bg: #050507;
-      --gold: #d4af37;
-      --gold-light: #fef08a;
-      --gold-glow: rgba(212, 175, 55, 0.4);
-      --border-gold: rgba(212, 175, 55, 0.45);
+      --gold: #ffffff;
+      --gold-light: #ffffff;
+      --gold-glow: rgba(255, 255, 255, 0.4);
+      --border-gold: rgba(255, 255, 255, 0.45);
       --dark-card: rgba(14, 14, 18, 0.92);
       --text-muted: rgba(255, 255, 255, 0.65);
     }
@@ -151,7 +151,7 @@
       box-shadow:
         0 30px 80px rgba(0, 0, 0, 0.9),
         0 0 40px var(--gold-glow),
-        inset 0 0 30px rgba(212, 175, 55, 0.15);
+        inset 0 0 30px rgba(255, 255, 255, 0.12);
       padding: 36px 44px;
       backdrop-filter: blur(16px);
       position: relative;
@@ -232,7 +232,7 @@
 
     @keyframes pulseGold {
       0%, 100% { opacity: 0.85; transform: scale(1); }
-      50% { opacity: 1; transform: scale(1.02); text-shadow: 0 0 35px rgba(212, 175, 55, 0.7); }
+      50% { opacity: 1; transform: scale(1.02); text-shadow: 0 0 35px rgba(255, 255, 255, 0.7); }
     }
 
     /* Cinta de premios que se desplaza */
@@ -335,7 +335,7 @@
       letter-spacing: 0.16em;
       text-transform: uppercase;
       color: var(--gold-light);
-      background: rgba(212, 175, 55, 0.12);
+      background: rgba(255, 255, 255, 0.1);
       border: 1px solid var(--border-gold);
       padding: 8px 24px;
       border-radius: 30px;
@@ -672,7 +672,7 @@
         particleCount: 120,
         spread: 90,
         origin: { y: 0.6 },
-        colors: ['#d4af37', '#ffffff', '#fef08a', '#e2e8f0']
+        colors: ['#ffffff', '#f1f5f9', '#e2e8f0', '#cbd5e1']
       });
 
       setTimeout(() => {
@@ -681,14 +681,14 @@
           angle: 60,
           spread: 70,
           origin: { x: 0 },
-          colors: ['#d4af37', '#ffffff']
+          colors: ['#ffffff', '#e2e8f0']
         });
         confetti({
           particleCount: 80,
           angle: 120,
           spread: 70,
           origin: { x: 1 },
-          colors: ['#d4af37', '#ffffff']
+          colors: ['#ffffff', '#e2e8f0']
         });
       }, 250);
     }

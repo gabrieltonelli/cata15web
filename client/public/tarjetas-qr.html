@@ -565,6 +565,11 @@
         </div>
       </div>
 
+      <div class="form-group">
+        <label>Escala de Grises: <span id="grayscaleBadge" class="badge-val">100%</span></label>
+        <input type="range" id="grayscale" min="0" max="100" value="100">
+      </div>
+
       <!-- SECCIÓN 2: TEXTOS Y POSICIONES -->
       <div class="section-title">
         <span>2. Textos, Alturas (Y) y Tipografía</span>
@@ -857,7 +862,7 @@
 
     // Lista de todos los IDs de controles para reactividad inmediata
     const controlIds = [
-      'overlayDarkness', 'contrast',
+      'overlayDarkness', 'contrast', 'grayscale',
       'txtHeader', 'sizeHeader', 'yHeader',
       'txtTitle', 'sizeTitle', 'yTitle',
       'yDivider1',
@@ -918,6 +923,7 @@
     function updateBadges() {
       document.getElementById('overlayDarknessBadge').textContent = document.getElementById('overlayDarkness').value + '%';
       document.getElementById('contrastBadge').textContent = document.getElementById('contrast').value + '%';
+      document.getElementById('grayscaleBadge').textContent = document.getElementById('grayscale').value + '%';
       document.getElementById('sizeHeaderBadge').textContent = document.getElementById('sizeHeader').value + 'px';
       document.getElementById('yHeaderBadge').textContent = document.getElementById('yHeader').value + 'px';
       document.getElementById('sizeTitleBadge').textContent = document.getElementById('sizeTitle').value + 'px';
@@ -1179,7 +1185,8 @@
       // 1. Dibujar video de fondo
       ctx.save();
       const contrastVal = document.getElementById('contrast').value;
-      ctx.filter = `contrast(${contrastVal}%) grayscale(85%)`;
+      const grayscaleVal = document.getElementById('grayscale').value;
+      ctx.filter = `contrast(${contrastVal}%) grayscale(${grayscaleVal}%)`;
 
       if (video.videoWidth > 0) {
         const vW = video.videoWidth;
@@ -1207,7 +1214,7 @@
       ctx.fillRect(0, 0, W, H);
 
       // 3. Marco orfebre perimetral minimalista
-      ctx.strokeStyle = 'rgba(212, 175, 55, 0.45)';
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.45)';
       ctx.lineWidth = 2;
       ctx.strokeRect(40, 40, W - 80, H - 80);
 
@@ -1232,7 +1239,7 @@
       drawTextAutoFit(ctx, txtHeader, W / 2, yHeader, sizeHeader, MAX_TEXT_WIDTH, {
         family: '"Montserrat", sans-serif',
         weight: '600',
-        color: 'rgba(212, 175, 55, 0.9)'
+        color: 'rgba(255, 255, 255, 0.9)'
       });
 
       // Línea 2: Título Principal
@@ -1271,7 +1278,7 @@
         drawTextAutoFit(ctx, formattedGuest, W / 2, yGuest, sizeGuest, MAX_TEXT_WIDTH, {
           family: '"Cinzel", serif',
           weight: '700',
-          color: '#d4af37'
+          color: '#ffffff'
         });
       }
 
@@ -1327,8 +1334,8 @@
       ctx.fillStyle = '#ffffff';
       ctx.fillRect(qrBoxX, qrBoxY, qrBoxSize, qrBoxSize);
 
-      // Marco dorado exterior
-      ctx.strokeStyle = '#d4af37';
+      // Marco exterior
+      ctx.strokeStyle = '#ffffff';
       ctx.lineWidth = 4;
       ctx.strokeRect(qrBoxX - 8, qrBoxY - 8, qrBoxSize + 16, qrBoxSize + 16);
 
@@ -1347,14 +1354,14 @@
     }
 
     function drawDivider(ctx, x, y, width) {
-      ctx.strokeStyle = 'rgba(212, 175, 55, 0.4)';
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
       ctx.lineWidth = 1;
       ctx.beginPath();
       ctx.moveTo(x - width / 2, y);
       ctx.lineTo(x + width / 2, y);
       ctx.stroke();
 
-      ctx.fillStyle = '#d4af37';
+      ctx.fillStyle = '#ffffff';
       ctx.font = '16px serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
@@ -1362,7 +1369,7 @@
     }
 
     function drawCornerOrnament(ctx, x, y, size) {
-      ctx.strokeStyle = '#d4af37';
+      ctx.strokeStyle = '#ffffff';
       ctx.lineWidth = 2;
       ctx.beginPath();
       const sX = x < 500 ? 1 : -1;
