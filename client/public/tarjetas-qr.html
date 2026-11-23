@@ -714,27 +714,31 @@
       <div class="control-card">
         <div class="control-card-header">Ajustes del Código QR</div>
         <div class="form-group">
+          <label>Texto sobre el QR:</label>
+          <input type="text" id="txtQrTitle" value="Conserva este código para presentar al final de la fiesta">
+        </div>
+        <div class="row-controls">
+          <div class="form-group">
+            <label>Tamaño Texto: <span id="sizeQrTitleBadge" class="badge-val">28px</span></label>
+            <input type="range" id="sizeQrTitle" min="16" max="44" value="28">
+          </div>
+          <div class="form-group">
+            <label>Posición Y (Texto): <span id="yQrTitleBadge" class="badge-val">820px</span></label>
+            <input type="range" id="yQrTitle" min="700" max="950" value="820">
+          </div>
+        </div>
+        <div class="form-group">
           <label>Hash de prueba (Muestra):</label>
           <input type="text" id="txtSampleHash" value="CATA15-VIP2026">
         </div>
         <div class="row-controls">
           <div class="form-group">
-            <label>Tamaño QR: <span id="sizeQrBoxBadge" class="badge-val">480px</span></label>
-            <input type="range" id="sizeQrBox" min="340" max="600" value="480">
+            <label>Tamaño QR: <span id="sizeQrBoxBadge" class="badge-val">620px</span></label>
+            <input type="range" id="sizeQrBox" min="400" max="820" value="620">
           </div>
           <div class="form-group">
-            <label>Posición Y (QR): <span id="yQrBoxBadge" class="badge-val">870px</span></label>
-            <input type="range" id="yQrBox" min="760" max="1100" value="870">
-          </div>
-        </div>
-        <div class="row-controls">
-          <div class="form-group">
-            <label>Posición Y (Título QR): <span id="yQrTitleBadge" class="badge-val">780px</span></label>
-            <input type="range" id="yQrTitle" min="700" max="860" value="780">
-          </div>
-          <div class="form-group">
-            <label>Posición Y (Instrucción): <span id="yQrInstructionBadge" class="badge-val">825px</span></label>
-            <input type="range" id="yQrInstruction" min="740" max="920" value="825">
+            <label>Posición Y (QR): <span id="yQrBoxBadge" class="badge-val">900px</span></label>
+            <input type="range" id="yQrBox" min="760" max="1150" value="900">
           </div>
         </div>
       </div>
@@ -863,7 +867,8 @@
       'txtDateTime', 'sizeDateTime', 'yDateTime',
       'txtVenue', 'sizeVenue', 'yVenue',
       'yDivider2',
-      'txtSampleHash', 'sizeQrBox', 'yQrBox', 'yQrTitle', 'yQrInstruction'
+      'txtQrTitle', 'sizeQrTitle', 'yQrTitle',
+      'txtSampleHash', 'sizeQrBox', 'yQrBox'
     ];
 
     window.addEventListener('DOMContentLoaded', () => {
@@ -927,10 +932,10 @@
       document.getElementById('sizeVenueBadge').textContent = document.getElementById('sizeVenue').value + 'px';
       document.getElementById('yVenueBadge').textContent = document.getElementById('yVenue').value + 'px';
       document.getElementById('yDivider2Badge').textContent = document.getElementById('yDivider2').value + 'px';
+      document.getElementById('sizeQrTitleBadge').textContent = document.getElementById('sizeQrTitle').value + 'px';
+      document.getElementById('yQrTitleBadge').textContent = document.getElementById('yQrTitle').value + 'px';
       document.getElementById('sizeQrBoxBadge').textContent = document.getElementById('sizeQrBox').value + 'px';
       document.getElementById('yQrBoxBadge').textContent = document.getElementById('yQrBox').value + 'px';
-      document.getElementById('yQrTitleBadge').textContent = document.getElementById('yQrTitle').value + 'px';
-      document.getElementById('yQrInstructionBadge').textContent = document.getElementById('yQrInstruction').value + 'px';
     }
 
     // Navegación entre pasos
@@ -1297,18 +1302,13 @@
       // ==========================================
       // MITAD INFERIOR: CÓDIGO QR VISIBLE Y PARAMETRIZABLE
       // ==========================================
+      const txtQrTitle = document.getElementById('txtQrTitle').value;
+      const sizeQrTitle = document.getElementById('sizeQrTitle').value;
       const yQrTitle = parseInt(document.getElementById('yQrTitle').value);
-      drawTextAutoFit(ctx, '✦ CÓDIGO ÚNICO DE SORTEO ✦', W / 2, yQrTitle, 26, MAX_TEXT_WIDTH, {
-        family: '"Cinzel", serif',
-        weight: '700',
-        color: '#ffffff'
-      });
-
-      const yQrInst = parseInt(document.getElementById('yQrInstruction').value);
-      drawTextAutoFit(ctx, 'Mostrá este código desde tu celular para participar del sorteo', W / 2, yQrInst, 21, MAX_TEXT_WIDTH, {
+      drawTextAutoFit(ctx, txtQrTitle, W / 2, yQrTitle, sizeQrTitle, MAX_TEXT_WIDTH, {
         family: '"Montserrat", sans-serif',
-        weight: '300',
-        color: 'rgba(255, 255, 255, 0.75)'
+        weight: '500',
+        color: '#ffffff'
       });
 
       // Determinación del hash (de invitado seleccionado o de muestra en Paso 1)
@@ -1344,27 +1344,6 @@
         ctx.textBaseline = 'middle';
         ctx.fillText(`[ QR: ${qrData} ]`, W / 2, qrBoxY + qrBoxSize / 2);
       }
-
-      // Hash en texto monoespaciado debajo del QR
-      const hashY = qrBoxY + qrBoxSize + 55;
-      drawTextAutoFit(ctx, `HASH: ${qrData}`, W / 2, hashY, 28, MAX_TEXT_WIDTH, {
-        family: '"JetBrains Mono", monospace',
-        weight: '700',
-        color: '#ffffff'
-      });
-
-      // Footer inferior de la tarjeta
-      drawTextAutoFit(ctx, 'TE ESPERO PARA COMPARTIR UNA NOCHE INOLVIDABLE', W / 2, 1740, 20, MAX_TEXT_WIDTH, {
-        family: '"Montserrat", sans-serif',
-        weight: '400',
-        color: 'rgba(255, 255, 255, 0.5)'
-      });
-
-      drawTextAutoFit(ctx, 'CATALINA • 2026', W / 2, 1785, 22, MAX_TEXT_WIDTH, {
-        family: '"Cinzel", serif',
-        weight: '600',
-        color: '#d4af37'
-      });
     }
 
     function drawDivider(ctx, x, y, width) {
