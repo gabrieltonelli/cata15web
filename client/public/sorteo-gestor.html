@@ -447,6 +447,9 @@
 
       <div class="scanner-container">
         <div id="qrReader"></div>
+        <div id="scannerOverlayNotice" style="display: none; padding: 20px; text-align: center; color: var(--text-muted); font-size: 12px;">
+          La cámara se está visualizando en la pantalla de ruleta para los participantes.
+        </div>
       </div>
 
       <div class="camera-select-row">
@@ -543,6 +546,9 @@
           updateScreenStatus(true);
         } else if (type === 'SPIN_COMPLETED') {
           notify(`¡Jackpot finalizado para ${event.data.guest}!`);
+        } else if (type === 'QR_SCANNED_FROM_SCREEN') {
+          // Escaneado desde la cámara en pantalla de ruleta
+          triggerPrizeSpin(event.data.hash, true);
         }
       };
 
@@ -688,7 +694,7 @@
     }
 
     // 4. Activación de Sorteo hacia la Pantalla Secundaria
-    window.triggerPrizeSpin = function(hash) {
+    window.triggerPrizeSpin = function(hash, fromCamera = false) {
       const guest = guests.find(g => g.hash.toLowerCase() === hash.toLowerCase());
       if (!guest) {
         notify('Código Hash no encontrado en el padrón', true);
@@ -696,7 +702,22 @@
       }
 
       if (guest.claimed) {
-        const confirmRetry = confirm(`El invitado ${guest.name} ya reclamó su premio anteriormente (${guest.prize}). ¿Deseas volver a girar la ruleta?`);
+        // Notificar a la pantalla secundaria para que exhiba el aviso en el sector del premio
+        channel.postMessage({
+          type: 'ALREADY_CLAIMED',
+          guest: guest.name,
+          prize: guest.prize,
+          hash: guest.hash
+        });
+
+        notify(`⚠️ El QR de ${guest.name} ya fue escaneado anteriormente`, true);
+
+        // Si es escaneo automático por cámara, no forzamos confirmación invasiva, simplemente avisamos y retornamos
+        if (fromCamera) {
+          return;
+        }
+
+        const confirmRetry = confirm(`El invitado ${guest.name} ya reclamó su premio anteriormente (${guest.prize}). ¿Deseas volver a girar la ruleta de todos modos?`);
         if (!confirmRetry) return;
       }
 
@@ -807,7 +828,7 @@
       scanThrottle = true;
       lastScannedText = text;
 
-      triggerPrizeSpin(text);
+      triggerPrizeSpin(text, true);
 
       setTimeout(() => {
         scanThrottle = false;

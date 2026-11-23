@@ -13,6 +13,9 @@
   <!-- Confeti de celebración -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
+  <!-- Escáner QR y Cámara integrada -->
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+
   <style>
     :root {
       --bg: #050507;
@@ -366,6 +369,137 @@
       0%, 100% { opacity: 0.45; }
       50% { opacity: 0.95; color: #fff; }
     }
+
+    /* Visor de cámara en vivo para encuadre del participante */
+    .camera-hud-container {
+      position: absolute;
+      bottom: 24px;
+      right: 28px;
+      width: 240px;
+      height: 180px;
+      background: rgba(10, 10, 14, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(12px);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      z-index: 50;
+      transition: all 0.3s ease;
+    }
+
+    .camera-hud-container:hover {
+      border-color: rgba(255, 255, 255, 0.7);
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.9), 0 0 30px rgba(255, 255, 255, 0.25);
+    }
+
+    .camera-hud-header {
+      padding: 6px 10px;
+      background: rgba(0, 0, 0, 0.6);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.8);
+      font-weight: 600;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .camera-hud-header .live-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 8px #22c55e;
+      animation: blinkDot 1.6s infinite;
+    }
+
+    @keyframes blinkDot {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    .camera-hud-video {
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      position: relative;
+      background: #000;
+      overflow: hidden;
+    }
+
+    #qrCameraScreenReader {
+      width: 100%;
+      height: 100%;
+    }
+
+    #qrCameraScreenReader video {
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: cover !important;
+      border-radius: 0 0 11px 11px;
+    }
+
+    /* Guía de encuadre óptica */
+    .hud-reticle {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 100px;
+      height: 100px;
+      border: 1.5px dashed rgba(255, 255, 255, 0.75);
+      border-radius: 8px;
+      pointer-events: none;
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hud-reticle::after {
+      content: 'ENCUADRAR QR';
+      font-size: 8px;
+      letter-spacing: 0.1em;
+      color: rgba(255, 255, 255, 0.9);
+      font-weight: 700;
+      background: rgba(0, 0, 0, 0.6);
+      padding: 1px 4px;
+      border-radius: 2px;
+    }
+
+    /* Mensaje de QR Ya Escaneado */
+    .slot-warning-text {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(18px, 2.8vw, 32px);
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #f87171;
+      text-shadow: 0 0 25px rgba(239, 68, 68, 0.6);
+      z-index: 18;
+      text-align: center;
+      padding: 0 20px;
+      opacity: 0;
+      transform: scale(0.95);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+      display: none;
+    }
+
+    .slot-warning-text.show {
+      display: block;
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .slot-warning-text.fade-out {
+      opacity: 0;
+      transform: scale(0.95);
+      transition: opacity 0.6s ease;
+    }
   </style>
 </head>
 <body>
@@ -405,6 +539,11 @@
           ESPERANDO PRÓXIMO QR...
         </div>
 
+        <!-- Mensaje de aviso si el QR ya fue escaneado -->
+        <div class="slot-warning-text" id="slotWarningText">
+          QR YA ESCANEADO ANTERIORMENTE
+        </div>
+
         <!-- Cinta de premios que se desplaza -->
         <div class="slot-strip" id="slotStrip"></div>
       </div>
@@ -420,6 +559,21 @@
       <div class="idle-instruction" id="idleInstruction">
         ✦ Mostrá tu tarjeta con código QR frente a la cámara ✦
       </div>
+    </div>
+  </div>
+
+  <!-- Visor en vivo de cámara para que el participante sepa cómo encuadrar el QR -->
+  <div class="camera-hud-container" id="cameraHudBox">
+    <div class="camera-hud-header">
+      <div style="display: flex; align-items: center; gap: 6px;">
+        <span class="live-dot"></span>
+        <span>Cámara en Vivo</span>
+      </div>
+      <span style="font-size: 9px; opacity: 0.7;">EN VIVO</span>
+    </div>
+    <div class="camera-hud-video">
+      <div id="qrCameraScreenReader"></div>
+      <div class="hud-reticle"></div>
     </div>
   </div>
 
@@ -485,6 +639,26 @@
           osc.stop(now + 2.8);
         });
       }
+
+      playWarning() {
+        if (!this.enabled) return;
+        this.init();
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(220, now);
+        osc.frequency.setValueAtTime(180, now + 0.15);
+
+        gain.gain.setValueAtTime(0.18, now);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.45);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.45);
+      }
     }
 
     const sound = new SoundFX();
@@ -507,17 +681,20 @@
     ];
 
     let isSpinning = false;
+    let isWarningShowing = false;
+    let screenHtml5QrCode = null;
     const ITEM_HEIGHT = 150; // px por celda de slot
 
-    window.addEventListener('DOMContentLoaded', () => {
+    window.addEventListener('DOMContentLoaded', async () => {
       buildSlotItems(prizeList);
       setupChannel();
       setupUIEvents();
+      await initScreenCamera();
     });
 
     function setupChannel() {
       channel.onmessage = (event) => {
-        const { type, prize, allPrizes } = event.data;
+        const { type, prize, allPrizes, guest } = event.data;
         if (type === 'PING_GESTION') {
           channel.postMessage({ type: 'PONG_SCREEN_READY' });
         } else if (type === 'SPIN_JACKPOT') {
@@ -525,10 +702,107 @@
             prizeList = allPrizes;
           }
           spinToWin(prize);
+        } else if (type === 'ALREADY_CLAIMED') {
+          showAlreadyClaimedWarning();
         }
       };
 
       channel.postMessage({ type: 'PONG_SCREEN_READY' });
+    }
+
+    // Mostrar advertencia en el mismo espacio donde aparece el premio y desvanecerlo
+    function showAlreadyClaimedWarning() {
+      if (isSpinning || isWarningShowing) return;
+      isWarningShowing = true;
+
+      sound.init();
+      sound.playWarning();
+
+      const idleText = document.getElementById('slotIdleText');
+      const warningText = document.getElementById('slotWarningText');
+      const strip = document.getElementById('slotStrip');
+
+      strip.classList.remove('active');
+      idleText.style.opacity = '0';
+      setTimeout(() => { idleText.style.display = 'none'; }, 200);
+
+      warningText.classList.remove('fade-out');
+      warningText.classList.add('show');
+
+      // Sacudida sutil de alerta
+      const box = document.getElementById('slotMachineBox');
+      box.classList.add('recoil');
+      setTimeout(() => box.classList.remove('recoil'), 400);
+
+      // Desvanecer después de 3.5 segundos y volver a mostrar "ESPERANDO PRÓXIMO QR..."
+      setTimeout(() => {
+        warningText.classList.remove('show');
+        warningText.classList.add('fade-out');
+
+        setTimeout(() => {
+          warningText.style.display = 'none';
+          warningText.classList.remove('fade-out');
+
+          idleText.style.display = 'block';
+          setTimeout(() => {
+            idleText.style.opacity = '1';
+            isWarningShowing = false;
+          }, 50);
+        }, 600);
+      }, 3500);
+    }
+
+    // Iniciar cámara local en la pantalla de la ruleta
+    async function initScreenCamera() {
+      if (typeof Html5Qrcode === 'undefined') return;
+
+      try {
+        const devices = await Html5Qrcode.getCameras();
+        if (devices && devices.length > 0) {
+          screenHtml5QrCode = new Html5Qrcode("qrCameraScreenReader");
+          const config = {
+            fps: 15,
+            qrbox: { width: 150, height: 150 },
+            aspectRatio: 1.33
+          };
+
+          await screenHtml5QrCode.start(
+            devices[0].id,
+            config,
+            (decodedText) => {
+              handleScreenCameraScan(decodedText.trim());
+            },
+            (error) => {
+              // lectura continua silenciosa
+            }
+          );
+        }
+      } catch (e) {
+        console.warn('Cámara en ruleta (si el gestor la tiene tomada, se visualiza en gestor):', e);
+        // Si la cámara no pudo tomarse directamente aquí (por ejemplo si dos pestañas compiten en navegadores antiguos),
+        // mantenemos el canal sincronizado con el gestor
+      }
+    }
+
+    let screenLastScanned = '';
+    let screenScanThrottle = false;
+
+    function handleScreenCameraScan(text) {
+      if (isSpinning || isWarningShowing || screenScanThrottle || text === screenLastScanned) return;
+
+      screenScanThrottle = true;
+      screenLastScanned = text;
+
+      // Emitir al gestor para que verifique padrón y dispare el sorteo
+      channel.postMessage({
+        type: 'QR_SCANNED_FROM_SCREEN',
+        hash: text
+      });
+
+      setTimeout(() => {
+        screenScanThrottle = false;
+        screenLastScanned = '';
+      }, 4000);
     }
 
     function buildSlotItems(items, targetPrize = null) {
