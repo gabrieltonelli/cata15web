@@ -370,60 +370,28 @@
       50% { opacity: 0.95; color: #fff; }
     }
 
-    /* Visor de cámara en vivo para encuadre del participante */
+    /* Visor de cámara en vivo para encuadre del participante (limpia y minimalista) */
     .camera-hud-container {
       position: absolute;
       bottom: 24px;
       right: 28px;
-      width: 240px;
-      height: 180px;
-      background: rgba(10, 10, 14, 0.85);
-      border: 1px solid rgba(255, 255, 255, 0.3);
+      width: 220px;
+      height: 165px;
+      background: #000;
+      border: 1.5px solid rgba(255, 255, 255, 0.35);
       border-radius: 12px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(12px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.85), 0 0 20px rgba(255, 255, 255, 0.12);
       overflow: hidden;
-      display: flex;
-      flex-direction: column;
       z-index: 50;
       transition: all 0.3s ease;
     }
 
     .camera-hud-container:hover {
-      border-color: rgba(255, 255, 255, 0.7);
-      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.9), 0 0 30px rgba(255, 255, 255, 0.25);
-    }
-
-    .camera-hud-header {
-      padding: 6px 10px;
-      background: rgba(0, 0, 0, 0.6);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 10px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: rgba(255, 255, 255, 0.8);
-      font-weight: 600;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .camera-hud-header .live-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: #22c55e;
-      box-shadow: 0 0 8px #22c55e;
-      animation: blinkDot 1.6s infinite;
-    }
-
-    @keyframes blinkDot {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.3; }
+      border-color: rgba(255, 255, 255, 0.8);
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.95), 0 0 30px rgba(255, 255, 255, 0.25);
     }
 
     .camera-hud-video {
-      flex: 1;
       width: 100%;
       height: 100%;
       position: relative;
@@ -440,35 +408,7 @@
       width: 100% !important;
       height: 100% !important;
       object-fit: cover !important;
-      border-radius: 0 0 11px 11px;
-    }
-
-    /* Guía de encuadre óptica */
-    .hud-reticle {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 100px;
-      height: 100px;
-      border: 1.5px dashed rgba(255, 255, 255, 0.75);
-      border-radius: 8px;
-      pointer-events: none;
-      box-shadow: 0 0 15px rgba(255, 255, 255, 0.15);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .hud-reticle::after {
-      content: 'ENCUADRAR QR';
-      font-size: 8px;
-      letter-spacing: 0.1em;
-      color: rgba(255, 255, 255, 0.9);
-      font-weight: 700;
-      background: rgba(0, 0, 0, 0.6);
-      padding: 1px 4px;
-      border-radius: 2px;
+      border-radius: 10px;
     }
 
     /* Mensaje de QR Ya Escaneado */
@@ -562,18 +502,10 @@
     </div>
   </div>
 
-  <!-- Visor en vivo de cámara para que el participante sepa cómo encuadrar el QR -->
+  <!-- Visor en vivo de cámara para que el participante sepa cómo encuadrar el QR (Limpia) -->
   <div class="camera-hud-container" id="cameraHudBox">
-    <div class="camera-hud-header">
-      <div style="display: flex; align-items: center; gap: 6px;">
-        <span class="live-dot"></span>
-        <span>Cámara en Vivo</span>
-      </div>
-      <span style="font-size: 9px; opacity: 0.7;">EN VIVO</span>
-    </div>
     <div class="camera-hud-video">
       <div id="qrCameraScreenReader"></div>
-      <div class="hud-reticle"></div>
     </div>
   </div>
 
@@ -711,8 +643,16 @@
     }
 
     // Mostrar advertencia en el mismo espacio donde aparece el premio y desvanecerlo
+    let warningTimeout = null;
+    let warningFadeTimeout = null;
+
     function showAlreadyClaimedWarning() {
-      if (isSpinning || isWarningShowing) return;
+      if (isSpinning) return;
+
+      // Si ya había una alerta mostrándose, limpiamos los timeouts previos para renovar el ciclo completo
+      if (warningTimeout) clearTimeout(warningTimeout);
+      if (warningFadeTimeout) clearTimeout(warningFadeTimeout);
+
       isWarningShowing = true;
 
       sound.init();
@@ -722,24 +662,27 @@
       const warningText = document.getElementById('slotWarningText');
       const strip = document.getElementById('slotStrip');
 
-      strip.classList.remove('active');
+      strip.classList.remove('active', 'fade-out');
+      idleText.style.display = 'none';
       idleText.style.opacity = '0';
-      setTimeout(() => { idleText.style.display = 'none'; }, 200);
 
+      warningText.style.display = 'block';
       warningText.classList.remove('fade-out');
       warningText.classList.add('show');
 
       // Sacudida sutil de alerta
       const box = document.getElementById('slotMachineBox');
+      box.classList.remove('recoil');
+      void box.offsetWidth; // forzar reflow
       box.classList.add('recoil');
       setTimeout(() => box.classList.remove('recoil'), 400);
 
       // Desvanecer después de 3.5 segundos y volver a mostrar "ESPERANDO PRÓXIMO QR..."
-      setTimeout(() => {
+      warningTimeout = setTimeout(() => {
         warningText.classList.remove('show');
         warningText.classList.add('fade-out');
 
-        setTimeout(() => {
+        warningFadeTimeout = setTimeout(() => {
           warningText.style.display = 'none';
           warningText.classList.remove('fade-out');
 
@@ -788,12 +731,12 @@
     let screenScanThrottle = false;
 
     function handleScreenCameraScan(text) {
-      if (isSpinning || isWarningShowing || screenScanThrottle || text === screenLastScanned) return;
+      if (isSpinning || screenScanThrottle) return;
 
       screenScanThrottle = true;
       screenLastScanned = text;
 
-      // Emitir al gestor para que verifique padrón y dispare el sorteo
+      // Emitir al gestor para que verifique padrón y dispare el sorteo o el aviso
       channel.postMessage({
         type: 'QR_SCANNED_FROM_SCREEN',
         hash: text
@@ -802,7 +745,7 @@
       setTimeout(() => {
         screenScanThrottle = false;
         screenLastScanned = '';
-      }, 4000);
+      }, 2500); // Cooldown reducido para respuesta reactiva ante reintentos
     }
 
     function buildSlotItems(items, targetPrize = null) {

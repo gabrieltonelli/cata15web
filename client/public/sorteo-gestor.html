@@ -823,7 +823,7 @@
     let scanThrottle = false;
 
     function handleQrScan(text) {
-      if (scanThrottle || text === lastScannedText) return;
+      if (scanThrottle) return;
 
       scanThrottle = true;
       lastScannedText = text;
@@ -833,7 +833,7 @@
       setTimeout(() => {
         scanThrottle = false;
         lastScannedText = '';
-      }, 4000); // 4 segundos de cooldown para no duplicar escaneos instantáneos
+      }, 2500); // 2.5 segundos para respuesta ágil y limpia
     }
 
     // 6. Event Listeners y Controles
