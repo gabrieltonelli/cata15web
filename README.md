@@ -11,12 +11,16 @@ Aplicación Web de Invitación a Evento (15 años) con arquitectura **Monorepo l
 ```text
 cata15web/
 ├── client/                      # Frontend autónomo (SPA React + Vite)
-│   ├── public/                  # Multimedia (videos, fotos, audio Rihanna-Diamonds.mp3, favicon)
-│   │   ├── capture.html         # Mini-app generadora de imágenes Open Graph (600x600 WhatsApp preview)
+│   ├── public/                  # Multimedia (videos, fotos, audio, favicon)
+│   │   ├── capture.html         # Generador de imágenes Open Graph (600x600 preview WhatsApp)
+│   │   ├── tarjetas-qr.html     # Asistente 9:16 de tarjetas de recordatorio con código QR único
+│   │   ├── sorteo-gestor.html   # Panel de control de sorteo con escáner QR por cámara de notebook
+│   │   ├── sorteo-pantalla.html # Pantalla secundaria con ruleta Jackpot de un solo slot en vivo
+│   │   ├── invitados_premios_ejemplo.csv # Archivo CSV de prueba (nombre_apellido;premio;hash)
 │   │   └── assets/              # icons, photos, mp3, video
 │   ├── src/
 │   │   ├── components/          # WelcomeHero, Countdown, InfoCards, RSVP, Footer, etc.
-│   │   ├── config/              # eventData.js (parametrización)
+│   │   ├── config/              # eventData.js (parametrización central)
 │   │   └── styles/              # index.css (Tailwind & custom utilities)
 │   ├── .env                     # Variables de entorno locales del cliente (ignorado en git)
 │   ├── .env.template            # Plantilla documentada de variables del cliente
@@ -231,6 +235,55 @@ Documentadas con comentarios y ejemplos en [server/.env.template](file:///c:/Use
   - **Desactivación Inmediata:** En cuanto se detecta cualquier interacción nativa del usuario (scroll manual, toque táctil, rueda del ratón o teclado), la ayuda se desvanece de inmediato y se desactiva permanentemente para no interrumpir la navegación.
   - **Parametrización Completa:** Tiempos, distancias, activación y filtro móvil configurables mediante variables de entorno `VITE_SCROLL_HINT_*`.
 - **Footer:** Sección "TE ESPERO" con fondo blanco puro y última banda de créditos con **icono de WhatsApp blanco**.
+
+---
+
+## 🎟️ Ecosistema de Tarjetas 9:16 con QR y Sorteo en Vivo (Jackpot)
+
+El proyecto incluye un ecosistema completo para fidelizar a los invitados, recordar la ubicación/horarios y llevar a cabo un sorteo en vivo interactivo con ruleta tipo Jackpot de un solo slot:
+
+### 1. Asistente de Tarjetas 9:16 con QR ([`client/public/tarjetas-qr.html`](file:///c:/Users/gabrielt/Documents/Proyectos/PROPIOS/cata15web/client/public/tarjetas-qr.html))
+Acceso: `http://localhost:5173/tarjetas-qr.html`
+- **Paso 1 (Plantilla & Diseño):**
+  - Generación de tarjetas en **proporción 9:16 vertical** (resolución nativa **1080 x 1920 px**), optimizadas para envío por WhatsApp y estados.
+  - **Mitad superior:** Datos del evento (título, fecha, hora, locación principal y alternativa Plan B, nombre de invitado personalizado).
+  - **Mitad inferior:** Código QR único generado a partir del hash del invitado (`CATA15-XXXXX`) con marco de oro/blanco e instrucciones para el sorteo.
+  - Fondo de video capturado frame a frame o imágenes, con controles de contraste, oscurecimiento y tipografía *Cinzel* y *Montserrat*.
+- **Paso 2 (Cargar CSV & Generación en Lote):**
+  - Carga de archivo CSV (`nombre_apellido;premio;hash`).
+  - Previsualización en tiempo real de cada invitado en un mockup de smartphone.
+  - Descarga individual en PNG o **Descarga masiva en ZIP** (genera automáticamente las N tarjetas de todos los invitados en un clic).
+
+### 2. Gestor de Sorteo con Escáner de Cámara ([`client/public/sorteo-gestor.html`](file:///c:/Users/gabrielt/Documents/Proyectos/PROPIOS/cata15web/client/public/sorteo-gestor.html))
+Acceso: `http://localhost:5173/sorteo-gestor.html`
+- Utiliza la **cámara web de la notebook** para leer el código QR de la tarjeta que el invitado muestra desde su smartphone.
+- Detecta instantáneamente el hash y busca al invitado en el padrón:
+  - Si es válido: marca al invitado como "Entregado" y dispara automáticamente la orden de giro a la pantalla secundaria.
+  - Si ya fue entregado: muestra alerta de resguardo para evitar reclamos duplicados.
+- Padrón con buscador, filtros (Todos, Pendientes, Entregados), persistencia en `localStorage` y botón manual para sortear cualquier invitado sin necesidad de cámara.
+- Conexión en tiempo real con la pantalla secundaria vía `BroadcastChannel`.
+
+### 3. Pantalla Secundaria de Ruleta / Jackpot: "Llevate tu Kit" ([`client/public/sorteo-pantalla.html`](file:///c:/Users/gabrielt/Documents/Proyectos/PROPIOS/cata15web/client/public/sorteo-pantalla.html))
+Acceso: `http://localhost:5173/sorteo-pantalla.html`
+- Diseñada para proyectar en **pantalla gigante, TV o monitor secundario**.
+- Cuenta con botón minimalista de **Pantalla Completa** (`⛶`) con tooltip accesible.
+- Encabezado de impacto: **"LLEVATE TU KIT"**.
+- **Secuencia Coreográfica Completa:**
+  1. **Estado Inicial:** En el sector central donde aparece el premio se muestra: **`ESPERANDO PRÓXIMO QR...`**.
+  2. **Escaneo y Giro:** Al acercar el invitado el QR de su tarjeta a la cámara de la notebook, el sector se activa y la ruleta gira a toda velocidad con sonido mecánico procedural (*Web Audio API*).
+  3. **Freno en el Premio:** Desacelera y frena en el premio asignado; se dispara el confeti de gala (*canvas-confetti*) y abajo aparece el texto:
+     > **¡Felicitaciones, gracias por compartir conmigo esta noche especial!**
+  4. **Desvanecimiento a Destiempo y Limpieza:** Tras exhibirse por unos segundos, primero se desvanece el texto de felicitaciones y luego se desvanece el sector del premio para vaciarse por completo y no confundir al siguiente participante.
+  5. **Reinicio y Último Entregado:** El sector central de la ruleta se limpia y vuelve a decir **`ESPERANDO PRÓXIMO QR...`**, mientras que abajo aparece la franja: **`Último entregado: [Nombre del premio]`**. Todo queda listo para el siguiente participante.
+
+### 4. Archivo de Prueba CSV ([`client/public/invitados_premios_ejemplo.csv`](file:///c:/Users/gabrielt/Documents/Proyectos/PROPIOS/cata15web/client/public/invitados_premios_ejemplo.csv))
+- Contiene 20 registros ficticios con la estructura requerida:
+  ```text
+  nombre_apellido;premio;hash
+  Catalina Panelo;Viaje Sorpresa & Set Exclusivo;CATA15-VIP01
+  Agustina Fernandez;Auriculares Inalámbricos Sony;CATA15-AF812
+  ...
+  ```
 
 ---
 

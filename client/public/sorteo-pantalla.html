@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Llevate tu Kit • Cata15</title>
+
+  <!-- Fuentes oficiales del evento -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Montserrat:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@600&display=swap" rel="stylesheet">
+
+  <!-- Confeti de celebración -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <style>
+    :root {
+      --bg: #050507;
+      --gold: #d4af37;
+      --gold-light: #fef08a;
+      --gold-glow: rgba(212, 175, 55, 0.4);
+      --border-gold: rgba(212, 175, 55, 0.45);
+      --dark-card: rgba(14, 14, 18, 0.92);
+      --text-muted: rgba(255, 255, 255, 0.65);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: #fff;
+      font-family: 'Montserrat', sans-serif;
+      min-height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    /* Video de fondo elegante en loop */
+    .bg-video-container {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: 0;
+    }
+
+    #bgVideo {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: contrast(135%) grayscale(85%) brightness(0.4);
+    }
+
+    .video-overlay {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at center, rgba(5,5,8,0.7) 0%, rgba(2,2,4,0.95) 100%);
+      z-index: 1;
+    }
+
+    /* Control superior derecho solo con icono de pantalla completa y tooltip */
+    .screen-controls {
+      position: absolute;
+      top: 20px;
+      right: 24px;
+      z-index: 50;
+    }
+
+    .fullscreen-icon-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #fff;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      backdrop-filter: blur(8px);
+      transition: all 0.25s ease;
+      outline: none;
+    }
+
+    .fullscreen-icon-btn:hover {
+      background: rgba(255, 255, 255, 0.22);
+      border-color: #fff;
+      transform: scale(1.08);
+    }
+
+    /* Escenario central del Jackpot */
+    .jackpot-stage {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      max-width: 1100px;
+      width: 90%;
+      padding: 30px;
+    }
+
+    .event-eyebrow {
+      font-family: 'Cinzel', serif;
+      font-size: 14px;
+      letter-spacing: 0.35em;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .event-eyebrow::before,
+    .event-eyebrow::after {
+      content: '';
+      width: 40px;
+      height: 1px;
+      background: var(--border-gold);
+    }
+
+    .main-heading {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(34px, 5.5vw, 62px);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 26px;
+      text-shadow: 0 4px 30px rgba(0, 0, 0, 0.9);
+    }
+
+    /* Máquina Jackpot de un solo slot */
+    .slot-machine-box {
+      width: 100%;
+      max-width: 920px;
+      background: var(--dark-card);
+      border: 2px solid var(--gold);
+      border-radius: 20px;
+      box-shadow:
+        0 30px 80px rgba(0, 0, 0, 0.9),
+        0 0 40px var(--gold-glow),
+        inset 0 0 30px rgba(212, 175, 55, 0.15);
+      padding: 36px 44px;
+      backdrop-filter: blur(16px);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .slot-machine-box.recoil {
+      animation: recoilShake 0.45s ease-out;
+    }
+
+    @keyframes recoilShake {
+      0% { transform: scale(1); }
+      25% { transform: scale(1.03) translateY(-4px); }
+      50% { transform: scale(0.98) translateY(2px); }
+      75% { transform: scale(1.01) translateY(-1px); }
+      100% { transform: scale(1) translateY(0); }
+    }
+
+    /* Ventana del Slot Reel (Ruleta donde aparece el premio) */
+    .slot-window {
+      width: 100%;
+      height: 150px;
+      background: #09090c;
+      border: 2px solid var(--border-gold);
+      border-radius: 14px;
+      overflow: hidden;
+      position: relative;
+      box-shadow: inset 0 0 35px rgba(0, 0, 0, 0.95);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Sombras superior e inferior para efecto 3D cilíndrico de ruleta */
+    .slot-window::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 45px;
+      background: linear-gradient(to bottom, rgba(9,9,12,1) 0%, rgba(9,9,12,0) 100%);
+      z-index: 20;
+      pointer-events: none;
+    }
+
+    .slot-window::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 45px;
+      background: linear-gradient(to top, rgba(9,9,12,1) 0%, rgba(9,9,12,0) 100%);
+      z-index: 20;
+      pointer-events: none;
+    }
+
+    /* Texto inicial/limpio en el sector de la ruleta: "Esperando próximo QR" */
+    .slot-idle-text {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(20px, 3.2vw, 36px);
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--gold-light);
+      text-shadow: 0 0 25px var(--gold-glow);
+      z-index: 15;
+      transition: opacity 0.4s ease, transform 0.4s ease;
+      animation: pulseGold 2.8s ease-in-out infinite;
+      text-align: center;
+      padding: 0 20px;
+    }
+
+    @keyframes pulseGold {
+      0%, 100% { opacity: 0.85; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.02); text-shadow: 0 0 35px rgba(212, 175, 55, 0.7); }
+    }
+
+    /* Cinta de premios que se desplaza */
+    .slot-strip {
+      display: flex;
+      flex-direction: column;
+      position: absolute;
+      width: 100%;
+      top: 0;
+      left: 0;
+      will-change: transform;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      z-index: 8;
+    }
+
+    .slot-strip.active {
+      opacity: 1;
+    }
+
+    .slot-strip.fade-out {
+      opacity: 0;
+      transition: opacity 0.6s ease;
+    }
+
+    .slot-item {
+      height: 150px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Cinzel', serif;
+      font-size: clamp(22px, 3.4vw, 42px);
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gold-light);
+      text-shadow: 0 0 20px var(--gold-glow);
+      padding: 0 24px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    /* Punteros laterales de fijación del Jackpot */
+    .slot-pointer-left,
+    .slot-pointer-right {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 0;
+      height: 0;
+      border-style: solid;
+      z-index: 25;
+    }
+
+    .slot-pointer-left {
+      left: 8px;
+      border-width: 10px 0 10px 16px;
+      border-color: transparent transparent transparent var(--gold);
+      filter: drop-shadow(0 0 6px var(--gold));
+    }
+
+    .slot-pointer-right {
+      right: 8px;
+      border-width: 10px 16px 10px 0;
+      border-color: transparent var(--gold) transparent transparent;
+      filter: drop-shadow(0 0 6px var(--gold));
+    }
+
+    /* Texto de felicitaciones abajo de la ruleta */
+    .winner-congrats-text {
+      margin-top: 26px;
+      font-family: 'Cinzel', serif;
+      font-size: clamp(16px, 2.3vw, 26px);
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: #ffffff;
+      text-shadow: 0 0 22px rgba(255, 255, 255, 0.7);
+      text-align: center;
+      opacity: 0;
+      transform: translateY(14px);
+      transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+      min-height: 38px;
+    }
+
+    .winner-congrats-text.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .winner-congrats-text.fade-out {
+      opacity: 0;
+      transform: translateY(-8px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    /* Indicador de último kit entregado */
+    .last-awarded-badge {
+      margin-top: 22px;
+      font-size: 13px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--gold-light);
+      background: rgba(212, 175, 55, 0.12);
+      border: 1px solid var(--border-gold);
+      padding: 8px 24px;
+      border-radius: 30px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+      display: none;
+    }
+
+    .last-awarded-badge.show {
+      display: inline-flex;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Mensaje de espera inferior */
+    .idle-instruction {
+      margin-top: 24px;
+      font-size: 13px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      animation: breathe 3s ease-in-out infinite;
+    }
+
+    @keyframes breathe {
+      0%, 100% { opacity: 0.45; }
+      50% { opacity: 0.95; color: #fff; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Video de fondo estético -->
+  <div class="bg-video-container">
+    <video id="bgVideo" autoplay muted loop playsinline>
+      <source src="/assets/video/video4.mp4" type="video/mp4">
+    </video>
+    <div class="video-overlay"></div>
+  </div>
+
+  <!-- Control de Pantalla Completa con Tooltip -->
+  <div class="screen-controls">
+    <button class="fullscreen-icon-btn" id="btnFullScreen" title="Pantalla Completa (F11)" aria-label="Pantalla Completa">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Escenario central -->
+  <div class="jackpot-stage">
+    <div class="event-eyebrow">MIS XV CATALINA • 2026</div>
+    <h1 class="main-heading">LLEVATE TU KIT</h1>
+
+    <!-- Caja de la máquina Jackpot -->
+    <div class="slot-machine-box" id="slotMachineBox">
+      
+      <!-- Ventana de slot / ruleta donde aparece el premio -->
+      <div class="slot-window" id="slotWindow">
+        <div class="slot-pointer-left"></div>
+        <div class="slot-pointer-right"></div>
+
+        <!-- Texto inicial en el sector de la ruleta -->
+        <div class="slot-idle-text" id="slotIdleText">
+          ESPERANDO PRÓXIMO QR...
+        </div>
+
+        <!-- Cinta de premios que se desplaza -->
+        <div class="slot-strip" id="slotStrip"></div>
+      </div>
+
+      <!-- Texto de felicitaciones que aparece al ganar y se desvanece a destiempo -->
+      <div class="winner-congrats-text" id="winnerCongratsText">
+        ¡Felicitaciones, gracias por compartir conmigo esta noche especial!
+      </div>
+
+      <!-- Badge de último entregado (aparece tras vaciarse el sector del premio) -->
+      <div class="last-awarded-badge" id="lastAwardedBadge"></div>
+
+      <div class="idle-instruction" id="idleInstruction">
+        ✦ Mostrá tu tarjeta con código QR frente a la cámara ✦
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Sintetizador de audio Web Audio API (procedural, confiable y sin dependencias externas)
+    class SoundFX {
+      constructor() {
+        this.ctx = null;
+        this.enabled = true;
+      }
+
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioContext();
+        }
+        if (this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+
+      playClick() {
+        if (!this.enabled) return;
+        this.init();
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(800 + Math.random() * 200, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(150, this.ctx.currentTime + 0.04);
+
+        gain.gain.setValueAtTime(0.18, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.04);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.04);
+      }
+
+      playWinChord() {
+        if (!this.enabled) return;
+        this.init();
+        const now = this.ctx.currentTime;
+        const freqs = [523.25, 659.25, 783.99, 1046.50, 1318.51]; // C major luxury chord
+
+        freqs.forEach((f, idx) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(f, now + idx * 0.07);
+
+          gain.gain.setValueAtTime(0.001, now + idx * 0.07);
+          gain.gain.linearRampToValueAtTime(0.25, now + idx * 0.07 + 0.04);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + 2.8);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+
+          osc.start(now + idx * 0.07);
+          osc.stop(now + 2.8);
+        });
+      }
+    }
+
+    const sound = new SoundFX();
+
+    // Sincronización BroadcastChannel con el gestor
+    const channel = new BroadcastChannel('cata15_sorteo_channel');
+
+    // Lista por defecto de premios si aún no se transmitió el padrón
+    let prizeList = [
+      'Viaje Sorpresa & Set Exclusivo',
+      'Auriculares Inalámbricos Sony',
+      'Parlante Bluetooth JBL',
+      'Vaso Térmico Stanley Edición 15',
+      'Cámara Instantánea Fujifilm Instax',
+      'Smartband Deportiva Xiaomi',
+      'Set Beauty & Skincare Luxury',
+      'Tarjeta Regalo Spotify 6 Meses',
+      'Perfume Importado Edición Limitada',
+      'Kit Luminoso Fiesta Premium'
+    ];
+
+    let isSpinning = false;
+    const ITEM_HEIGHT = 150; // px por celda de slot
+
+    window.addEventListener('DOMContentLoaded', () => {
+      buildSlotItems(prizeList);
+      setupChannel();
+      setupUIEvents();
+    });
+
+    function setupChannel() {
+      channel.onmessage = (event) => {
+        const { type, prize, allPrizes } = event.data;
+        if (type === 'PING_GESTION') {
+          channel.postMessage({ type: 'PONG_SCREEN_READY' });
+        } else if (type === 'SPIN_JACKPOT') {
+          if (allPrizes && allPrizes.length) {
+            prizeList = allPrizes;
+          }
+          spinToWin(prize);
+        }
+      };
+
+      channel.postMessage({ type: 'PONG_SCREEN_READY' });
+    }
+
+    function buildSlotItems(items, targetPrize = null) {
+      const strip = document.getElementById('slotStrip');
+      strip.innerHTML = '';
+
+      const repeated = [];
+      for (let r = 0; r < 6; r++) {
+        repeated.push(...items);
+      }
+
+      if (targetPrize) {
+        repeated[repeated.length - 3] = targetPrize;
+      }
+
+      repeated.forEach(p => {
+        const div = document.createElement('div');
+        div.className = 'slot-item';
+        div.textContent = p;
+        strip.appendChild(div);
+      });
+
+      return repeated;
+    }
+
+    // Animación física del Jackpot
+    async function spinToWin(targetPrize) {
+      if (isSpinning) return;
+      isSpinning = true;
+
+      sound.init();
+
+      // 1. Ocultar el texto de espera dentro de la ruleta y mensajes anteriores
+      const idleText = document.getElementById('slotIdleText');
+      idleText.style.opacity = '0';
+      setTimeout(() => { idleText.style.display = 'none'; }, 300);
+
+      const congratsEl = document.getElementById('winnerCongratsText');
+      congratsEl.classList.remove('show', 'fade-out');
+
+      document.getElementById('idleInstruction').style.display = 'none';
+
+      // 2. Preparar cinta con el premio asignado
+      const strip = document.getElementById('slotStrip');
+      strip.classList.remove('fade-out');
+      const stripItems = buildSlotItems(prizeList, targetPrize);
+      const targetIndex = stripItems.length - 3;
+      const targetPosition = targetIndex * ITEM_HEIGHT;
+
+      strip.style.transition = 'none';
+      strip.style.transform = 'translateY(0px)';
+      strip.offsetHeight; // forzar reflow
+      strip.classList.add('active');
+
+      // 3. Fases de giro con clicks audibles
+      const totalDuration = 4500;
+      const startTime = performance.now();
+      let lastClickPosition = 0;
+
+      function animateSpin(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / totalDuration, 1);
+
+        const easeOut = 1 - Math.pow(1 - progress, 3);
+        const currentY = easeOut * targetPosition;
+
+        strip.style.transform = `translateY(-${currentY}px)`;
+
+        if (Math.abs(currentY - lastClickPosition) >= ITEM_HEIGHT) {
+          sound.playClick();
+          lastClickPosition = currentY;
+        }
+
+        if (progress < 1) {
+          requestAnimationFrame(animateSpin);
+        } else {
+          strip.style.transform = `translateY(-${targetPosition}px)`;
+          finishJackpot(targetPrize);
+        }
+      }
+
+      requestAnimationFrame(animateSpin);
+    }
+
+    function finishJackpot(targetPrize) {
+      // Sacudida de impacto
+      const box = document.getElementById('slotMachineBox');
+      box.classList.add('recoil');
+      setTimeout(() => box.classList.remove('recoil'), 500);
+
+      sound.playWinChord();
+      launchLuxuryConfetti();
+
+      // Mostrar abajo el texto de agradecimiento
+      const congratsEl = document.getElementById('winnerCongratsText');
+      congratsEl.textContent = '¡Felicitaciones, gracias por compartir conmigo esta noche especial!';
+      congratsEl.classList.remove('fade-out');
+      congratsEl.classList.add('show');
+
+      // Notificar al gestor que finalizó el giro
+      channel.postMessage({
+        type: 'SPIN_COMPLETED',
+        prize: targetPrize
+      });
+
+      // El premio se muestra por unos segundos (4.5s)
+      setTimeout(() => {
+        // 1. Primero se desvanece a destiempo el texto de felicitaciones
+        congratsEl.classList.remove('show');
+        congratsEl.classList.add('fade-out');
+
+        // 2. A destiempo (600ms después), se desvanece el sector del premio para vaciarlo/limpiarlo
+        setTimeout(() => {
+          const strip = document.getElementById('slotStrip');
+          strip.classList.add('fade-out');
+
+          // 3. Una vez desvanecido el premio, la ventana de la ruleta se limpia y vuelve a decir "Esperando próximo QR"
+          setTimeout(() => {
+            strip.classList.remove('active', 'fade-out');
+            strip.style.transform = 'translateY(0px)';
+
+            const idleText = document.getElementById('slotIdleText');
+            idleText.style.display = 'block';
+            setTimeout(() => { idleText.style.opacity = '1'; }, 50);
+
+            // 4. El texto del premio recién entregado aparece abajo con "Último entregado: [premio]"
+            const lastAwarded = document.getElementById('lastAwardedBadge');
+            lastAwarded.innerHTML = `Último entregado: &nbsp;<strong>${targetPrize.toUpperCase()}</strong>`;
+            lastAwarded.classList.add('show');
+
+            document.getElementById('idleInstruction').style.display = 'block';
+
+            isSpinning = false;
+          }, 600);
+        }, 600);
+      }, 4500);
+    }
+
+    function launchLuxuryConfetti() {
+      confetti({
+        particleCount: 120,
+        spread: 90,
+        origin: { y: 0.6 },
+        colors: ['#d4af37', '#ffffff', '#fef08a', '#e2e8f0']
+      });
+
+      setTimeout(() => {
+        confetti({
+          particleCount: 80,
+          angle: 60,
+          spread: 70,
+          origin: { x: 0 },
+          colors: ['#d4af37', '#ffffff']
+        });
+        confetti({
+          particleCount: 80,
+          angle: 120,
+          spread: 70,
+          origin: { x: 1 },
+          colors: ['#d4af37', '#ffffff']
+        });
+      }, 250);
+    }
+
+    // UI Events
+    function setupUIEvents() {
+      // Pantalla Completa con botón minimalista
+      document.getElementById('btnFullScreen').addEventListener('click', () => {
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen().catch(err => console.log(err));
+        } else {
+          document.exitFullscreen();
+        }
+      });
+
+      // Iniciar contexto de audio en el primer click de la ventana
+      window.addEventListener('click', () => sound.init(), { once: true });
+    }
+  </script>
+</body>
+</html>

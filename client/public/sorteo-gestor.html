@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gestor de Sorteo & Escáner QR • Cata15Web</title>
+
+  <!-- Fuentes oficiales -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Montserrat:wght@300;400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+  <!-- Escáner QR por cámara -->
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+
+  <style>
+    :root {
+      --bg: #09090b;
+      --card-bg: #121215;
+      --card-inner: #18181c;
+      --border: rgba(255, 255, 255, 0.12);
+      --border-gold: rgba(212, 175, 55, 0.4);
+      --accent-gold: #d4af37;
+      --text-muted: rgba(255, 255, 255, 0.65);
+      --green: #22c55e;
+      --red: #ef4444;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: #fff;
+      font-family: 'Montserrat', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 16px 80px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 24px;
+      max-width: 900px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    header h1 {
+      font-family: 'Cinzel', serif;
+      font-size: 26px;
+      letter-spacing: 0.15em;
+      margin-bottom: 6px;
+      color: #fff;
+      text-transform: uppercase;
+    }
+
+    header p {
+      font-size: 13px;
+      color: var(--text-muted);
+      letter-spacing: 0.04em;
+    }
+
+    /* Barra superior de estado y acciones rápidas */
+    .top-action-bar {
+      width: 100%;
+      max-width: 1380px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      padding: 12px 20px;
+      border-radius: 12px;
+      margin-bottom: 24px;
+      gap: 14px;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      padding: 6px 14px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--red);
+    }
+
+    .status-dot.connected {
+      background: var(--green);
+      box-shadow: 0 0 10px var(--green);
+    }
+
+    /* Layout principal */
+    .dashboard-layout {
+      display: grid;
+      grid-template-columns: 420px 1fr;
+      gap: 24px;
+      max-width: 1380px;
+      width: 100%;
+      align-items: start;
+    }
+
+    @media (max-width: 1024px) {
+      .dashboard-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Paneles */
+    .panel {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+    }
+
+    .section-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: #fff;
+      font-weight: 700;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* Cámara / Escáner */
+    .scanner-container {
+      width: 100%;
+      background: #000;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      position: relative;
+      min-height: 280px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #qrReader {
+      width: 100%;
+      height: 100%;
+    }
+
+    #qrReader video {
+      object-fit: cover !important;
+      border-radius: 8px;
+    }
+
+    .camera-select-row {
+      display: flex;
+      gap: 8px;
+      width: 100%;
+    }
+
+    .camera-select-row select {
+      flex: 1;
+      background: #09090b;
+      border: 1px solid var(--border);
+      color: #fff;
+      padding: 8px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+    }
+
+    /* Último escaneado */
+    .last-scan-card {
+      background: var(--card-inner);
+      border: 1px solid var(--border-gold);
+      border-radius: 8px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .last-scan-card.empty {
+      border-color: var(--border);
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 12px;
+      padding: 24px;
+    }
+
+    /* Botones */
+    .btn {
+      padding: 10px 16px;
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s;
+      border: none;
+    }
+
+    .btn-gold {
+      background: linear-gradient(135deg, #d4af37 0%, #aa820a 100%);
+      color: #000;
+      font-weight: 700;
+    }
+
+    .btn-gold:hover {
+      filter: brightness(1.15);
+    }
+
+    .btn-primary {
+      background: #ffffff;
+      color: #000000;
+    }
+
+    .btn-primary:hover {
+      background: #e4e4e7;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: #ffffff;
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: #fff;
+    }
+
+    .btn-sm {
+      padding: 5px 10px;
+      font-size: 10px;
+      letter-spacing: 0.08em;
+    }
+
+    /* Tabla de invitados */
+    .table-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .search-input {
+      background: #09090b;
+      border: 1px solid var(--border);
+      color: #fff;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      width: 240px;
+      outline: none;
+    }
+
+    .search-input:focus {
+      border-color: #fff;
+    }
+
+    .filter-tabs {
+      display: flex;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 4px;
+      border-radius: 6px;
+    }
+
+    .filter-tab {
+      padding: 5px 12px;
+      border-radius: 4px;
+      font-size: 11px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .filter-tab.active {
+      background: #fff;
+      color: #000;
+    }
+
+    .guest-table-wrapper {
+      max-height: 520px;
+      overflow-y: auto;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #0c0c0e;
+    }
+
+    .guest-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+
+    .guest-table th, .guest-table td {
+      padding: 10px 12px;
+      text-align: left;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .guest-table th {
+      background: rgba(255, 255, 255, 0.05);
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      position: sticky;
+      top: 0;
+      z-index: 5;
+    }
+
+    .badge-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .badge-status.pending {
+      background: rgba(234, 179, 8, 0.15);
+      color: #facc15;
+      border: 1px solid rgba(234, 179, 8, 0.3);
+    }
+
+    .badge-status.claimed {
+      background: rgba(34, 197, 94, 0.15);
+      color: #4ade80;
+      border: 1px solid rgba(34, 197, 94, 0.3);
+    }
+
+    .hash-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 2px 6px;
+      border-radius: 3px;
+      color: #e4e4e7;
+    }
+
+    /* Notificación flotante */
+    #notification {
+      position: fixed;
+      bottom: 24px;
+      background: #ffffff;
+      color: #000;
+      font-weight: 600;
+      font-size: 13px;
+      padding: 12px 24px;
+      border-radius: 30px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.3s;
+      pointer-events: none;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    #notification.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Gestor de Sorteo de Premios • Cata15</h1>
+    <p>Escaneá los códigos QR desde la notebook o dispará el sorteo de cada invitado hacia la pantalla secundaria en vivo.</p>
+  </header>
+
+  <!-- Barra de acciones y estado -->
+  <div class="top-action-bar">
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <div class="status-pill">
+        <span class="status-dot" id="screenDot"></span>
+        <span id="screenStatusText">Pantalla secundaria: Desconectada</span>
+      </div>
+      <button class="btn btn-gold btn-sm" id="btnOpenScreen">
+        🖥️ Abrir Pantalla de Ruleta (Jackpot)
+      </button>
+    </div>
+
+    <div style="display: flex; gap: 8px;">
+      <button class="btn btn-secondary btn-sm" id="btnLoadSampleCsv">
+        ⚡ Cargar CSV de Prueba
+      </button>
+      <input type="file" id="csvFileInput" accept=".csv" style="display: none;">
+      <button class="btn btn-secondary btn-sm" onclick="document.getElementById('csvFileInput').click()">
+        📂 Importar CSV
+      </button>
+      <button class="btn btn-secondary btn-sm" id="btnResetAll" style="color: #f87171;">
+        🔄 Reiniciar Estados
+      </button>
+    </div>
+  </div>
+
+  <div class="dashboard-layout">
+    
+    <!-- COLUMNA IZQUIERDA: CÁMARA Y ÚLTIMO ESCANEADO -->
+    <div class="panel">
+      <div class="section-title">
+        <span>Cámara / Escáner QR</span>
+        <span id="scannerStatusBadge" style="font-size: 10px; color: var(--green);">ACTIVA</span>
+      </div>
+
+      <div class="scanner-container">
+        <div id="qrReader"></div>
+      </div>
+
+      <div class="camera-select-row">
+        <select id="cameraSelect">
+          <option value="">Detectando cámaras...</option>
+        </select>
+        <button class="btn btn-secondary btn-sm" id="btnToggleScanner">Pausar</button>
+      </div>
+
+      <div class="section-title" style="margin-top: 10px;">
+        <span>Último Invitado Escaneado</span>
+      </div>
+
+      <div id="lastScanContainer" class="last-scan-card empty">
+        No se ha escaneado ningún código QR todavía. Mostrá la tarjeta frente a la cámara.
+      </div>
+    </div>
+
+    <!-- COLUMNA DERECHA: PADRÓN DE INVITADOS Y CONTROL MANUAL -->
+    <div class="panel">
+      <div class="section-title">
+        <span>Padrón de Invitados (<span id="totalCount">0</span>)</span>
+        <div style="font-size: 11px; color: var(--text-muted);">
+          Entregados: <strong id="claimedCount" style="color: #4ade80;">0</strong> |
+          Pendientes: <strong id="pendingCount" style="color: #facc15;">0</strong>
+        </div>
+      </div>
+
+      <div class="table-controls">
+        <input type="text" id="searchInput" class="search-input" placeholder="Buscar por nombre o hash...">
+
+        <div class="filter-tabs">
+          <button class="filter-tab active" data-filter="all">Todos</button>
+          <button class="filter-tab" data-filter="pending">Pendientes</button>
+          <button class="filter-tab" data-filter="claimed">Entregados</button>
+        </div>
+      </div>
+
+      <div class="guest-table-wrapper">
+        <table class="guest-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Invitado</th>
+              <th>Premio Asignado</th>
+              <th>Hash QR</th>
+              <th>Estado</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody id="guestTableBody">
+            <tr>
+              <td colspan="6" style="text-align: center; padding: 24px; color: var(--text-muted);">
+                Cargá un archivo CSV para visualizar el listado.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <div id="notification">
+    <span id="notifIcon">✓</span>
+    <span id="notifMessage">Mensaje</span>
+  </div>
+
+  <script>
+    // Comunicación en tiempo real con la pantalla secundaria
+    const channel = new BroadcastChannel('cata15_sorteo_channel');
+    let screenConnected = false;
+    let heartbeatInterval = null;
+
+    // Estado local
+    let guests = [];
+    let html5QrCode = null;
+    let isScannerRunning = false;
+    let currentFilter = 'all';
+    let searchQuery = '';
+
+    window.addEventListener('DOMContentLoaded', async () => {
+      loadGuestsFromStorage();
+      setupBroadcastChannel();
+      setupEventListeners();
+      await initScanner();
+    });
+
+    // 1. Configuración de BroadcastChannel
+    function setupBroadcastChannel() {
+      channel.onmessage = (event) => {
+        const { type } = event.data;
+        if (type === 'PONG_SCREEN_READY' || type === 'SCREEN_HEARTBEAT') {
+          updateScreenStatus(true);
+        } else if (type === 'SPIN_COMPLETED') {
+          notify(`¡Jackpot finalizado para ${event.data.guest}!`);
+        }
+      };
+
+      // Enviar ping continuo cada 2.5s para detectar conexión
+      heartbeatInterval = setInterval(() => {
+        channel.postMessage({ type: 'PING_GESTION' });
+      }, 2500);
+      channel.postMessage({ type: 'PING_GESTION' });
+    }
+
+    function updateScreenStatus(connected) {
+      screenConnected = connected;
+      const dot = document.getElementById('screenDot');
+      const text = document.getElementById('screenStatusText');
+      if (connected) {
+        dot.classList.add('connected');
+        text.textContent = 'Pantalla secundaria: Sincronizada';
+        text.style.color = '#4ade80';
+      } else {
+        dot.classList.remove('connected');
+        text.textContent = 'Pantalla secundaria: Desconectada';
+        text.style.color = 'var(--text-muted)';
+      }
+    }
+
+    // 2. Persistencia en LocalStorage
+    function saveGuestsToStorage() {
+      localStorage.setItem('cata15_guests_data', JSON.stringify(guests));
+      updateCounts();
+      renderTable();
+    }
+
+    function loadGuestsFromStorage() {
+      const saved = localStorage.getItem('cata15_guests_data');
+      if (saved) {
+        try {
+          guests = JSON.parse(saved);
+          updateCounts();
+          renderTable();
+        } catch (e) {
+          console.error(e);
+        }
+      } else {
+        // Cargar ejemplo por defecto si está vacío
+        loadSampleCsv();
+      }
+    }
+
+    async function loadSampleCsv() {
+      try {
+        const res = await fetch('/invitados_premios_ejemplo.csv');
+        const text = await res.text();
+        parseCsvText(text);
+      } catch (err) {
+        console.error('Error al cargar ejemplo:', err);
+      }
+    }
+
+    function parseCsvText(csvText) {
+      const lines = csvText.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
+      if (lines.length <= 1) return;
+
+      guests = [];
+      const startIdx = lines[0].toLowerCase().includes('hash') ? 1 : 0;
+
+      for (let i = startIdx; i < lines.length; i++) {
+        const parts = lines[i].split(';').map(p => p.trim());
+        if (parts.length >= 3) {
+          guests.push({
+            id: i,
+            name: parts[0],
+            prize: parts[1],
+            hash: parts[2],
+            claimed: false,
+            claimedAt: null
+          });
+        }
+      }
+
+      saveGuestsToStorage();
+      notify(`Padrón cargado (${guests.length} invitados)`);
+    }
+
+    // 3. Renderizado y Filtros de Tabla
+    function updateCounts() {
+      const total = guests.length;
+      const claimed = guests.filter(g => g.claimed).length;
+      const pending = total - claimed;
+
+      document.getElementById('totalCount').textContent = total;
+      document.getElementById('claimedCount').textContent = claimed;
+      document.getElementById('pendingCount').textContent = pending;
+    }
+
+    function renderTable() {
+      const tbody = document.getElementById('guestTableBody');
+      tbody.innerHTML = '';
+
+      const filtered = guests.filter(g => {
+        const matchesFilter =
+          currentFilter === 'all' ? true :
+          currentFilter === 'claimed' ? g.claimed : !g.claimed;
+
+        const matchesSearch =
+          g.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          g.hash.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          g.prize.toLowerCase().includes(searchQuery.toLowerCase());
+
+        return matchesFilter && matchesSearch;
+      });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" style="text-align: center; padding: 24px; color: var(--text-muted);">
+              No se encontraron invitados con los criterios actuales.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      filtered.forEach((g, idx) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${idx + 1}</td>
+          <td><strong>${g.name}</strong></td>
+          <td>${g.prize}</td>
+          <td><span class="hash-badge">${g.hash}</span></td>
+          <td>
+            <span class="badge-status ${g.claimed ? 'claimed' : 'pending'}">
+              ${g.claimed ? '✓ Entregado' : '⏳ Pendiente'}
+            </span>
+          </td>
+          <td>
+            <button class="btn ${g.claimed ? 'btn-secondary' : 'btn-gold'} btn-sm" onclick="triggerPrizeSpin('${g.hash}')">
+              🎰 Sortear
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // 4. Activación de Sorteo hacia la Pantalla Secundaria
+    window.triggerPrizeSpin = function(hash) {
+      const guest = guests.find(g => g.hash.toLowerCase() === hash.toLowerCase());
+      if (!guest) {
+        notify('Código Hash no encontrado en el padrón', true);
+        return;
+      }
+
+      if (guest.claimed) {
+        const confirmRetry = confirm(`El invitado ${guest.name} ya reclamó su premio anteriormente (${guest.prize}). ¿Deseas volver a girar la ruleta?`);
+        if (!confirmRetry) return;
+      }
+
+      // Marcar como entregado
+      guest.claimed = true;
+      guest.claimedAt = new Date().toLocaleTimeString();
+      saveGuestsToStorage();
+
+      // Renderizar tarjeta de último escaneado
+      renderLastScanCard(guest);
+
+      // Enviar orden a la pantalla secundaria
+      const allDistinctPrizes = Array.from(new Set(guests.map(g => g.prize)));
+      channel.postMessage({
+        type: 'SPIN_JACKPOT',
+        guest: guest.name,
+        prize: guest.prize,
+        hash: guest.hash,
+        allPrizes: allDistinctPrizes
+      });
+
+      notify(`🎰 ¡Ruleta activada para ${guest.name}!`);
+    };
+
+    function renderLastScanCard(guest) {
+      const container = document.getElementById('lastScanContainer');
+      container.className = 'last-scan-card';
+      container.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span class="badge-status claimed">✓ PREMIO ENTREGADO</span>
+          <span style="font-size: 11px; color: var(--text-muted);">${guest.claimedAt || 'Ahora'}</span>
+        </div>
+        <h3 style="font-family: 'Cinzel', serif; font-size: 18px; color: #fff; margin-top: 4px;">
+          ${guest.name}
+        </h3>
+        <p style="font-size: 14px; color: var(--accent-gold); font-weight: 600;">
+          🎁 ${guest.prize}
+        </p>
+        <div style="font-size: 11px; color: var(--text-muted); display: flex; gap: 8px; align-items: center; margin-top: 4px;">
+          <span>Código:</span>
+          <span class="hash-badge">${guest.hash}</span>
+        </div>
+      `;
+    }
+
+    // 5. Escáner de Código QR con Cámara
+    async function initScanner() {
+      try {
+        const devices = await Html5Qrcode.getCameras();
+        const select = document.getElementById('cameraSelect');
+        select.innerHTML = '';
+
+        if (devices && devices.length) {
+          devices.forEach(cam => {
+            const opt = document.createElement('option');
+            opt.value = cam.id;
+            opt.textContent = cam.label || `Cámara ${cam.id}`;
+            select.appendChild(opt);
+          });
+
+          startScannerWithCamera(devices[0].id);
+        } else {
+          select.innerHTML = '<option value="">No se encontraron cámaras</option>';
+        }
+      } catch (err) {
+        console.error('Error al iniciar cámaras:', err);
+      }
+    }
+
+    async function startScannerWithCamera(cameraId) {
+      if (html5QrCode && isScannerRunning) {
+        await html5QrCode.stop();
+      }
+
+      html5QrCode = new Html5Qrcode("qrReader");
+      isScannerRunning = true;
+
+      const config = {
+        fps: 15,
+        qrbox: { width: 220, height: 220 },
+        aspectRatio: 1.0
+      };
+
+      try {
+        await html5QrCode.start(
+          cameraId,
+          config,
+          (decodedText) => {
+            handleQrScan(decodedText.trim());
+          },
+          (errorMessage) => {
+            // escaneo continuo en silencio
+          }
+        );
+        document.getElementById('scannerStatusBadge').textContent = 'ACTIVA';
+        document.getElementById('scannerStatusBadge').style.color = 'var(--green)';
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    let lastScannedText = '';
+    let scanThrottle = false;
+
+    function handleQrScan(text) {
+      if (scanThrottle || text === lastScannedText) return;
+
+      scanThrottle = true;
+      lastScannedText = text;
+
+      triggerPrizeSpin(text);
+
+      setTimeout(() => {
+        scanThrottle = false;
+        lastScannedText = '';
+      }, 4000); // 4 segundos de cooldown para no duplicar escaneos instantáneos
+    }
+
+    // 6. Event Listeners y Controles
+    function setupEventListeners() {
+      // Abrir pantalla secundaria
+      document.getElementById('btnOpenScreen').addEventListener('click', () => {
+        window.open('/sorteo-pantalla.html', 'Cata15JackpotScreen', 'width=1920,height=1080');
+      });
+
+      // Cargar CSV
+      document.getElementById('btnLoadSampleCsv').addEventListener('click', loadSampleCsv);
+
+      document.getElementById('csvFileInput').addEventListener('change', (e) => {
+        if (e.target.files.length) {
+          const reader = new FileReader();
+          reader.onload = (evt) => parseCsvText(evt.target.result);
+          reader.readAsText(e.target.files[0]);
+        }
+      });
+
+      // Reiniciar
+      document.getElementById('btnResetAll').addEventListener('click', () => {
+        if (confirm('¿Estás seguro de que deseas reiniciar todos los estados a "Pendiente"?')) {
+          guests.forEach(g => {
+            g.claimed = false;
+            g.claimedAt = null;
+          });
+          saveGuestsToStorage();
+          notify('Estados reiniciados');
+        }
+      });
+
+      // Filtros y búsqueda
+      document.getElementById('searchInput').addEventListener('input', (e) => {
+        searchQuery = e.target.value;
+        renderTable();
+      });
+
+      document.querySelectorAll('.filter-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          currentFilter = tab.dataset.filter;
+          renderTable();
+        });
+      });
+
+      // Toggle cámara
+      document.getElementById('btnToggleScanner').addEventListener('click', async () => {
+        const btn = document.getElementById('btnToggleScanner');
+        if (isScannerRunning) {
+          await html5QrCode.stop();
+          isScannerRunning = false;
+          btn.textContent = 'Reanudar';
+          document.getElementById('scannerStatusBadge').textContent = 'PAUSADA';
+          document.getElementById('scannerStatusBadge').style.color = 'var(--red)';
+        } else {
+          const camId = document.getElementById('cameraSelect').value;
+          await startScannerWithCamera(camId);
+          btn.textContent = 'Pausar';
+        }
+      });
+
+      document.getElementById('cameraSelect').addEventListener('change', (e) => {
+        if (e.target.value) {
+          startScannerWithCamera(e.target.value);
+        }
+      });
+    }
+
+    function notify(msg, isError = false) {
+      const el = document.getElementById('notification');
+      document.getElementById('notifMessage').textContent = msg;
+      document.getElementById('notifIcon').textContent = isError ? '⚠️' : '✓';
+      el.style.background = isError ? '#ef4444' : '#ffffff';
+      el.style.color = isError ? '#ffffff' : '#000000';
+      el.classList.add('show');
+      setTimeout(() => el.classList.remove('show'), 3000);
+    }
+  </script>
+</body>
+</html>
