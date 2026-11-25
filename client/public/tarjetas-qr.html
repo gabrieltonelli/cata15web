@@ -10,15 +10,20 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800;900&family=Montserrat:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 
-  <!-- Librería QR local ultra rápida y síncrona -->
+  <!-- Librería QR local ultra rápida y síncrona (100% offline) -->
   <script src="/assets/qrious.min.js"></script>
   <script>
     if (typeof QRious === 'undefined') {
       document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"><\/script>');
     }
   </script>
-  <!-- JSZip para exportación por lote -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <!-- JSZip para exportación por lote (100% offline) -->
+  <script src="/assets/jszip.min.js"></script>
+  <script>
+    if (typeof JSZip === 'undefined') {
+      document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"><\/script>');
+    }
+  </script>
 
   <style>
     :root {

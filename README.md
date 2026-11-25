@@ -158,6 +158,8 @@ Documentadas con comentarios y ejemplos en [client/.env.template](file:///c:/Use
 - `VITE_TRANSITION_VIDEO_BOOMERANG`: Activar o desactivar efecto boomerang en transición (`true` o `false`, recomendado `false`).
 - `VITE_VIDEO_AUTO_PAUSE`: Pausa automática con `IntersectionObserver` cuando el video sale de pantalla para liberar GPU/RAM (`true` o `false`, default: `true`).
 - `VITE_VIDEO_CSS_FILTERS`: Habilitar o desactivar filtros CSS en tiempo real (grayscale/contrast) para teléfonos de baja gama (`true` o `false`, default: `true`).
+- `VITE_SORTEO_GESTOR_PASSWORD`: Clave de seguridad para acceder al panel del gestor de entrega de kits `/sorteo-gestor.html` (por defecto: `cata15gestor`, cifrado en build con SHA-256).
+- `VITE_SORTEO_PANTALLA_PASSWORD`: Clave de seguridad para acceder a la pantalla proyectable del sorteo `/sorteo-pantalla.html` (por defecto: `cata15pantalla`, cifrado en build con SHA-256).
 - `VITE_EVENT_TARGET_DATE`: Fecha y hora para la cuenta regresiva.
 - **Ubicación Principal:**
   - `VITE_VENUE_LABEL`: Titular de la opción en modo dual (ej. `Si hay buen clima`).
@@ -256,18 +258,24 @@ Acceso: `http://localhost:5173/tarjetas-qr.html`
 
 ### 2. Gestor de Sorteo con Escáner de Cámara ([`client/public/sorteo-gestor.html`](file:///c:/Users/gabrielt/Documents/Proyectos/PROPIOS/cata15web/client/public/sorteo-gestor.html))
 Acceso: `http://localhost:5173/sorteo-gestor.html`
+- **Seguridad por Contraseña:** Bloqueo de acceso con modal elegante. Valida la clave configurada en `VITE_SORTEO_GESTOR_PASSWORD` mediante hash criptográfico SHA-256 en sesión.
+- **Funcionamiento 100% Offline:** Todo el motor de escaneo de QR (`html5-qrcode.min.js`) y librerías corren localmente desde `/assets/` sin requerir conexión a internet.
 - Utiliza la **cámara web de la notebook** para leer el código QR de la tarjeta que el invitado muestra desde su smartphone.
 - Detecta instantáneamente el hash y busca al invitado en el padrón:
   - Si es válido: marca al invitado como "Entregado" y dispara automáticamente la orden de giro a la pantalla secundaria.
-  - Si ya fue entregado: muestra alerta de resguardo para evitar reclamos duplicados.
+  - Si ya fue entregado: muestra alerta de resguardo y notifica a la pantalla para evitar reclamos duplicados.
 - Padrón con buscador, filtros (Todos, Pendientes, Entregados), persistencia en `localStorage` y botón manual para sortear cualquier invitado sin necesidad de cámara.
-- Conexión en tiempo real con la pantalla secundaria vía `BroadcastChannel`.
+- Conexión en tiempo real con la pantalla secundaria vía `BroadcastChannel` (comunicación directa entre ventanas del navegador sin servidores externos).
 
 ### 3. Pantalla Secundaria de Ruleta / Jackpot: "Llevate tu Kit" ([`client/public/sorteo-pantalla.html`](file:///c:/Users/gabrielt/Documents/Proyectos/PROPIOS/cata15web/client/public/sorteo-pantalla.html))
 Acceso: `http://localhost:5173/sorteo-pantalla.html`
+- **Seguridad por Contraseña:** Protección con clave configurable vía `VITE_SORTEO_PANTALLA_PASSWORD` (SHA-256).
+- **Funcionamiento 100% Offline:** Sonidos procedurales generados por *Web Audio API* sin archivos de audio externos, confeti local (`confetti.browser.min.js`) y escaneo local.
+- **Visor HUD de Cámara Limpia:** Cuadro de video puro en la esquina inferior para que el participante encuadre su QR fácilmente frente a la pantalla.
 - Diseñada para proyectar en **pantalla gigante, TV o monitor secundario**.
 - Cuenta con botón minimalista de **Pantalla Completa** (`⛶`) con tooltip accesible.
 - Encabezado de impacto: **"LLEVATE TU KIT"**.
+- **Detección de Códigos Duplicados:** Si se escanea un QR ya entregado, el sector del slot exhibe la advertencia **`QR YA ESCANEADO ANTERIORMENTE`** en rojo con vibración óptica y sonido de alerta, desvaneciéndose limpiamente para volver a esperar el siguiente QR.
 - **Secuencia Coreográfica Completa:**
   1. **Estado Inicial:** En el sector central donde aparece el premio se muestra: **`ESPERANDO PRÓXIMO QR...`**.
   2. **Escaneo y Giro:** Al acercar el invitado el QR de su tarjeta a la cámara de la notebook, el sector se activa y la ruleta gira a toda velocidad con sonido mecánico procedural (*Web Audio API*).

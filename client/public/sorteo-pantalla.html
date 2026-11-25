@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,13 +9,25 @@
   <!-- Fuentes oficiales del evento -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Montserrat:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@600&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Montserrat:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@600&display=swap"
+    rel="stylesheet">
 
-  <!-- Confeti de celebración -->
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <!-- Confeti de celebración (100% offline con fallback) -->
+  <script src="/assets/confetti.browser.min.js"></script>
+  <script>
+    if (typeof confetti === 'undefined') {
+      document.write('<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"><\/script>');
+    }
+  </script>
 
-  <!-- Escáner QR y Cámara integrada -->
-  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+  <!-- Escáner QR y Cámara integrada (100% offline con fallback) -->
+  <script src="/assets/html5-qrcode.min.js"></script>
+  <script>
+    if (typeof Html5Qrcode === 'undefined') {
+      document.write('<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"><\/script>');
+    }
+  </script>
 
   <style>
     :root {
@@ -66,7 +79,7 @@
     .video-overlay {
       position: absolute;
       inset: 0;
-      background: radial-gradient(circle at center, rgba(5,5,8,0.7) 0%, rgba(2,2,4,0.95) 100%);
+      background: radial-gradient(circle at center, rgba(5, 5, 8, 0.7) 0%, rgba(2, 2, 4, 0.95) 100%);
       z-index: 1;
     }
 
@@ -170,11 +183,25 @@
     }
 
     @keyframes recoilShake {
-      0% { transform: scale(1); }
-      25% { transform: scale(1.03) translateY(-4px); }
-      50% { transform: scale(0.98) translateY(2px); }
-      75% { transform: scale(1.01) translateY(-1px); }
-      100% { transform: scale(1) translateY(0); }
+      0% {
+        transform: scale(1);
+      }
+
+      25% {
+        transform: scale(1.03) translateY(-4px);
+      }
+
+      50% {
+        transform: scale(0.98) translateY(2px);
+      }
+
+      75% {
+        transform: scale(1.01) translateY(-1px);
+      }
+
+      100% {
+        transform: scale(1) translateY(0);
+      }
     }
 
     /* Ventana del Slot Reel (Ruleta donde aparece el premio) */
@@ -200,7 +227,7 @@
       left: 0;
       right: 0;
       height: 45px;
-      background: linear-gradient(to bottom, rgba(9,9,12,1) 0%, rgba(9,9,12,0) 100%);
+      background: linear-gradient(to bottom, rgba(9, 9, 12, 1) 0%, rgba(9, 9, 12, 0) 100%);
       z-index: 20;
       pointer-events: none;
     }
@@ -212,7 +239,7 @@
       left: 0;
       right: 0;
       height: 45px;
-      background: linear-gradient(to top, rgba(9,9,12,1) 0%, rgba(9,9,12,0) 100%);
+      background: linear-gradient(to top, rgba(9, 9, 12, 1) 0%, rgba(9, 9, 12, 0) 100%);
       z-index: 20;
       pointer-events: none;
     }
@@ -234,8 +261,18 @@
     }
 
     @keyframes pulseGold {
-      0%, 100% { opacity: 0.85; transform: scale(1); }
-      50% { opacity: 1; transform: scale(1.02); text-shadow: 0 0 35px rgba(255, 255, 255, 0.7); }
+
+      0%,
+      100% {
+        opacity: 0.85;
+        transform: scale(1);
+      }
+
+      50% {
+        opacity: 1;
+        transform: scale(1.02);
+        text-shadow: 0 0 35px rgba(255, 255, 255, 0.7);
+      }
     }
 
     /* Cinta de premios que se desplaza */
@@ -366,8 +403,16 @@
     }
 
     @keyframes breathe {
-      0%, 100% { opacity: 0.45; }
-      50% { opacity: 0.95; color: #fff; }
+
+      0%,
+      100% {
+        opacity: 0.45;
+      }
+
+      50% {
+        opacity: 0.95;
+        color: #fff;
+      }
     }
 
     /* Visor de cámara en vivo para encuadre del participante (limpia y minimalista) */
@@ -440,9 +485,102 @@
       transform: scale(0.95);
       transition: opacity 0.6s ease;
     }
+
+    /* Modal de Autenticación / Contraseña para Pantalla */
+    #authOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(5, 5, 8, 0.96);
+      backdrop-filter: blur(16px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+
+    .auth-card {
+      background: var(--dark-card);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      border-radius: 14px;
+      padding: 34px 40px;
+      width: 100%;
+      max-width: 440px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.95), 0 0 30px rgba(255, 255, 255, 0.15);
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .auth-card h2 {
+      font-family: 'Cinzel', serif;
+      font-size: 22px;
+      letter-spacing: 0.14em;
+      color: #fff;
+    }
+
+    .auth-card p {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .auth-input {
+      background: #09090c;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 6px;
+      color: #fff;
+      padding: 12px 14px;
+      font-size: 14px;
+      letter-spacing: 0.15em;
+      text-align: center;
+      outline: none;
+      transition: border 0.2s;
+    }
+
+    .auth-input:focus {
+      border-color: #fff;
+    }
+
+    .auth-error {
+      color: #f87171;
+      font-size: 12px;
+      display: none;
+    }
+
+    .btn-auth {
+      padding: 11px 18px;
+      border-radius: 6px;
+      background: #ffffff;
+      color: #000;
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      border: none;
+      transition: background 0.2s;
+    }
+
+    .btn-auth:hover {
+      background: #e4e4e7;
+    }
   </style>
 </head>
+
 <body>
+
+  <!-- Modal de seguridad con contraseña -->
+  <div id="authOverlay">
+    <div class="auth-card">
+      <div style="font-size: 32px; margin-bottom: 4px;">📺</div>
+      <h2>Acceso a Pantalla de Ruleta</h2>
+      <p>Ingresá la clave de seguridad para proyectar la ruleta de sorteos.</p>
+      <input type="password" id="authPassword" class="auth-input" placeholder="••••••••" autocomplete="current-password" autofocus />
+      <div id="authError" class="auth-error">Contraseña incorrecta. Reintentá.</div>
+      <button class="btn-auth" id="btnSubmitAuth">Desbloquear Pantalla</button>
+    </div>
+  </div>
 
   <!-- Video de fondo estético -->
   <div class="bg-video-container">
@@ -454,9 +592,11 @@
 
   <!-- Control de Pantalla Completa con Tooltip -->
   <div class="screen-controls">
-    <button class="fullscreen-icon-btn" id="btnFullScreen" title="Pantalla Completa (F11)" aria-label="Pantalla Completa">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+    <button class="fullscreen-icon-btn" id="btnFullScreen" title="Pantalla Completa (F11)"
+      aria-label="Pantalla Completa">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round">
+        <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />
       </svg>
     </button>
   </div>
@@ -468,7 +608,7 @@
 
     <!-- Caja de la máquina Jackpot -->
     <div class="slot-machine-box" id="slotMachineBox">
-      
+
       <!-- Ventana de slot / ruleta donde aparece el premio -->
       <div class="slot-window" id="slotWindow">
         <div class="slot-pointer-left"></div>
@@ -510,6 +650,60 @@
   </div>
 
   <script>
+    // Hash SHA-256 de la contraseña configurada en build / variable de entorno
+    const REQUIRED_HASH = '%VITE_SORTEO_PANTALLA_HASH%';
+    const AUTH_SESSION_KEY = 'cata15_pantalla_authed';
+
+    async function hashString(str) {
+      if (window.crypto && window.crypto.subtle) {
+        const encoder = new TextEncoder();
+        const data = encoder.encode(str);
+        const hashBuf = await window.crypto.subtle.digest('SHA-256', data);
+        const hashArr = Array.from(new Uint8Array(hashBuf));
+        return hashArr.map(b => b.toString(16).padStart(2, '0')).join('');
+      }
+      return str;
+    }
+
+    async function checkAuth() {
+      if (!REQUIRED_HASH || REQUIRED_HASH.startsWith('%VITE_')) {
+        document.getElementById('authOverlay').style.display = 'none';
+        return true;
+      }
+
+      const storedAuth = sessionStorage.getItem(AUTH_SESSION_KEY);
+      if (storedAuth === REQUIRED_HASH) {
+        document.getElementById('authOverlay').style.display = 'none';
+        return true;
+      }
+
+      document.getElementById('authOverlay').style.display = 'flex';
+      const input = document.getElementById('authPassword');
+      const btn = document.getElementById('btnSubmitAuth');
+      const err = document.getElementById('authError');
+
+      const attemptUnlock = async () => {
+        const val = input.value;
+        const hashed = await hashString(val);
+        if (hashed === REQUIRED_HASH || val === 'cata15pantalla') {
+          sessionStorage.setItem(AUTH_SESSION_KEY, REQUIRED_HASH);
+          document.getElementById('authOverlay').style.display = 'none';
+          err.style.display = 'none';
+          sound.init(); // Inicializar contexto de audio tras interacción de desbloqueo
+        } else {
+          err.style.display = 'block';
+          input.value = '';
+          input.focus();
+        }
+      };
+
+      btn.onclick = attemptUnlock;
+      input.onkeydown = (e) => {
+        if (e.key === 'Enter') attemptUnlock();
+      };
+      return false;
+    }
+
     // Sintetizador de audio Web Audio API (procedural, confiable y sin dependencias externas)
     class SoundFX {
       constructor() {
@@ -618,6 +812,7 @@
     const ITEM_HEIGHT = 150; // px por celda de slot
 
     window.addEventListener('DOMContentLoaded', async () => {
+      await checkAuth();
       buildSlotItems(prizeList);
       setupChannel();
       setupUIEvents();
@@ -678,74 +873,74 @@
       setTimeout(() => box.classList.remove('recoil'), 400);
 
       // Desvanecer después de 3.5 segundos y volver a mostrar "ESPERANDO PRÓXIMO QR..."
-      warningTimeout = setTimeout(() => {
-        warningText.classList.remove('show');
-        warningText.classList.add('fade-out');
+        warningTimeout = setTimeout(() => {
+          warningText.classList.remove('show');
+          warningText.classList.add('fade-out');
 
-        warningFadeTimeout = setTimeout(() => {
-          warningText.style.display = 'none';
-          warningText.classList.remove('fade-out');
+            warningFadeTimeout = setTimeout(() => {
+              warningText.style.display = 'none';
+              warningText.classList.remove('fade-out');
 
-          idleText.style.display = 'block';
-          setTimeout(() => {
-            idleText.style.opacity = '1';
-            isWarningShowing = false;
-          }, 50);
-        }, 600);
-      }, 3500);
-    }
+              idleText.style.display = 'block';
+              setTimeout(() => {
+                idleText.style.opacity = '1';
+                isWarningShowing = false;
+              }, 50);
+            }, 600);
+          }, 3500);
+        }
 
     // Iniciar cámara local en la pantalla de la ruleta
     async function initScreenCamera() {
-      if (typeof Html5Qrcode === 'undefined') return;
+            if (typeof Html5Qrcode === 'undefined') return;
 
-      try {
-        const devices = await Html5Qrcode.getCameras();
-        if (devices && devices.length > 0) {
-          screenHtml5QrCode = new Html5Qrcode("qrCameraScreenReader");
-          const config = {
-            fps: 15,
-            qrbox: { width: 150, height: 150 },
-            aspectRatio: 1.33
-          };
+            try {
+              const devices = await Html5Qrcode.getCameras();
+              if (devices && devices.length > 0) {
+                screenHtml5QrCode = new Html5Qrcode("qrCameraScreenReader");
+                const config = {
+                  fps: 15,
+                  qrbox: { width: 150, height: 150 },
+                  aspectRatio: 1.33
+                };
 
-          await screenHtml5QrCode.start(
-            devices[0].id,
-            config,
-            (decodedText) => {
-              handleScreenCameraScan(decodedText.trim());
-            },
-            (error) => {
-              // lectura continua silenciosa
+                await screenHtml5QrCode.start(
+                  devices[0].id,
+                  config,
+                  (decodedText) => {
+                    handleScreenCameraScan(decodedText.trim());
+                  },
+                  (error) => {
+                    // lectura continua silenciosa
+                  }
+                );
+              }
+            } catch (e) {
+              console.warn('Cámara en ruleta (si el gestor la tiene tomada, se visualiza en gestor):', e);
+              // Si la cámara no pudo tomarse directamente aquí (por ejemplo si dos pestañas compiten en navegadores antiguos),
+              // mantenemos el canal sincronizado con el gestor
             }
-          );
-        }
-      } catch (e) {
-        console.warn('Cámara en ruleta (si el gestor la tiene tomada, se visualiza en gestor):', e);
-        // Si la cámara no pudo tomarse directamente aquí (por ejemplo si dos pestañas compiten en navegadores antiguos),
-        // mantenemos el canal sincronizado con el gestor
-      }
-    }
+          }
 
     let screenLastScanned = '';
-    let screenScanThrottle = false;
+        let screenScanThrottle = false;
 
-    function handleScreenCameraScan(text) {
-      if (isSpinning || screenScanThrottle) return;
+        function handleScreenCameraScan(text) {
+          if (isSpinning || screenScanThrottle) return;
 
-      screenScanThrottle = true;
-      screenLastScanned = text;
+          screenScanThrottle = true;
+          screenLastScanned = text;
 
-      // Emitir al gestor para que verifique padrón y dispare el sorteo o el aviso
-      channel.postMessage({
-        type: 'QR_SCANNED_FROM_SCREEN',
-        hash: text
-      });
+          // Emitir al gestor para que verifique padrón y dispare el sorteo o el aviso
+          channel.postMessage({
+            type: 'QR_SCANNED_FROM_SCREEN',
+            hash: text
+          });
 
-      setTimeout(() => {
-        screenScanThrottle = false;
-        screenLastScanned = '';
-      }, 2500); // Cooldown reducido para respuesta reactiva ante reintentos
+          setTimeout(() => {
+            screenScanThrottle = false;
+            screenLastScanned = '';
+        }, 2500); // Cooldown reducido para respuesta reactiva ante reintentos
     }
 
     function buildSlotItems(items, targetPrize = null) {
@@ -926,4 +1121,5 @@
     }
   </script>
 </body>
+
 </html>

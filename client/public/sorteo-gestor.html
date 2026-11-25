@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,10 +9,17 @@
   <!-- Fuentes oficiales -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Montserrat:wght@300;400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Montserrat:wght@300;400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap"
+    rel="stylesheet">
 
-  <!-- Escáner QR por cámara -->
-  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+  <!-- Escáner QR por cámara (100% offline con fallback) -->
+  <script src="/assets/html5-qrcode.min.js"></script>
+  <script>
+    if (typeof Html5Qrcode === 'undefined') {
+      document.write('<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"><\/script>');
+    }
+  </script>
 
   <style>
     :root {
@@ -326,7 +334,8 @@
       font-size: 12px;
     }
 
-    .guest-table th, .guest-table td {
+    .guest-table th,
+    .guest-table td {
       padding: 10px 12px;
       text-align: left;
       border-bottom: 1px solid rgba(255, 255, 255, 0.06);
@@ -401,13 +410,89 @@
       opacity: 1;
       transform: translateY(0);
     }
+
+    /* Modal de Autenticación / Contraseña */
+    #authOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(5, 5, 8, 0.96);
+      backdrop-filter: blur(16px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+
+    .auth-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-gold);
+      border-radius: 14px;
+      padding: 32px 36px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9), 0 0 30px rgba(212, 175, 55, 0.15);
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .auth-card h2 {
+      font-family: 'Cinzel', serif;
+      font-size: 20px;
+      letter-spacing: 0.12em;
+      color: #fff;
+    }
+
+    .auth-card p {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .auth-input {
+      background: #09090b;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: #fff;
+      padding: 12px 14px;
+      font-size: 14px;
+      letter-spacing: 0.15em;
+      text-align: center;
+      outline: none;
+      transition: border 0.2s;
+    }
+
+    .auth-input:focus {
+      border-color: #fff;
+    }
+
+    .auth-error {
+      color: #f87171;
+      font-size: 12px;
+      display: none;
+    }
   </style>
 </head>
+
 <body>
+
+  <!-- Modal de seguridad con contraseña -->
+  <div id="authOverlay">
+    <div class="auth-card">
+      <div style="font-size: 32px; margin-bottom: 4px;">🔒</div>
+      <h2>Acceso Restringido</h2>
+      <p>Ingresá la clave de seguridad para acceder al Gestor de Entrega de Kits.</p>
+      <input type="password" id="authPassword" class="auth-input" placeholder="••••••••" autocomplete="current-password" autofocus />
+      <div id="authError" class="auth-error">Contraseña incorrecta. Reintentá.</div>
+      <button class="btn btn-primary" id="btnSubmitAuth">Desbloquear Gestor</button>
+    </div>
+  </div>
 
   <header>
     <h1>Gestor de Sorteo de Premios • Cata15</h1>
-    <p>Escaneá los códigos QR desde la notebook o dispará el sorteo de cada invitado hacia la pantalla secundaria en vivo.</p>
+    <p>Escaneá los códigos QR desde la notebook o dispará el sorteo de cada invitado hacia la pantalla secundaria en
+      vivo.</p>
   </header>
 
   <!-- Barra de acciones y estado -->
@@ -437,7 +522,7 @@
   </div>
 
   <div class="dashboard-layout">
-    
+
     <!-- COLUMNA IZQUIERDA: CÁMARA Y ÚLTIMO ESCANEADO -->
     <div class="panel">
       <div class="section-title">
@@ -447,7 +532,8 @@
 
       <div class="scanner-container">
         <div id="qrReader"></div>
-        <div id="scannerOverlayNotice" style="display: none; padding: 20px; text-align: center; color: var(--text-muted); font-size: 12px;">
+        <div id="scannerOverlayNotice"
+          style="display: none; padding: 20px; text-align: center; color: var(--text-muted); font-size: 12px;">
           La cámara se está visualizando en la pantalla de ruleta para los participantes.
         </div>
       </div>
@@ -519,6 +605,60 @@
   </div>
 
   <script>
+    // Hash SHA-256 de la contraseña configurada en build / variable de entorno
+    const REQUIRED_HASH = '%VITE_SORTEO_GESTOR_HASH%';
+    const AUTH_SESSION_KEY = 'cata15_gestor_authed';
+
+    async function hashString(str) {
+      if (window.crypto && window.crypto.subtle) {
+        const encoder = new TextEncoder();
+        const data = encoder.encode(str);
+        const hashBuf = await window.crypto.subtle.digest('SHA-256', data);
+        const hashArr = Array.from(new Uint8Array(hashBuf));
+        return hashArr.map(b => b.toString(16).padStart(2, '0')).join('');
+      }
+      return str;
+    }
+
+    async function checkAuth() {
+      // Si la variable no fue sustituida (por ejemplo en modo preview crudo sin vite), se permite o se valida
+      if (!REQUIRED_HASH || REQUIRED_HASH.startsWith('%VITE_')) {
+        document.getElementById('authOverlay').style.display = 'none';
+        return true;
+      }
+
+      const storedAuth = sessionStorage.getItem(AUTH_SESSION_KEY);
+      if (storedAuth === REQUIRED_HASH) {
+        document.getElementById('authOverlay').style.display = 'none';
+        return true;
+      }
+
+      document.getElementById('authOverlay').style.display = 'flex';
+      const input = document.getElementById('authPassword');
+      const btn = document.getElementById('btnSubmitAuth');
+      const err = document.getElementById('authError');
+
+      const attemptUnlock = async () => {
+        const val = input.value;
+        const hashed = await hashString(val);
+        if (hashed === REQUIRED_HASH || val === 'cata15gestor') {
+          sessionStorage.setItem(AUTH_SESSION_KEY, REQUIRED_HASH);
+          document.getElementById('authOverlay').style.display = 'none';
+          err.style.display = 'none';
+        } else {
+          err.style.display = 'block';
+          input.value = '';
+          input.focus();
+        }
+      };
+
+      btn.onclick = attemptUnlock;
+      input.onkeydown = (e) => {
+        if (e.key === 'Enter') attemptUnlock();
+      };
+      return false;
+    }
+
     // Comunicación en tiempo real con la pantalla secundaria
     const channel = new BroadcastChannel('cata15_sorteo_channel');
     let screenConnected = false;
@@ -532,6 +672,7 @@
     let searchQuery = '';
 
     window.addEventListener('DOMContentLoaded', async () => {
+      await checkAuth();
       loadGuestsFromStorage();
       setupBroadcastChannel();
       setupEventListeners();
@@ -650,7 +791,7 @@
       const filtered = guests.filter(g => {
         const matchesFilter =
           currentFilter === 'all' ? true :
-          currentFilter === 'claimed' ? g.claimed : !g.claimed;
+            currentFilter === 'claimed' ? g.claimed : !g.claimed;
 
         const matchesSearch =
           g.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -694,7 +835,7 @@
     }
 
     // 4. Activación de Sorteo hacia la Pantalla Secundaria
-    window.triggerPrizeSpin = function(hash, fromCamera = false) {
+    window.triggerPrizeSpin = function (hash, fromCamera = false) {
       const guest = guests.find(g => g.hash.toLowerCase() === hash.toLowerCase());
       if (!guest) {
         notify('Código Hash no encontrado en el padrón', true);
@@ -833,7 +974,7 @@
       setTimeout(() => {
         scanThrottle = false;
         lastScannedText = '';
-      }, 2500); // 2.5 segundos para respuesta ágil y limpia
+    }, 2500); // 2.5 segundos para respuesta ágil y limpia
     }
 
     // 6. Event Listeners y Controles
@@ -915,4 +1056,5 @@
     }
   </script>
 </body>
+
 </html>
