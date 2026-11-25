@@ -416,6 +416,7 @@
       transform: translateY(10px);
       transition: opacity 0.6s ease, transform 0.6s ease;
       position: absolute;
+      z-index: 5;
     }
 
     .last-awarded-badge.show {
@@ -432,7 +433,13 @@
       color: var(--text-muted);
       animation: breathe 3s ease-in-out infinite;
       position: absolute;
-      transition: opacity 0.4s ease;
+      transition: opacity 0.4s ease, visibility 0.4s ease;
+      z-index: 2;
+    }
+
+    .idle-instruction.hidden {
+      opacity: 0 !important;
+      visibility: hidden;
     }
 
     @keyframes breathe {
@@ -1107,7 +1114,8 @@
       const congratsEl = document.getElementById('winnerCongratsText');
       congratsEl.classList.remove('show', 'fade-out');
 
-      document.getElementById('idleInstruction').style.opacity = '0';
+      // Ocultar la instrucción de espera mientras se procesa el sorteo
+      document.getElementById('idleInstruction').classList.add('hidden');
 
       // 2. Preparar cinta con el premio asignado
       const strip = document.getElementById('slotStrip');
@@ -1192,12 +1200,13 @@
             idleText.style.display = 'block';
             setTimeout(() => { idleText.style.opacity = '1'; }, 50);
 
-            // 4. El texto del premio recién entregado aparece abajo con "Último entregado: [premio]"
+            // 4. El texto del premio recién entregado aparece en la fila inferior
+            // Se mantiene oculta la instrucción para no superponerse con el badge de último entregado
             const lastAwarded = document.getElementById('lastAwardedBadge');
             lastAwarded.innerHTML = `Último entregado: &nbsp;<strong>${targetPrize.toUpperCase()}</strong>`;
             lastAwarded.classList.add('show');
 
-            document.getElementById('idleInstruction').style.opacity = '1';
+            document.getElementById('idleInstruction').classList.add('hidden');
 
             isSpinning = false;
           }, 600);
