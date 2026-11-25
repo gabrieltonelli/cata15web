@@ -271,7 +271,12 @@ Acceso: `http://localhost:5173/sorteo-gestor.html`
 Acceso: `http://localhost:5173/sorteo-pantalla.html`
 - **Seguridad por Contraseña:** Protección con clave configurable vía `VITE_SORTEO_PANTALLA_PASSWORD` (SHA-256).
 - **Funcionamiento 100% Offline:** Sonidos procedurales generados por *Web Audio API* sin archivos de audio externos, confeti local (`confetti.browser.min.js`) y escaneo local.
-- **Visor HUD de Cámara Limpia:** Cuadro de video puro en la esquina inferior para que el participante encuadre su QR fácilmente frente a la pantalla.
+- **Visor HUD de Cámara Flotante & Menú Contextual:**
+  - Cuadro de video limpio y minimalista, con bordes sutiles para no alterar la atmósfera de gala.
+  - **Inversión en Espejo:** Por defecto invierte horizontalmente la imagen (`scaleX(-1)`) para que las cámaras frontales funcionen de forma natural e intuitiva ante el movimiento de las personas.
+  - **Flotante y Arrastrable:** Permite arrastrar libremente el visor por cualquier sector de la pantalla.
+  - **Ventana Completa:** Opcional para expandir la cámara a pantalla completa o trasladarla a un monitor secundario (vía menú o doble clic).
+  - **Menú Contextual (Click Derecho):** Opciones directas para activar/desactivar espejo, alternar pantalla completa y restablecer la posición original.
 - Diseñada para proyectar en **pantalla gigante, TV o monitor secundario**.
 - Cuenta con botón minimalista de **Pantalla Completa** (`⛶`) con tooltip accesible.
 - Encabezado de impacto: **"LLEVATE TU KIT"**.

@@ -415,25 +415,44 @@
       }
     }
 
-    /* Visor de cámara en vivo para encuadre del participante (limpia y minimalista) */
+    /* Visor de cámara en vivo para encuadre del participante (Flotante, Arrastrable, Sin borde excesivo) */
     .camera-hud-container {
-      position: absolute;
+      position: fixed;
       bottom: 24px;
       right: 28px;
-      width: 220px;
-      height: 165px;
+      width: 240px;
+      height: 180px;
       background: #000;
-      border: 1.5px solid rgba(255, 255, 255, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.2);
       border-radius: 12px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.85), 0 0 20px rgba(255, 255, 255, 0.12);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.85), 0 0 15px rgba(255, 255, 255, 0.08);
       overflow: hidden;
-      z-index: 50;
-      transition: all 0.3s ease;
+      z-index: 80;
+      cursor: grab;
+      user-select: none;
+      touch-action: none;
+      transition: box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+
+    .camera-hud-container:active {
+      cursor: grabbing;
     }
 
     .camera-hud-container:hover {
-      border-color: rgba(255, 255, 255, 0.8);
-      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.95), 0 0 30px rgba(255, 255, 255, 0.25);
+      border-color: rgba(255, 255, 255, 0.5);
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.95), 0 0 25px rgba(255, 255, 255, 0.18);
+    }
+
+    .camera-hud-container.fullscreen-hud {
+      position: fixed !important;
+      inset: 0 !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      border-radius: 0 !important;
+      border: none !important;
+      box-shadow: none !important;
+      z-index: 99999 !important;
+      cursor: default !important;
     }
 
     .camera-hud-video {
@@ -453,7 +472,58 @@
       width: 100% !important;
       height: 100% !important;
       object-fit: cover !important;
+      border-radius: inherit;
+      /* Inversión en espejo por defecto para cámara frontal */
+      transform: scaleX(-1);
+      transition: transform 0.2s ease;
+    }
+
+    #qrCameraScreenReader video.unmirrored {
+      transform: scaleX(1) !important;
+    }
+
+    /* Menú Contextual Personalizado (Click Derecho) */
+    .context-menu {
+      position: fixed;
+      background: rgba(14, 14, 18, 0.95);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
       border-radius: 10px;
+      padding: 6px 0;
+      min-width: 210px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.9), 0 0 20px rgba(255, 255, 255, 0.1);
+      z-index: 100000;
+      display: none;
+      flex-direction: column;
+      font-size: 12px;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    .context-menu-item {
+      padding: 9px 16px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+
+    .context-menu-item:hover {
+      background: rgba(255, 255, 255, 0.15);
+      color: #ffffff;
+    }
+
+    .context-menu-item .menu-icon {
+      font-size: 14px;
+      width: 18px;
+      text-align: center;
+    }
+
+    .context-menu-divider {
+      height: 1px;
+      background: rgba(255, 255, 255, 0.12);
+      margin: 4px 0;
     }
 
     /* Mensaje de QR Ya Escaneado */
@@ -642,10 +712,27 @@
     </div>
   </div>
 
-  <!-- Visor en vivo de cámara para que el participante sepa cómo encuadrar el QR (Limpia) -->
-  <div class="camera-hud-container" id="cameraHudBox">
+  <!-- Visor en vivo de cámara para que el participante sepa cómo encuadrar el QR (Limpia y Flotante) -->
+  <div class="camera-hud-container" id="cameraHudBox" title="Arrastrá para mover • Click derecho para opciones">
     <div class="camera-hud-video">
       <div id="qrCameraScreenReader"></div>
+    </div>
+  </div>
+
+  <!-- Menú contextual para la cámara (Click derecho) -->
+  <div class="context-menu" id="cameraContextMenu">
+    <div class="context-menu-item" id="menuToggleMirror">
+      <span class="menu-icon">🪞</span>
+      <span id="menuMirrorText">Desactivar espejo</span>
+    </div>
+    <div class="context-menu-item" id="menuToggleFullscreen">
+      <span class="menu-icon">🖥️</span>
+      <span id="menuFsText">Ventana / Pantalla Completa</span>
+    </div>
+    <div class="context-menu-divider"></div>
+    <div class="context-menu-item" id="menuResetPosition">
+      <span class="menu-icon">📍</span>
+      <span>Restablecer posición</span>
     </div>
   </div>
 
@@ -1105,7 +1192,7 @@
       }, 250);
     }
 
-    // UI Events
+    // UI Events y Control Flotante de Cámara
     function setupUIEvents() {
       // Pantalla Completa con botón minimalista
       document.getElementById('btnFullScreen').addEventListener('click', () => {
@@ -1118,6 +1205,157 @@
 
       // Iniciar contexto de audio en el primer click de la ventana
       window.addEventListener('click', () => sound.init(), { once: true });
+
+      // Configuración de la Cámara Flotante (Arrastrable, Menú Contextual, Espejo y Fullscreen)
+      setupFloatingCameraControls();
+    }
+
+    function setupFloatingCameraControls() {
+      const hud = document.getElementById('cameraHudBox');
+      const menu = document.getElementById('cameraContextMenu');
+      const menuToggleMirror = document.getElementById('menuToggleMirror');
+      const menuMirrorText = document.getElementById('menuMirrorText');
+      const menuToggleFs = document.getElementById('menuToggleFullscreen');
+      const menuFsText = document.getElementById('menuFsText');
+      const menuResetPos = document.getElementById('menuResetPosition');
+
+      let isMirrored = true; // Espejo por defecto activado para cámara frontal
+      let isHudFullscreen = false;
+
+      // 1. Alternar Espejo (Invertir horizontalmente)
+      const updateMirrorState = () => {
+        const videoEl = hud.querySelector('video');
+        if (videoEl) {
+          if (isMirrored) {
+            videoEl.classList.remove('unmirrored');
+            menuMirrorText.textContent = 'Desactivar espejo (Normal)';
+          } else {
+            videoEl.classList.add('unmirrored');
+            menuMirrorText.textContent = 'Activar espejo (Frontal)';
+          }
+        }
+      };
+
+      menuToggleMirror.addEventListener('click', () => {
+        isMirrored = !isMirrored;
+        updateMirrorState();
+        hideContextMenu();
+      });
+
+      // 2. Alternar Pantalla Completa / Ventana Completa para la cámara
+      const toggleHudFullscreen = () => {
+        isHudFullscreen = !isHudFullscreen;
+        if (isHudFullscreen) {
+          hud.classList.add('fullscreen-hud');
+          menuFsText.textContent = 'Salir de ventana completa';
+        } else {
+          hud.classList.remove('fullscreen-hud');
+          menuFsText.textContent = 'Ventana / Pantalla Completa';
+        }
+        hideContextMenu();
+      };
+
+      menuToggleFs.addEventListener('click', toggleHudFullscreen);
+      hud.addEventListener('dblclick', toggleHudFullscreen);
+
+      // 3. Restablecer Posición inicial
+      menuResetPos.addEventListener('click', () => {
+        hud.style.left = '';
+        hud.style.top = '';
+        hud.style.right = '28px';
+        hud.style.bottom = '24px';
+        hideContextMenu();
+      });
+
+      // 4. Arrastre Libre (Drag & Drop) de la Cámara
+      let isDragging = false;
+      let startX = 0, startY = 0;
+      let initialLeft = 0, initialTop = 0;
+
+      hud.addEventListener('pointerdown', (e) => {
+        // Ignorar si está en pantalla completa o click derecho
+        if (isHudFullscreen || e.button !== 0) return;
+
+        isDragging = true;
+        hud.setPointerCapture(e.pointerId);
+
+        const rect = hud.getBoundingClientRect();
+        startX = e.clientX;
+        startY = e.clientY;
+        initialLeft = rect.left;
+        initialTop = rect.top;
+
+        // Fijar left y top absolutos para arrastre fluido
+        hud.style.right = 'auto';
+        hud.style.bottom = 'auto';
+        hud.style.left = `${initialLeft}px`;
+        hud.style.top = `${initialTop}px`;
+        hud.style.transition = 'none';
+      });
+
+      hud.addEventListener('pointermove', (e) => {
+        if (!isDragging) return;
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+
+        let newLeft = initialLeft + dx;
+        let newTop = initialTop + dy;
+
+        // Limitar dentro de la ventana
+        const maxLeft = window.innerWidth - hud.offsetWidth;
+        const maxTop = window.innerHeight - hud.offsetHeight;
+
+        newLeft = Math.max(0, Math.min(newLeft, maxLeft));
+        newTop = Math.max(0, Math.min(newTop, maxTop));
+
+        hud.style.left = `${newLeft}px`;
+        hud.style.top = `${newTop}px`;
+      });
+
+      const stopDragging = (e) => {
+        if (isDragging) {
+          isDragging = false;
+          try { hud.releasePointerCapture(e.pointerId); } catch (_) {}
+          hud.style.transition = 'box-shadow 0.2s ease, border-color 0.2s ease';
+        }
+      };
+
+      hud.addEventListener('pointerup', stopDragging);
+      hud.addEventListener('pointercancel', stopDragging);
+
+      // 5. Menú Contextual (Click Derecho)
+      hud.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        const menuWidth = 220;
+        const menuHeight = 130;
+
+        let posX = e.clientX;
+        let posY = e.clientY;
+
+        if (posX + menuWidth > window.innerWidth) posX = window.innerWidth - menuWidth - 10;
+        if (posY + menuHeight > window.innerHeight) posY = window.innerHeight - menuHeight - 10;
+
+        menu.style.left = `${posX}px`;
+        menu.style.top = `${posY}px`;
+        menu.style.display = 'flex';
+      });
+
+      function hideContextMenu() {
+        menu.style.display = 'none';
+      }
+
+      window.addEventListener('click', (e) => {
+        if (!menu.contains(e.target)) {
+          hideContextMenu();
+        }
+      });
+
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          hideContextMenu();
+          if (isHudFullscreen) toggleHudFullscreen();
+        }
+      });
     }
   </script>
 </body>
