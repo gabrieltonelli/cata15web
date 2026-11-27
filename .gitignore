@@ -49,3 +49,4 @@ server/.env.*.local
 
 # Misc
 *.local
+docs/
