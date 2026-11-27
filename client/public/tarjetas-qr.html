@@ -593,7 +593,7 @@
           </div>
           <div class="form-group">
             <label>Posición Y: <span id="yHeaderBadge" class="badge-val">140px</span></label>
-            <input type="range" id="yHeader" min="80" max="240" value="140">
+            <input type="range" id="yHeader" min="80" max="1000" value="140">
           </div>
         </div>
       </div>
@@ -611,7 +611,7 @@
           </div>
           <div class="form-group">
             <label>Posición Y: <span id="yTitleBadge" class="badge-val">250px</span></label>
-            <input type="range" id="yTitle" min="180" max="360" value="250">
+            <input type="range" id="yTitle" min="180" max="1000" value="250">
           </div>
         </div>
       </div>
@@ -621,7 +621,7 @@
         <div class="control-card-header">Separador Superior ✦</div>
         <div class="form-group">
           <label>Posición Y: <span id="yDivider1Badge" class="badge-val">330px</span></label>
-          <input type="range" id="yDivider1" min="260" max="420" value="330">
+          <input type="range" id="yDivider1" min="260" max="1000" value="330">
         </div>
       </div>
 
@@ -632,13 +632,13 @@
         <div class="form-group">
           <label>Modalidad de Nombre:</label>
           <select id="guestNameMode">
-            <option value="full" selected>Nombre y Apellido (ej. Agustina Fernandez)</option>
+            <option value="full">Nombre y Apellido (ej. Agustina Fernandez)</option>
             <option value="first">Solo Primer Nombre (sin apellido, ej. Agustina)</option>
-            <option value="none">Ocultar Nombre (Tarjeta genérica sin destinatario)</option>
+            <option value="none" selected>Ocultar Nombre (Tarjeta genérica sin destinatario)</option>
           </select>
         </div>
 
-        <div id="guestNameInputsBlock" style="display: flex; flex-direction: column; gap: 8px;">
+        <div id="guestNameInputsBlock" style="display: flex; flex-direction: column; gap: 8px; opacity: 0.4; pointer-events: none;">
           <div class="form-group">
             <label>Etiqueta superior:</label>
             <input type="text" id="txtGuestLabel" value="INVITACIÓN ESPECIAL PARA">
@@ -650,7 +650,7 @@
             </div>
             <div class="form-group">
               <label>Posición Y: <span id="yGuestLabelBadge" class="badge-val">385px</span></label>
-              <input type="range" id="yGuestLabel" min="320" max="460" value="385">
+              <input type="range" id="yGuestLabel" min="320" max="1000" value="385">
             </div>
           </div>
 
@@ -665,7 +665,7 @@
             </div>
             <div class="form-group">
               <label>Posición Y: <span id="yGuestBadge" class="badge-val">445px</span></label>
-              <input type="range" id="yGuest" min="380" max="540" value="445">
+              <input type="range" id="yGuest" min="380" max="1000" value="445">
             </div>
           </div>
         </div>
@@ -675,7 +675,7 @@
       <div class="control-card">
         <div class="control-card-header">Fecha y Horario</div>
         <div class="form-group">
-          <input type="text" id="txtDateTime" value="SÁBADO 28 DE NOVIEMBRE DE 2026 • 20:30 HS">
+          <input type="text" id="txtDateTime" value="SÁBADO 28 DE NOVIEMBRE • 21:00 a 2:00 HS">
         </div>
         <div class="row-controls">
           <div class="form-group">
@@ -684,7 +684,7 @@
           </div>
           <div class="form-group">
             <label>Posición Y: <span id="yDateTimeBadge" class="badge-val">540px</span></label>
-            <input type="range" id="yDateTime" min="460" max="640" value="540">
+            <input type="range" id="yDateTime" min="460" max="1000" value="540">
           </div>
         </div>
       </div>
@@ -693,7 +693,7 @@
       <div class="control-card">
         <div class="control-card-header">Locación Definitiva del Evento</div>
         <div class="form-group">
-          <input type="text" id="txtVenue" value="QUINTA KM 214,5 • CHACABUCO">
+          <input type="text" id="txtVenue" value="CASAQUINTA KM 214,5 • CHACABUCO">
         </div>
         <div class="row-controls">
           <div class="form-group">
@@ -702,7 +702,7 @@
           </div>
           <div class="form-group">
             <label>Posición Y: <span id="yVenueBadge" class="badge-val">610px</span></label>
-            <input type="range" id="yVenue" min="520" max="720" value="610">
+            <input type="range" id="yVenue" min="520" max="1000" value="610">
           </div>
         </div>
       </div>
@@ -712,7 +712,7 @@
         <div class="control-card-header">Separador Central ✦</div>
         <div class="form-group">
           <label>Posición Y: <span id="yDivider2Badge" class="badge-val">710px</span></label>
-          <input type="range" id="yDivider2" min="630" max="820" value="710">
+          <input type="range" id="yDivider2" min="630" max="1000" value="710">
         </div>
       </div>
 
@@ -734,7 +734,7 @@
           </div>
           <div class="form-group">
             <label>Posición Y (Texto): <span id="yQrTitleBadge" class="badge-val">820px</span></label>
-            <input type="range" id="yQrTitle" min="700" max="950" value="820">
+            <input type="range" id="yQrTitle" min="700" max="1000" value="820">
           </div>
         </div>
         <div class="form-group">
@@ -748,7 +748,7 @@
           </div>
           <div class="form-group">
             <label>Posición Y (QR): <span id="yQrBoxBadge" class="badge-val">900px</span></label>
-            <input type="range" id="yQrBox" min="760" max="1150" value="900">
+            <input type="range" id="yQrBox" min="760" max="1000" value="900">
           </div>
         </div>
       </div>
