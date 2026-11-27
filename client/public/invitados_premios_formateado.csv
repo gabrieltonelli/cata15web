@@ -21,7 +21,7 @@ Francesca Cabani;Kit Skin Care;CATA15-FC195
 Mercedes Marino;Kit Runner;CATA15-MM323
 Jazmín da Cunha;Kit Skin Care;CATA15-JC338
 Pía Echeverría;Kit Skin Care;CATA15-PE617
-Ignacio Priano;Kit Tecnología;CATA15-IP716
+Ignacio Priano;Kit Runner;CATA15-IP716
 Mora Zinani;Kit Manicure;CATA15-MZ127
 Sofía Golia;Kit Skin Care;CATA15-SG674
 Pilar Falabella;Kit Skin Care;CATA15-PF303
@@ -41,33 +41,33 @@ Emilia Marino;Kit Skin Hair;CATA15-EM877
 Guadalupe Valls;Kit Skin Hair;CATA15-GV925
 Francina;Kit Manicure;CATA15-FR263
 Ariana;Kit Skin Care;CATA15-AR814
-Alicia;Kit Relax;CATA15-AL532
+Alicia;Kit Aromaterapia;CATA15-AL532
 Gabriel Tonelli;Kit Relax;CATA15-GT448
 Flavia Abaca;Kit Relax;CATA15-FA384
 Darío Tonelli;Kit Relax;CATA15-DT259
 Paula Martínez;Kit Relax;CATA15-PM320
-Maru;Kit Relax;CATA15-MA881
+Maru;Kit Aromaterapia;CATA15-MA881
 Natalín Arzuaga;Kit Relax;CATA15-NA444
 Luciano Ferreyra;Kit Relax;CATA15-LF204
 Claudia Lenciza;Kit Relax;CATA15-CL194
-Agustina Biasco;Kit Relax;CATA15-AB489
+Agustina Biasco;Kit Aromaterapia;CATA15-AB489
 Lucas Chappero;Kit Relax;CATA15-LC199
 Cecilia Falabella;Kit Relax;CATA15-CF467
 Andrés Trotta;Kit Relax;CATA15-AT967
-Alina Chaves;Kit Relax;CATA15-AC452
+Alina Chaves;Kit Aromaterapia;CATA15-AC452
 Carla Chaves;Kit Relax;CATA15-CC718
 Julio Chaves;Kit Relax;CATA15-JC370
 Rocío Pérez;Kit Relax;CATA15-RP926
 Miguel Olivera;Kit Relax;CATA15-MO144
 Emilia Romero;Kit Relax;CATA15-ER847
 Franco;Kit Relax;CATA15-FR570
-Rosario Santucci;Kit Relax;CATA15-RS649
+Rosario Santucci;Kit Aromaterapia;CATA15-RS649
 Azul Valvidares;Kit Skin Care;CATA15-AV227
 Natalia Tonelli;Kit Relax;CATA15-NT487
 Juan Cruz;Kit Relax;CATA15-JC180
 Victoria Tonelli;Kit Skin Hair;CATA15-VT665
 Tiziana Tonelli;Kit Skin Hair;CATA15-TT400
-Simón Priano;Kit Runner;CATA15-SP949
+Simón Priano;Kit de Viaje;CATA15-SP949
 Candelaria Chappero;Kit Skin Care;CATA15-CC743
 Tiziano Romero;Kit Art;CATA15-TR733
 Helena Tonelli;Kit Art;CATA15-HT982
@@ -78,3 +78,5 @@ Leo Buonasissi;Kit Relax;CATA15-LB821
 Agustín Trotta;Kit Aire Libre;CATA15-AT171
 Roma Baigorria;Kit Bebé;CATA15-RB146
 Antonia Tonelli;Kit Bebé;CATA15-AT777
+Bianca;Kit Manicure;CATA15-AJ972
+Lucía;Kit Manicure;CATA15-AT972

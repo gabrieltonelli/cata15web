@@ -645,856 +645,857 @@
           </select>
         </div>
 
-          <div id="guestNameInputsBlock"
-            style="display: flex; flex-direction: column; gap: 8px; opacity: 0.4; pointer-events: none;">
-            <div class="form-group">
-              <label>Etiqueta superior:</label>
-              <input type="text" id="txtGuestLabel" value="INVITACIÓN ESPECIAL PARA">
-            </div>
-            <div class="row-controls">
-              <div class="form-group">
-                <label>Tamaño: <span id="sizeGuestLabelBadge" class="badge-val">24px</span></label>
-                <input type="range" id="sizeGuestLabel" min="14" max="38" value="24">
-              </div>
-              <div class="form-group">
-                <label>Posición Y: <span id="yGuestLabelBadge" class="badge-val">385px</span></label>
-                <input type="range" id="yGuestLabel" min="320" max="1000" value="385">
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label>Nombre de muestra:</label>
-              <input type="text" id="txtGuest" value="AGUSTINA FERNANDEZ">
-            </div>
-            <div class="row-controls">
-              <div class="form-group">
-                <label>Tamaño: <span id="sizeGuestBadge" class="badge-val">46px</span></label>
-                <input type="range" id="sizeGuest" min="26" max="76" value="46">
-              </div>
-              <div class="form-group">
-                <label>Posición Y: <span id="yGuestBadge" class="badge-val">445px</span></label>
-                <input type="range" id="yGuest" min="380" max="1000" value="445">
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- LÍNEA 5: Fecha y Horario -->
-        <div class="control-card">
-          <div class="control-card-header">Fecha y Horario</div>
+        <div id="guestNameInputsBlock"
+          style="display: flex; flex-direction: column; gap: 8px; opacity: 0.4; pointer-events: none;">
           <div class="form-group">
-            <input type="text" id="txtDateTime" value="SÁBADO 28 DE NOVIEMBRE • 21:00 a 2:00 HS">
+            <label>Etiqueta superior:</label>
+            <input type="text" id="txtGuestLabel" value="INVITACIÓN ESPECIAL PARA">
           </div>
           <div class="row-controls">
             <div class="form-group">
-              <label>Tamaño: <span id="sizeDateTimeBadge" class="badge-val">32px</span></label>
-              <input type="range" id="sizeDateTime" min="18" max="50" value="32">
+              <label>Tamaño: <span id="sizeGuestLabelBadge" class="badge-val">24px</span></label>
+              <input type="range" id="sizeGuestLabel" min="14" max="38" value="24">
             </div>
             <div class="form-group">
-              <label>Posición Y: <span id="yDateTimeBadge" class="badge-val">540px</span></label>
-              <input type="range" id="yDateTime" min="460" max="1000" value="540">
+              <label>Posición Y: <span id="yGuestLabelBadge" class="badge-val">385px</span></label>
+              <input type="range" id="yGuestLabel" min="320" max="1000" value="385">
             </div>
           </div>
-        </div>
 
-        <!-- LÍNEA 6: Locación Definitiva -->
-        <div class="control-card">
-          <div class="control-card-header">Locación Definitiva del Evento</div>
           <div class="form-group">
-            <input type="text" id="txtVenue" value="CASAQUINTA KM 214,5 • CHACABUCO">
+            <label>Nombre de muestra:</label>
+            <input type="text" id="txtGuest" value="AGUSTINA FERNANDEZ">
           </div>
           <div class="row-controls">
             <div class="form-group">
-              <label>Tamaño: <span id="sizeVenueBadge" class="badge-val">28px</span></label>
-              <input type="range" id="sizeVenue" min="16" max="44" value="28">
+              <label>Tamaño: <span id="sizeGuestBadge" class="badge-val">46px</span></label>
+              <input type="range" id="sizeGuest" min="26" max="76" value="46">
             </div>
             <div class="form-group">
-              <label>Posición Y: <span id="yVenueBadge" class="badge-val">610px</span></label>
-              <input type="range" id="yVenue" min="520" max="1000" value="610">
+              <label>Posición Y: <span id="yGuestBadge" class="badge-val">445px</span></label>
+              <input type="range" id="yGuest" min="380" max="1000" value="445">
             </div>
           </div>
         </div>
-
-        <!-- Separador Central -->
-        <div class="control-card">
-          <div class="control-card-header">Separador Central ✦</div>
-          <div class="form-group">
-            <label>Posición Y: <span id="yDivider2Badge" class="badge-val">710px</span></label>
-            <input type="range" id="yDivider2" min="630" max="1000" value="710">
-          </div>
-        </div>
-
-        <!-- SECCIÓN 3: CÓDIGO QR -->
-        <div class="section-title">
-          <span>3. Bloque de Código QR (Sorteo)</span>
-        </div>
-
-        <div class="control-card">
-          <div class="control-card-header">Ajustes del Código QR</div>
-          <div class="form-group">
-            <label>Texto sobre el QR:</label>
-            <input type="text" id="txtQrTitle" value="Conserva este código hasta para el final de la fiesta">
-          </div>
-          <div class="row-controls">
-            <div class="form-group">
-              <label>Tamaño Texto: <span id="sizeQrTitleBadge" class="badge-val">28px</span></label>
-              <input type="range" id="sizeQrTitle" min="16" max="44" value="28">
-            </div>
-            <div class="form-group">
-              <label>Posición Y (Texto): <span id="yQrTitleBadge" class="badge-val">820px</span></label>
-              <input type="range" id="yQrTitle" min="700" max="1000" value="820">
-            </div>
-          </div>
-          <div class="form-group">
-            <label>Hash de prueba (Muestra):</label>
-            <input type="text" id="txtSampleHash" value="CATA15-VIP2026">
-          </div>
-          <div class="row-controls">
-            <div class="form-group">
-              <label>Tamaño QR: <span id="sizeQrBoxBadge" class="badge-val">620px</span></label>
-              <input type="range" id="sizeQrBox" min="400" max="820" value="620">
-            </div>
-            <div class="form-group">
-              <label>Posición Y (QR): <span id="yQrBoxBadge" class="badge-val">900px</span></label>
-              <input type="range" id="yQrBox" min="760" max="1000" value="900">
-            </div>
-          </div>
-        </div>
-
-        <button class="btn btn-primary" onclick="switchStep(2)" style="margin-top: 10px;">
-          Siguiente: Cargar CSV de Invitados →
-        </button>
       </div>
 
-      <!-- ======================================================== -->
-      <!-- PANEL PASO 2: CSV Y EXPORTACIÓN MASIVA -->
-      <!-- ======================================================== -->
-      <div class="panel" id="panelStep2" style="display: none;">
-        <div class="section-title">
-          <span>Archivo de Invitados (CSV)</span>
+      <!-- LÍNEA 5: Fecha y Horario -->
+      <div class="control-card">
+        <div class="control-card-header">Fecha y Horario</div>
+        <div class="form-group">
+          <input type="text" id="txtDateTime" value="SÁBADO 28 DE NOVIEMBRE • 21:00 a 2:00 HS">
         </div>
-
-        <div class="csv-dropzone" id="csvDropzone">
-          <p style="font-size: 14px; font-weight: 600; margin-bottom: 6px;">📂 Arrastrá tu archivo CSV aquí</p>
-          <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">Formato:
-            <code>nombre_apellido;premio;hash</code></p>
-          <input type="file" id="csvFileInput" accept=".csv" style="display: none;">
-          <button class="btn btn-secondary" onclick="document.getElementById('csvFileInput').click()">
-            Seleccionar Archivo
-          </button>
-        </div>
-
-        <div style="display: flex; gap: 8px;">
-          <button class="btn btn-secondary" style="flex: 1; font-size: 11px;" id="btnLoadSampleCsv">
-            ⚡ Cargar CSV de Prueba (20 Invitados)
-          </button>
-        </div>
-
-        <div class="section-title" style="margin-top: 10px;">
-          <span>Lista de Invitados (<span id="guestCountBadge">0</span>)</span>
-        </div>
-
-        <div class="guest-list-container">
-          <table class="guest-table">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Invitado</th>
-                <th>Premio</th>
-                <th>Hash QR</th>
-              </tr>
-            </thead>
-            <tbody id="guestTableBody">
-              <tr>
-                <td colspan="4" style="text-align: center; color: var(--text-muted); padding: 20px;">
-                  Cargá un archivo CSV para visualizar los invitados
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div class="section-title" style="margin-top: 10px;">
-          <span>Acciones de Exportación</span>
-        </div>
-
         <div class="row-controls">
-          <button class="btn btn-primary" id="btnDownloadSingle">
-            📥 Descargar Tarjeta Actual
-          </button>
-          <button class="btn btn-secondary" id="btnCopySingle">
-            📋 Copiar al Portapapeles
-          </button>
-        </div>
-
-        <button class="btn btn-gold" id="btnDownloadAllZip" style="margin-top: 6px;">
-          📦 Generar y Descargar Todas en ZIP
-        </button>
-
-        <div class="progress-bar-container" id="progressBarContainer">
-          <div class="progress-bar" id="progressBar"></div>
-        </div>
-        <p id="progressText" style="font-size: 11px; text-align: center; color: var(--text-muted); display: none;"></p>
-
-        <button class="btn btn-secondary" onclick="switchStep(1)">
-          ← Volver a Calibrar Plantilla & Alturas
-        </button>
-      </div>
-
-      <!-- ======================================================== -->
-      <!-- PREVIEW MOCKUP 9:16 -->
-      <!-- ======================================================== -->
-      <div class="preview-section">
-        <div class="phone-mockup">
-          <div class="phone-notch"></div>
-          <div class="canvas-container">
-            <canvas id="outputCanvas" width="1080" height="1920"></canvas>
+          <div class="form-group">
+            <label>Tamaño: <span id="sizeDateTimeBadge" class="badge-val">32px</span></label>
+            <input type="range" id="sizeDateTime" min="18" max="50" value="32">
+          </div>
+          <div class="form-group">
+            <label>Posición Y: <span id="yDateTimeBadge" class="badge-val">540px</span></label>
+            <input type="range" id="yDateTime" min="460" max="1000" value="540">
           </div>
         </div>
+      </div>
 
-        <div style="font-size: 11px; color: var(--text-muted); text-align: center;">
-          Resolución nativa: <strong>1080 x 1920 px (9:16)</strong> • Auto-ajuste de textos sin desborde
+      <!-- LÍNEA 6: Locación Definitiva -->
+      <div class="control-card">
+        <div class="control-card-header">Locación Definitiva del Evento</div>
+        <div class="form-group">
+          <input type="text" id="txtVenue" value="CASAQUINTA KM 214,5 • CHACABUCO">
+        </div>
+        <div class="row-controls">
+          <div class="form-group">
+            <label>Tamaño: <span id="sizeVenueBadge" class="badge-val">28px</span></label>
+            <input type="range" id="sizeVenue" min="16" max="44" value="28">
+          </div>
+          <div class="form-group">
+            <label>Posición Y: <span id="yVenueBadge" class="badge-val">610px</span></label>
+            <input type="range" id="yVenue" min="520" max="1000" value="610">
+          </div>
         </div>
       </div>
 
+      <!-- Separador Central -->
+      <div class="control-card">
+        <div class="control-card-header">Separador Central ✦</div>
+        <div class="form-group">
+          <label>Posición Y: <span id="yDivider2Badge" class="badge-val">710px</span></label>
+          <input type="range" id="yDivider2" min="630" max="1000" value="710">
+        </div>
+      </div>
+
+      <!-- SECCIÓN 3: CÓDIGO QR -->
+      <div class="section-title">
+        <span>3. Bloque de Código QR (Sorteo)</span>
+      </div>
+
+      <div class="control-card">
+        <div class="control-card-header">Ajustes del Código QR</div>
+        <div class="form-group">
+          <label>Texto sobre el QR:</label>
+          <input type="text" id="txtQrTitle" value="Conserva este código hasta para el final de la fiesta">
+        </div>
+        <div class="row-controls">
+          <div class="form-group">
+            <label>Tamaño Texto: <span id="sizeQrTitleBadge" class="badge-val">28px</span></label>
+            <input type="range" id="sizeQrTitle" min="16" max="44" value="28">
+          </div>
+          <div class="form-group">
+            <label>Posición Y (Texto): <span id="yQrTitleBadge" class="badge-val">820px</span></label>
+            <input type="range" id="yQrTitle" min="700" max="1000" value="820">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Hash de prueba (Muestra):</label>
+          <input type="text" id="txtSampleHash" value="CATA15-VIP2026">
+        </div>
+        <div class="row-controls">
+          <div class="form-group">
+            <label>Tamaño QR: <span id="sizeQrBoxBadge" class="badge-val">620px</span></label>
+            <input type="range" id="sizeQrBox" min="400" max="820" value="620">
+          </div>
+          <div class="form-group">
+            <label>Posición Y (QR): <span id="yQrBoxBadge" class="badge-val">900px</span></label>
+            <input type="range" id="yQrBox" min="760" max="1000" value="900">
+          </div>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" onclick="switchStep(2)" style="margin-top: 10px;">
+        Siguiente: Cargar CSV de Invitados →
+      </button>
     </div>
 
-    <div id="notification">
-      <span id="notifIcon">✓</span>
-      <span id="notifMessage">Acción completada</span>
+    <!-- ======================================================== -->
+    <!-- PANEL PASO 2: CSV Y EXPORTACIÓN MASIVA -->
+    <!-- ======================================================== -->
+    <div class="panel" id="panelStep2" style="display: none;">
+      <div class="section-title">
+        <span>Archivo de Invitados (CSV)</span>
+      </div>
+
+      <div class="csv-dropzone" id="csvDropzone">
+        <p style="font-size: 14px; font-weight: 600; margin-bottom: 6px;">📂 Arrastrá tu archivo CSV aquí</p>
+        <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">Formato:
+          <code>nombre_apellido;premio;hash</code>
+        </p>
+        <input type="file" id="csvFileInput" accept=".csv" style="display: none;">
+        <button class="btn btn-secondary" onclick="document.getElementById('csvFileInput').click()">
+          Seleccionar Archivo
+        </button>
+      </div>
+
+      <div style="display: flex; gap: 8px;">
+        <button class="btn btn-secondary" style="flex: 1; font-size: 11px;" id="btnLoadSampleCsv">
+          ⚡ Cargar CSV de Prueba (20 Invitados)
+        </button>
+      </div>
+
+      <div class="section-title" style="margin-top: 10px;">
+        <span>Lista de Invitados (<span id="guestCountBadge">0</span>)</span>
+      </div>
+
+      <div class="guest-list-container">
+        <table class="guest-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Invitado</th>
+              <th>Premio</th>
+              <th>Hash QR</th>
+            </tr>
+          </thead>
+          <tbody id="guestTableBody">
+            <tr>
+              <td colspan="4" style="text-align: center; color: var(--text-muted); padding: 20px;">
+                Cargá un archivo CSV para visualizar los invitados
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section-title" style="margin-top: 10px;">
+        <span>Acciones de Exportación</span>
+      </div>
+
+      <div class="row-controls">
+        <button class="btn btn-primary" id="btnDownloadSingle">
+          📥 Descargar Tarjeta Actual
+        </button>
+        <button class="btn btn-secondary" id="btnCopySingle">
+          📋 Copiar al Portapapeles
+        </button>
+      </div>
+
+      <button class="btn btn-gold" id="btnDownloadAllZip" style="margin-top: 6px;">
+        📦 Generar y Descargar Todas en ZIP
+      </button>
+
+      <div class="progress-bar-container" id="progressBarContainer">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+      <p id="progressText" style="font-size: 11px; text-align: center; color: var(--text-muted); display: none;"></p>
+
+      <button class="btn btn-secondary" onclick="switchStep(1)">
+        ← Volver a Calibrar Plantilla & Alturas
+      </button>
     </div>
 
-    <script>
-      // Estado de la aplicación
-      let guests = [];
-      let currentGuestIndex = -1; // -1 significa modo plantilla de muestra
-      let isVideoPlaying = false;
+    <!-- ======================================================== -->
+    <!-- PREVIEW MOCKUP 9:16 -->
+    <!-- ======================================================== -->
+    <div class="preview-section">
+      <div class="phone-mockup">
+        <div class="phone-notch"></div>
+        <div class="canvas-container">
+          <canvas id="outputCanvas" width="1080" height="1920"></canvas>
+        </div>
+      </div>
 
-      const video = document.getElementById('sourceVideo');
-      const canvas = document.getElementById('outputCanvas');
-      const ctx = canvas.getContext('2d');
+      <div style="font-size: 11px; color: var(--text-muted); text-align: center;">
+        Resolución nativa: <strong>1080 x 1920 px (9:16)</strong> • Auto-ajuste de textos sin desborde
+      </div>
+    </div>
 
-      // Lista de todos los IDs de controles para reactividad inmediata
-      const controlIds = [
-        'overlayDarkness', 'contrast', 'grayscale',
-        'txtHeader', 'sizeHeader', 'yHeader',
-        'txtTitle', 'sizeTitle', 'yTitle',
-        'yDivider1',
-        'guestNameMode',
-        'txtGuestLabel', 'sizeGuestLabel', 'yGuestLabel',
-        'txtGuest', 'sizeGuest', 'yGuest',
-        'txtDateTime', 'sizeDateTime', 'yDateTime',
-        'txtVenue', 'sizeVenue', 'yVenue',
-        'yDivider2',
-        'txtQrTitle', 'sizeQrTitle', 'yQrTitle',
-        'txtSampleHash', 'sizeQrBox', 'yQrBox'
-      ];
+  </div>
 
-      window.addEventListener('DOMContentLoaded', () => {
-        setupVideoControls();
-        setupCsvHandlers();
-        setupExportButtons();
-        setupReactiveListeners();
+  <div id="notification">
+    <span id="notifIcon">✓</span>
+    <span id="notifMessage">Acción completada</span>
+  </div>
 
-        video.addEventListener('loadeddata', () => {
-          document.getElementById('videoTime').max = video.duration || 10;
-          updateBadges();
-          updatePreview();
-        });
+  <script>
+    // Estado de la aplicación
+    let guests = [];
+    let currentGuestIndex = -1; // -1 significa modo plantilla de muestra
+    let isVideoPlaying = false;
 
-        document.fonts.ready.then(() => {
-          updatePreview();
-        });
+    const video = document.getElementById('sourceVideo');
+    const canvas = document.getElementById('outputCanvas');
+    const ctx = canvas.getContext('2d');
 
+    // Lista de todos los IDs de controles para reactividad inmediata
+    const controlIds = [
+      'overlayDarkness', 'contrast', 'grayscale',
+      'txtHeader', 'sizeHeader', 'yHeader',
+      'txtTitle', 'sizeTitle', 'yTitle',
+      'yDivider1',
+      'guestNameMode',
+      'txtGuestLabel', 'sizeGuestLabel', 'yGuestLabel',
+      'txtGuest', 'sizeGuest', 'yGuest',
+      'txtDateTime', 'sizeDateTime', 'yDateTime',
+      'txtVenue', 'sizeVenue', 'yVenue',
+      'yDivider2',
+      'txtQrTitle', 'sizeQrTitle', 'yQrTitle',
+      'txtSampleHash', 'sizeQrBox', 'yQrBox'
+    ];
+
+    window.addEventListener('DOMContentLoaded', () => {
+      setupVideoControls();
+      setupCsvHandlers();
+      setupExportButtons();
+      setupReactiveListeners();
+
+      video.addEventListener('loadeddata', () => {
+        document.getElementById('videoTime').max = video.duration || 10;
         updateBadges();
         updatePreview();
       });
 
-      // Registra listeners de input y change en TODOS los controles para reactividad instantánea
-      function setupReactiveListeners() {
-        controlIds.forEach(id => {
-          const el = document.getElementById(id);
-          if (el) {
-            el.addEventListener('input', () => {
-              updateBadges();
-              updatePreview();
-            });
-            el.addEventListener('change', () => {
-              updateBadges();
-              updatePreview();
-            });
-          }
-        });
+      document.fonts.ready.then(() => {
+        updatePreview();
+      });
 
-        document.getElementById('guestNameMode').addEventListener('change', (e) => {
-          const isNone = e.target.value === 'none';
-          document.getElementById('guestNameInputsBlock').style.opacity = isNone ? '0.4' : '1';
-          document.getElementById('guestNameInputsBlock').style.pointerEvents = isNone ? 'none' : 'auto';
-          updatePreview();
-        });
-      }
+      updateBadges();
+      updatePreview();
+    });
 
-      function updateBadges() {
-        document.getElementById('overlayDarknessBadge').textContent = document.getElementById('overlayDarkness').value + '%';
-        document.getElementById('contrastBadge').textContent = document.getElementById('contrast').value + '%';
-        document.getElementById('grayscaleBadge').textContent = document.getElementById('grayscale').value + '%';
-        document.getElementById('sizeHeaderBadge').textContent = document.getElementById('sizeHeader').value + 'px';
-        document.getElementById('yHeaderBadge').textContent = document.getElementById('yHeader').value + 'px';
-        document.getElementById('sizeTitleBadge').textContent = document.getElementById('sizeTitle').value + 'px';
-        document.getElementById('yTitleBadge').textContent = document.getElementById('yTitle').value + 'px';
-        document.getElementById('yDivider1Badge').textContent = document.getElementById('yDivider1').value + 'px';
-        document.getElementById('sizeGuestLabelBadge').textContent = document.getElementById('sizeGuestLabel').value + 'px';
-        document.getElementById('yGuestLabelBadge').textContent = document.getElementById('yGuestLabel').value + 'px';
-        document.getElementById('sizeGuestBadge').textContent = document.getElementById('sizeGuest').value + 'px';
-        document.getElementById('yGuestBadge').textContent = document.getElementById('yGuest').value + 'px';
-        document.getElementById('sizeDateTimeBadge').textContent = document.getElementById('sizeDateTime').value + 'px';
-        document.getElementById('yDateTimeBadge').textContent = document.getElementById('yDateTime').value + 'px';
-        document.getElementById('sizeVenueBadge').textContent = document.getElementById('sizeVenue').value + 'px';
-        document.getElementById('yVenueBadge').textContent = document.getElementById('yVenue').value + 'px';
-        document.getElementById('yDivider2Badge').textContent = document.getElementById('yDivider2').value + 'px';
-        document.getElementById('sizeQrTitleBadge').textContent = document.getElementById('sizeQrTitle').value + 'px';
-        document.getElementById('yQrTitleBadge').textContent = document.getElementById('yQrTitle').value + 'px';
-        document.getElementById('sizeQrBoxBadge').textContent = document.getElementById('sizeQrBox').value + 'px';
-        document.getElementById('yQrBoxBadge').textContent = document.getElementById('yQrBox').value + 'px';
-      }
+    // Registra listeners de input y change en TODOS los controles para reactividad instantánea
+    function setupReactiveListeners() {
+      controlIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.addEventListener('input', () => {
+            updateBadges();
+            updatePreview();
+          });
+          el.addEventListener('change', () => {
+            updateBadges();
+            updatePreview();
+          });
+        }
+      });
 
-      // Navegación entre pasos
-      function switchStep(stepNumber) {
-        document.getElementById('panelStep1').style.display = stepNumber === 1 ? 'flex' : 'none';
-        document.getElementById('panelStep2').style.display = stepNumber === 2 ? 'flex' : 'none';
-        document.getElementById('btnStep1').classList.toggle('active', stepNumber === 1);
-        document.getElementById('btnStep2').classList.toggle('active', stepNumber === 2);
-      }
+      document.getElementById('guestNameMode').addEventListener('change', (e) => {
+        const isNone = e.target.value === 'none';
+        document.getElementById('guestNameInputsBlock').style.opacity = isNone ? '0.4' : '1';
+        document.getElementById('guestNameInputsBlock').style.pointerEvents = isNone ? 'none' : 'auto';
+        updatePreview();
+      });
+    }
 
-      // Configuración del video
-      function setupVideoControls() {
-        const videoSelect = document.getElementById('videoSelect');
-        const videoTime = document.getElementById('videoTime');
-        const btnPlayPause = document.getElementById('btnPlayPause');
-        const btnCapture = document.getElementById('btnCaptureFrame');
+    function updateBadges() {
+      document.getElementById('overlayDarknessBadge').textContent = document.getElementById('overlayDarkness').value + '%';
+      document.getElementById('contrastBadge').textContent = document.getElementById('contrast').value + '%';
+      document.getElementById('grayscaleBadge').textContent = document.getElementById('grayscale').value + '%';
+      document.getElementById('sizeHeaderBadge').textContent = document.getElementById('sizeHeader').value + 'px';
+      document.getElementById('yHeaderBadge').textContent = document.getElementById('yHeader').value + 'px';
+      document.getElementById('sizeTitleBadge').textContent = document.getElementById('sizeTitle').value + 'px';
+      document.getElementById('yTitleBadge').textContent = document.getElementById('yTitle').value + 'px';
+      document.getElementById('yDivider1Badge').textContent = document.getElementById('yDivider1').value + 'px';
+      document.getElementById('sizeGuestLabelBadge').textContent = document.getElementById('sizeGuestLabel').value + 'px';
+      document.getElementById('yGuestLabelBadge').textContent = document.getElementById('yGuestLabel').value + 'px';
+      document.getElementById('sizeGuestBadge').textContent = document.getElementById('sizeGuest').value + 'px';
+      document.getElementById('yGuestBadge').textContent = document.getElementById('yGuest').value + 'px';
+      document.getElementById('sizeDateTimeBadge').textContent = document.getElementById('sizeDateTime').value + 'px';
+      document.getElementById('yDateTimeBadge').textContent = document.getElementById('yDateTime').value + 'px';
+      document.getElementById('sizeVenueBadge').textContent = document.getElementById('sizeVenue').value + 'px';
+      document.getElementById('yVenueBadge').textContent = document.getElementById('yVenue').value + 'px';
+      document.getElementById('yDivider2Badge').textContent = document.getElementById('yDivider2').value + 'px';
+      document.getElementById('sizeQrTitleBadge').textContent = document.getElementById('sizeQrTitle').value + 'px';
+      document.getElementById('yQrTitleBadge').textContent = document.getElementById('yQrTitle').value + 'px';
+      document.getElementById('sizeQrBoxBadge').textContent = document.getElementById('sizeQrBox').value + 'px';
+      document.getElementById('yQrBoxBadge').textContent = document.getElementById('yQrBox').value + 'px';
+    }
 
-        videoSelect.addEventListener('change', () => {
-          video.src = videoSelect.value;
-          video.load();
-        });
+    // Navegación entre pasos
+    function switchStep(stepNumber) {
+      document.getElementById('panelStep1').style.display = stepNumber === 1 ? 'flex' : 'none';
+      document.getElementById('panelStep2').style.display = stepNumber === 2 ? 'flex' : 'none';
+      document.getElementById('btnStep1').classList.toggle('active', stepNumber === 1);
+      document.getElementById('btnStep2').classList.toggle('active', stepNumber === 2);
+    }
 
-        videoTime.addEventListener('input', () => {
-          video.currentTime = parseFloat(videoTime.value);
-          document.getElementById('videoTimeBadge').textContent = parseFloat(videoTime.value).toFixed(1) + 's';
-          if (!isVideoPlaying) updatePreview();
-        });
+    // Configuración del video
+    function setupVideoControls() {
+      const videoSelect = document.getElementById('videoSelect');
+      const videoTime = document.getElementById('videoTime');
+      const btnPlayPause = document.getElementById('btnPlayPause');
+      const btnCapture = document.getElementById('btnCaptureFrame');
 
-        btnPlayPause.addEventListener('click', () => {
-          if (video.paused) {
-            video.play();
-            isVideoPlaying = true;
-            btnPlayPause.textContent = '⏸ Pausar';
-            renderLoop();
-          } else {
-            video.pause();
-            isVideoPlaying = false;
-            btnPlayPause.textContent = '▶ Reproducir';
-          }
-        });
+      videoSelect.addEventListener('change', () => {
+        video.src = videoSelect.value;
+        video.load();
+      });
 
-        btnCapture.addEventListener('click', () => {
+      videoTime.addEventListener('input', () => {
+        video.currentTime = parseFloat(videoTime.value);
+        document.getElementById('videoTimeBadge').textContent = parseFloat(videoTime.value).toFixed(1) + 's';
+        if (!isVideoPlaying) updatePreview();
+      });
+
+      btnPlayPause.addEventListener('click', () => {
+        if (video.paused) {
+          video.play();
+          isVideoPlaying = true;
+          btnPlayPause.textContent = '⏸ Pausar';
+          renderLoop();
+        } else {
           video.pause();
           isVideoPlaying = false;
           btnPlayPause.textContent = '▶ Reproducir';
-          updatePreview();
-          notify('Frame capturado correctamente');
-        });
+        }
+      });
+
+      btnCapture.addEventListener('click', () => {
+        video.pause();
+        isVideoPlaying = false;
+        btnPlayPause.textContent = '▶ Reproducir';
+        updatePreview();
+        notify('Frame capturado correctamente');
+      });
+    }
+
+    function renderLoop() {
+      if (isVideoPlaying) {
+        document.getElementById('videoTime').value = video.currentTime;
+        document.getElementById('videoTimeBadge').textContent = video.currentTime.toFixed(1) + 's';
+        updatePreview();
+        requestAnimationFrame(renderLoop);
+      }
+    }
+
+    // Manejo de CSV
+    function setupCsvHandlers() {
+      const dropzone = document.getElementById('csvDropzone');
+      const fileInput = document.getElementById('csvFileInput');
+      const btnLoadSample = document.getElementById('btnLoadSampleCsv');
+
+      dropzone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropzone.classList.add('dragover');
+      });
+
+      dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+
+      dropzone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropzone.classList.remove('dragover');
+        if (e.dataTransfer.files.length) {
+          parseCsvFile(e.dataTransfer.files[0]);
+        }
+      });
+
+      fileInput.addEventListener('change', () => {
+        if (fileInput.files.length) {
+          parseCsvFile(fileInput.files[0]);
+        }
+      });
+
+      btnLoadSample.addEventListener('click', async () => {
+        try {
+          const res = await fetch('/invitados_premios_ejemplo.csv');
+          const text = await res.text();
+          processCsvText(text);
+          notify('CSV de prueba cargado (20 invitados)');
+        } catch (err) {
+          notify('Error al cargar archivo de ejemplo', true);
+        }
+      });
+    }
+
+    function parseCsvFile(file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        processCsvText(e.target.result);
+        notify(`Archivo cargado: ${file.name}`);
+      };
+      reader.readAsText(file);
+    }
+
+    function processCsvText(csvText) {
+      const lines = csvText.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
+      if (lines.length <= 1) {
+        notify('El archivo CSV parece estar vacío', true);
+        return;
       }
 
-      function renderLoop() {
-        if (isVideoPlaying) {
-          document.getElementById('videoTime').value = video.currentTime;
-          document.getElementById('videoTimeBadge').textContent = video.currentTime.toFixed(1) + 's';
-          updatePreview();
-          requestAnimationFrame(renderLoop);
+      guests = [];
+      const startIdx = lines[0].toLowerCase().includes('hash') ? 1 : 0;
+
+      for (let i = startIdx; i < lines.length; i++) {
+        const parts = lines[i].split(';').map(p => p.trim());
+        if (parts.length >= 3) {
+          guests.push({
+            id: i,
+            name: parts[0],
+            prize: parts[1],
+            hash: parts[2]
+          });
         }
       }
 
-      // Manejo de CSV
-      function setupCsvHandlers() {
-        const dropzone = document.getElementById('csvDropzone');
-        const fileInput = document.getElementById('csvFileInput');
-        const btnLoadSample = document.getElementById('btnLoadSampleCsv');
+      document.getElementById('guestCountBadge').textContent = guests.length;
+      renderGuestTable();
 
-        dropzone.addEventListener('dragover', (e) => {
-          e.preventDefault();
-          dropzone.classList.add('dragover');
-        });
-
-        dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
-
-        dropzone.addEventListener('drop', (e) => {
-          e.preventDefault();
-          dropzone.classList.remove('dragover');
-          if (e.dataTransfer.files.length) {
-            parseCsvFile(e.dataTransfer.files[0]);
-          }
-        });
-
-        fileInput.addEventListener('change', () => {
-          if (fileInput.files.length) {
-            parseCsvFile(fileInput.files[0]);
-          }
-        });
-
-        btnLoadSample.addEventListener('click', async () => {
-          try {
-            const res = await fetch('/invitados_premios_ejemplo.csv');
-            const text = await res.text();
-            processCsvText(text);
-            notify('CSV de prueba cargado (20 invitados)');
-          } catch (err) {
-            notify('Error al cargar archivo de ejemplo', true);
-          }
-        });
+      if (guests.length > 0) {
+        selectGuest(0);
       }
+    }
 
-      function parseCsvFile(file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          processCsvText(e.target.result);
-          notify(`Archivo cargado: ${file.name}`);
-        };
-        reader.readAsText(file);
-      }
+    function renderGuestTable() {
+      const tbody = document.getElementById('guestTableBody');
+      tbody.innerHTML = '';
 
-      function processCsvText(csvText) {
-        const lines = csvText.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
-        if (lines.length <= 1) {
-          notify('El archivo CSV parece estar vacío', true);
-          return;
-        }
+      guests.forEach((g, idx) => {
+        const tr = document.createElement('tr');
+        if (idx === currentGuestIndex) tr.classList.add('selected');
 
-        guests = [];
-        const startIdx = lines[0].toLowerCase().includes('hash') ? 1 : 0;
-
-        for (let i = startIdx; i < lines.length; i++) {
-          const parts = lines[i].split(';').map(p => p.trim());
-          if (parts.length >= 3) {
-            guests.push({
-              id: i,
-              name: parts[0],
-              prize: parts[1],
-              hash: parts[2]
-            });
-          }
-        }
-
-        document.getElementById('guestCountBadge').textContent = guests.length;
-        renderGuestTable();
-
-        if (guests.length > 0) {
-          selectGuest(0);
-        }
-      }
-
-      function renderGuestTable() {
-        const tbody = document.getElementById('guestTableBody');
-        tbody.innerHTML = '';
-
-        guests.forEach((g, idx) => {
-          const tr = document.createElement('tr');
-          if (idx === currentGuestIndex) tr.classList.add('selected');
-
-          tr.innerHTML = `
+        tr.innerHTML = `
           <td>${idx + 1}</td>
           <td><strong>${g.name}</strong></td>
           <td>${g.prize}</td>
           <td><span class="hash-badge">${g.hash}</span></td>
         `;
 
-          tr.addEventListener('click', () => selectGuest(idx));
-          tbody.appendChild(tr);
-        });
+        tr.addEventListener('click', () => selectGuest(idx));
+        tbody.appendChild(tr);
+      });
+    }
+
+    function selectGuest(index) {
+      currentGuestIndex = index;
+      renderGuestTable();
+      const g = guests[index];
+      if (g) {
+        document.getElementById('txtGuest').value = g.name.toUpperCase();
+        updatePreview();
       }
+    }
 
-      function selectGuest(index) {
-        currentGuestIndex = index;
-        renderGuestTable();
-        const g = guests[index];
-        if (g) {
-          document.getElementById('txtGuest').value = g.name.toUpperCase();
-          updatePreview();
-        }
-      }
-
-      // Obtener el nombre formateado según la opción (con o sin apellido, o ninguno)
-      function getFormattedGuestName(rawName) {
-        const mode = document.getElementById('guestNameMode').value;
-        if (mode === 'none' || !rawName || !rawName.trim()) {
-          return null;
-        }
-
-        const trimmed = rawName.trim();
-        if (mode === 'first') {
-          // Tomar solo el primer nombre (sin apellido)
-          const parts = trimmed.split(/\s+/);
-          return parts[0].toUpperCase();
-        }
-
-        // Nombre completo con apellido
-        return trimmed.toUpperCase();
-      }
-
-      // Generador de QR ultra rápido y 100% síncrono con QRious
-      function getQrCanvas(text) {
-        const qrData = text && text.trim() ? text.trim() : 'CATA15-VIP2026';
-        try {
-          if (typeof QRious !== 'undefined') {
-            const qr = new QRious({
-              value: qrData,
-              size: 520,
-              level: 'H'
-            });
-            return qr.canvas;
-          }
-        } catch (e) {
-          console.error('Error al generar QRious:', e);
-        }
+    // Obtener el nombre formateado según la opción (con o sin apellido, o ninguno)
+    function getFormattedGuestName(rawName) {
+      const mode = document.getElementById('guestNameMode').value;
+      if (mode === 'none' || !rawName || !rawName.trim()) {
         return null;
       }
 
-      // Auto-ajuste de texto para que NUNCA desborde el ancho útil
-      function drawTextAutoFit(ctx, text, x, y, initialFontSize, maxWidth, fontConfig) {
-        if (!text || !text.trim()) return 0;
-        let currentSize = parseInt(initialFontSize);
-        const { family = 'sans-serif', weight = '400', color = '#fff', letterSpacing = '0px', shadow = false } = fontConfig;
+      const trimmed = rawName.trim();
+      if (mode === 'first') {
+        // Tomar solo el primer nombre (sin apellido)
+        const parts = trimmed.split(/\s+/);
+        return parts[0].toUpperCase();
+      }
 
-        ctx.save();
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillStyle = color;
+      // Nombre completo con apellido
+      return trimmed.toUpperCase();
+    }
 
-        if (shadow) {
-          ctx.shadowColor = 'rgba(0,0,0,0.85)';
-          ctx.shadowBlur = 14;
+    // Generador de QR ultra rápido y 100% síncrono con QRious
+    function getQrCanvas(text) {
+      const qrData = text && text.trim() ? text.trim() : 'CATA15-VIP2026';
+      try {
+        if (typeof QRious !== 'undefined') {
+          const qr = new QRious({
+            value: qrData,
+            size: 520,
+            level: 'H'
+          });
+          return qr.canvas;
         }
+      } catch (e) {
+        console.error('Error al generar QRious:', e);
+      }
+      return null;
+    }
 
+    // Auto-ajuste de texto para que NUNCA desborde el ancho útil
+    function drawTextAutoFit(ctx, text, x, y, initialFontSize, maxWidth, fontConfig) {
+      if (!text || !text.trim()) return 0;
+      let currentSize = parseInt(initialFontSize);
+      const { family = 'sans-serif', weight = '400', color = '#fff', letterSpacing = '0px', shadow = false } = fontConfig;
+
+      ctx.save();
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = color;
+
+      if (shadow) {
+        ctx.shadowColor = 'rgba(0,0,0,0.85)';
+        ctx.shadowBlur = 14;
+      }
+
+      ctx.font = `${weight} ${currentSize}px ${family}`;
+      let measuredWidth = ctx.measureText(text).width;
+
+      const minSize = Math.max(14, Math.floor(initialFontSize * 0.45));
+      while (measuredWidth > maxWidth && currentSize > minSize) {
+        currentSize -= 1;
         ctx.font = `${weight} ${currentSize}px ${family}`;
-        let measuredWidth = ctx.measureText(text).width;
-
-        const minSize = Math.max(14, Math.floor(initialFontSize * 0.45));
-        while (measuredWidth > maxWidth && currentSize > minSize) {
-          currentSize -= 1;
-          ctx.font = `${weight} ${currentSize}px ${family}`;
-          measuredWidth = ctx.measureText(text).width;
-        }
-
-        ctx.fillText(text, x, y);
-        ctx.restore();
-        return currentSize;
+        measuredWidth = ctx.measureText(text).width;
       }
 
-      // Renderizado principal en Canvas (1080 x 1920)
-      function updatePreview() {
-        const W = 1080;
-        const H = 1920;
-        const MAX_TEXT_WIDTH = 900; // Margen de seguridad para no tocar los marcos
+      ctx.fillText(text, x, y);
+      ctx.restore();
+      return currentSize;
+    }
 
-        // 1. Dibujar video de fondo
-        ctx.save();
-        const contrastVal = document.getElementById('contrast').value;
-        const grayscaleVal = document.getElementById('grayscale').value;
-        ctx.filter = `contrast(${contrastVal}%) grayscale(${grayscaleVal}%)`;
+    // Renderizado principal en Canvas (1080 x 1920)
+    function updatePreview() {
+      const W = 1080;
+      const H = 1920;
+      const MAX_TEXT_WIDTH = 900; // Margen de seguridad para no tocar los marcos
 
-        if (video.videoWidth > 0) {
-          const vW = video.videoWidth;
-          const vH = video.videoHeight;
-          const scale = Math.max(W / vW, H / vH);
-          const sW = vW * scale;
-          const sH = vH * scale;
-          const oX = (W - sW) / 2;
-          const oY = (H - sH) / 2;
-          ctx.drawImage(video, oX, oY, sW, sH);
-        } else {
-          ctx.fillStyle = '#08080a';
-          ctx.fillRect(0, 0, W, H);
-        }
-        ctx.restore();
+      // 1. Dibujar video de fondo
+      ctx.save();
+      const contrastVal = document.getElementById('contrast').value;
+      const grayscaleVal = document.getElementById('grayscale').value;
+      ctx.filter = `contrast(${contrastVal}%) grayscale(${grayscaleVal}%)`;
 
-        // 2. Overlay de degradado elegante y oscurecimiento
-        const darkness = parseInt(document.getElementById('overlayDarkness').value) / 100;
-        const grad = ctx.createLinearGradient(0, 0, 0, H);
-        grad.addColorStop(0, `rgba(5, 5, 8, ${darkness * 0.95})`);
-        grad.addColorStop(0.35, `rgba(10, 10, 14, ${darkness * 0.85})`);
-        grad.addColorStop(0.55, `rgba(8, 8, 12, ${darkness * 0.92})`);
-        grad.addColorStop(1, `rgba(3, 3, 5, ${darkness * 0.98})`);
-        ctx.fillStyle = grad;
+      if (video.videoWidth > 0) {
+        const vW = video.videoWidth;
+        const vH = video.videoHeight;
+        const scale = Math.max(W / vW, H / vH);
+        const sW = vW * scale;
+        const sH = vH * scale;
+        const oX = (W - sW) / 2;
+        const oY = (H - sH) / 2;
+        ctx.drawImage(video, oX, oY, sW, sH);
+      } else {
+        ctx.fillStyle = '#08080a';
         ctx.fillRect(0, 0, W, H);
+      }
+      ctx.restore();
 
-        // 3. Marco orfebre perimetral minimalista
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.45)';
-        ctx.lineWidth = 2;
-        ctx.strokeRect(40, 40, W - 80, H - 80);
+      // 2. Overlay de degradado elegante y oscurecimiento
+      const darkness = parseInt(document.getElementById('overlayDarkness').value) / 100;
+      const grad = ctx.createLinearGradient(0, 0, 0, H);
+      grad.addColorStop(0, `rgba(5, 5, 8, ${darkness * 0.95})`);
+      grad.addColorStop(0.35, `rgba(10, 10, 14, ${darkness * 0.85})`);
+      grad.addColorStop(0.55, `rgba(8, 8, 12, ${darkness * 0.92})`);
+      grad.addColorStop(1, `rgba(3, 3, 5, ${darkness * 0.98})`);
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, W, H);
 
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
-        ctx.lineWidth = 1;
-        ctx.strokeRect(52, 52, W - 104, H - 104);
+      // 3. Marco orfebre perimetral minimalista
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.45)';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(40, 40, W - 80, H - 80);
 
-        // Esquinas decorativas
-        drawCornerOrnament(ctx, 40, 40, 30);
-        drawCornerOrnament(ctx, W - 40, 40, 30);
-        drawCornerOrnament(ctx, 40, H - 40, 30);
-        drawCornerOrnament(ctx, W - 40, H - 40, 30);
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(52, 52, W - 104, H - 104);
 
-        // ==========================================
-        // MITAD SUPERIOR: TEXTOS PARAMETRIZABLES (AUTO-FIT)
-        // ==========================================
+      // Esquinas decorativas
+      drawCornerOrnament(ctx, 40, 40, 30);
+      drawCornerOrnament(ctx, W - 40, 40, 30);
+      drawCornerOrnament(ctx, 40, H - 40, 30);
+      drawCornerOrnament(ctx, W - 40, H - 40, 30);
 
-        // Línea 1: Encabezado
-        const txtHeader = document.getElementById('txtHeader').value;
-        const sizeHeader = document.getElementById('sizeHeader').value;
-        const yHeader = parseInt(document.getElementById('yHeader').value);
-        drawTextAutoFit(ctx, txtHeader, W / 2, yHeader, sizeHeader, MAX_TEXT_WIDTH, {
+      // ==========================================
+      // MITAD SUPERIOR: TEXTOS PARAMETRIZABLES (AUTO-FIT)
+      // ==========================================
+
+      // Línea 1: Encabezado
+      const txtHeader = document.getElementById('txtHeader').value;
+      const sizeHeader = document.getElementById('sizeHeader').value;
+      const yHeader = parseInt(document.getElementById('yHeader').value);
+      drawTextAutoFit(ctx, txtHeader, W / 2, yHeader, sizeHeader, MAX_TEXT_WIDTH, {
+        family: '"Montserrat", sans-serif',
+        weight: '600',
+        color: 'rgba(255, 255, 255, 0.9)'
+      });
+
+      // Línea 2: Título Principal
+      const txtTitle = document.getElementById('txtTitle').value;
+      const sizeTitle = document.getElementById('sizeTitle').value;
+      const yTitle = parseInt(document.getElementById('yTitle').value);
+      drawTextAutoFit(ctx, txtTitle, W / 2, yTitle, sizeTitle, MAX_TEXT_WIDTH, {
+        family: '"Cinzel", serif',
+        weight: '800',
+        color: '#ffffff',
+        shadow: true
+      });
+
+      // Separador Superior
+      const yDiv1 = parseInt(document.getElementById('yDivider1').value);
+      drawDivider(ctx, W / 2, yDiv1, 400);
+
+      // LÍNEA 3 & 4: NOMBRE DE INVITADO (OPCIONAL: CON/SIN APELLIDO O NINGUNO)
+      const rawGuest = document.getElementById('txtGuest').value;
+      const formattedGuest = getFormattedGuestName(rawGuest);
+
+      if (formattedGuest) {
+        // Etiqueta de Invitado
+        const txtGuestLabel = document.getElementById('txtGuestLabel').value;
+        const sizeGuestLabel = document.getElementById('sizeGuestLabel').value;
+        const yGuestLabel = parseInt(document.getElementById('yGuestLabel').value);
+        drawTextAutoFit(ctx, txtGuestLabel, W / 2, yGuestLabel, sizeGuestLabel, MAX_TEXT_WIDTH, {
           family: '"Montserrat", sans-serif',
-          weight: '600',
-          color: 'rgba(255, 255, 255, 0.9)'
+          weight: '400',
+          color: 'rgba(255, 255, 255, 0.7)'
         });
 
-        // Línea 2: Título Principal
-        const txtTitle = document.getElementById('txtTitle').value;
-        const sizeTitle = document.getElementById('sizeTitle').value;
-        const yTitle = parseInt(document.getElementById('yTitle').value);
-        drawTextAutoFit(ctx, txtTitle, W / 2, yTitle, sizeTitle, MAX_TEXT_WIDTH, {
+        // Nombre (con o sin apellido)
+        const sizeGuest = document.getElementById('sizeGuest').value;
+        const yGuest = parseInt(document.getElementById('yGuest').value);
+        drawTextAutoFit(ctx, formattedGuest, W / 2, yGuest, sizeGuest, MAX_TEXT_WIDTH, {
           family: '"Cinzel", serif',
-          weight: '800',
-          color: '#ffffff',
-          shadow: true
-        });
-
-        // Separador Superior
-        const yDiv1 = parseInt(document.getElementById('yDivider1').value);
-        drawDivider(ctx, W / 2, yDiv1, 400);
-
-        // LÍNEA 3 & 4: NOMBRE DE INVITADO (OPCIONAL: CON/SIN APELLIDO O NINGUNO)
-        const rawGuest = document.getElementById('txtGuest').value;
-        const formattedGuest = getFormattedGuestName(rawGuest);
-
-        if (formattedGuest) {
-          // Etiqueta de Invitado
-          const txtGuestLabel = document.getElementById('txtGuestLabel').value;
-          const sizeGuestLabel = document.getElementById('sizeGuestLabel').value;
-          const yGuestLabel = parseInt(document.getElementById('yGuestLabel').value);
-          drawTextAutoFit(ctx, txtGuestLabel, W / 2, yGuestLabel, sizeGuestLabel, MAX_TEXT_WIDTH, {
-            family: '"Montserrat", sans-serif',
-            weight: '400',
-            color: 'rgba(255, 255, 255, 0.7)'
-          });
-
-          // Nombre (con o sin apellido)
-          const sizeGuest = document.getElementById('sizeGuest').value;
-          const yGuest = parseInt(document.getElementById('yGuest').value);
-          drawTextAutoFit(ctx, formattedGuest, W / 2, yGuest, sizeGuest, MAX_TEXT_WIDTH, {
-            family: '"Cinzel", serif',
-            weight: '700',
-            color: '#ffffff'
-          });
-        }
-
-        // Línea 5: Fecha y Horario
-        const txtDateTime = document.getElementById('txtDateTime').value;
-        const sizeDateTime = document.getElementById('sizeDateTime').value;
-        const yDateTime = parseInt(document.getElementById('yDateTime').value);
-        drawTextAutoFit(ctx, txtDateTime, W / 2, yDateTime, sizeDateTime, MAX_TEXT_WIDTH, {
-          family: '"Montserrat", sans-serif',
-          weight: '600',
+          weight: '700',
           color: '#ffffff'
         });
-
-        // Línea 6: Locación Definitiva (Única, sin alternativa)
-        const txtVenue = document.getElementById('txtVenue').value;
-        const sizeVenue = document.getElementById('sizeVenue').value;
-        const yVenue = parseInt(document.getElementById('yVenue').value);
-        drawTextAutoFit(ctx, txtVenue, W / 2, yVenue, sizeVenue, MAX_TEXT_WIDTH, {
-          family: '"Montserrat", sans-serif',
-          weight: '500',
-          color: 'rgba(255, 255, 255, 0.88)'
-        });
-
-        // Separador Central
-        const yDiv2 = parseInt(document.getElementById('yDivider2').value);
-        drawDivider(ctx, W / 2, yDiv2, 700);
-
-        // ==========================================
-        // MITAD INFERIOR: CÓDIGO QR VISIBLE Y PARAMETRIZABLE
-        // ==========================================
-        const txtQrTitle = document.getElementById('txtQrTitle').value;
-        const sizeQrTitle = document.getElementById('sizeQrTitle').value;
-        const yQrTitle = parseInt(document.getElementById('yQrTitle').value);
-        drawTextAutoFit(ctx, txtQrTitle, W / 2, yQrTitle, sizeQrTitle, MAX_TEXT_WIDTH, {
-          family: '"Montserrat", sans-serif',
-          weight: '500',
-          color: '#ffffff'
-        });
-
-        // Determinación del hash (de invitado seleccionado o de muestra en Paso 1)
-        const currentGuest = currentGuestIndex >= 0 ? guests[currentGuestIndex] : null;
-        const sampleHash = document.getElementById('txtSampleHash').value || 'CATA15-VIP2026';
-        const qrData = currentGuest ? currentGuest.hash : sampleHash;
-
-        // Generar canvas QR con QRious (100% síncrono y fiable)
-        const qrCanvas = getQrCanvas(qrData);
-
-        const qrBoxSize = parseInt(document.getElementById('sizeQrBox').value);
-        const qrBoxY = parseInt(document.getElementById('yQrBox').value);
-        const qrBoxX = (W - qrBoxSize) / 2;
-
-        // Fondo blanco del QR para lectura óptica perfecta
-        ctx.fillStyle = '#ffffff';
-        ctx.fillRect(qrBoxX, qrBoxY, qrBoxSize, qrBoxSize);
-
-        // Marco exterior
-        ctx.strokeStyle = '#ffffff';
-        ctx.lineWidth = 4;
-        ctx.strokeRect(qrBoxX - 8, qrBoxY - 8, qrBoxSize + 16, qrBoxSize + 16);
-
-        // QR centrado adentro con margen interno
-        if (qrCanvas) {
-          const qrPadding = Math.max(16, Math.floor(qrBoxSize * 0.05));
-          ctx.drawImage(qrCanvas, qrBoxX + qrPadding, qrBoxY + qrPadding, qrBoxSize - (qrPadding * 2), qrBoxSize - (qrPadding * 2));
-        } else {
-          // Fallback visual si la librería aún no inicializó
-          ctx.fillStyle = '#000000';
-          ctx.font = '700 24px monospace';
-          ctx.textAlign = 'center';
-          ctx.textBaseline = 'middle';
-          ctx.fillText(`[ QR: ${qrData} ]`, W / 2, qrBoxY + qrBoxSize / 2);
-        }
       }
 
-      function drawDivider(ctx, x, y, width) {
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.moveTo(x - width / 2, y);
-        ctx.lineTo(x + width / 2, y);
-        ctx.stroke();
+      // Línea 5: Fecha y Horario
+      const txtDateTime = document.getElementById('txtDateTime').value;
+      const sizeDateTime = document.getElementById('sizeDateTime').value;
+      const yDateTime = parseInt(document.getElementById('yDateTime').value);
+      drawTextAutoFit(ctx, txtDateTime, W / 2, yDateTime, sizeDateTime, MAX_TEXT_WIDTH, {
+        family: '"Montserrat", sans-serif',
+        weight: '600',
+        color: '#ffffff'
+      });
 
-        ctx.fillStyle = '#ffffff';
-        ctx.font = '16px serif';
+      // Línea 6: Locación Definitiva (Única, sin alternativa)
+      const txtVenue = document.getElementById('txtVenue').value;
+      const sizeVenue = document.getElementById('sizeVenue').value;
+      const yVenue = parseInt(document.getElementById('yVenue').value);
+      drawTextAutoFit(ctx, txtVenue, W / 2, yVenue, sizeVenue, MAX_TEXT_WIDTH, {
+        family: '"Montserrat", sans-serif',
+        weight: '500',
+        color: 'rgba(255, 255, 255, 0.88)'
+      });
+
+      // Separador Central
+      const yDiv2 = parseInt(document.getElementById('yDivider2').value);
+      drawDivider(ctx, W / 2, yDiv2, 700);
+
+      // ==========================================
+      // MITAD INFERIOR: CÓDIGO QR VISIBLE Y PARAMETRIZABLE
+      // ==========================================
+      const txtQrTitle = document.getElementById('txtQrTitle').value;
+      const sizeQrTitle = document.getElementById('sizeQrTitle').value;
+      const yQrTitle = parseInt(document.getElementById('yQrTitle').value);
+      drawTextAutoFit(ctx, txtQrTitle, W / 2, yQrTitle, sizeQrTitle, MAX_TEXT_WIDTH, {
+        family: '"Montserrat", sans-serif',
+        weight: '500',
+        color: '#ffffff'
+      });
+
+      // Determinación del hash (de invitado seleccionado o de muestra en Paso 1)
+      const currentGuest = currentGuestIndex >= 0 ? guests[currentGuestIndex] : null;
+      const sampleHash = document.getElementById('txtSampleHash').value || 'CATA15-VIP2026';
+      const qrData = currentGuest ? currentGuest.hash : sampleHash;
+
+      // Generar canvas QR con QRious (100% síncrono y fiable)
+      const qrCanvas = getQrCanvas(qrData);
+
+      const qrBoxSize = parseInt(document.getElementById('sizeQrBox').value);
+      const qrBoxY = parseInt(document.getElementById('yQrBox').value);
+      const qrBoxX = (W - qrBoxSize) / 2;
+
+      // Fondo blanco del QR para lectura óptica perfecta
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(qrBoxX, qrBoxY, qrBoxSize, qrBoxSize);
+
+      // Marco exterior
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 4;
+      ctx.strokeRect(qrBoxX - 8, qrBoxY - 8, qrBoxSize + 16, qrBoxSize + 16);
+
+      // QR centrado adentro con margen interno
+      if (qrCanvas) {
+        const qrPadding = Math.max(16, Math.floor(qrBoxSize * 0.05));
+        ctx.drawImage(qrCanvas, qrBoxX + qrPadding, qrBoxY + qrPadding, qrBoxSize - (qrPadding * 2), qrBoxSize - (qrPadding * 2));
+      } else {
+        // Fallback visual si la librería aún no inicializó
+        ctx.fillStyle = '#000000';
+        ctx.font = '700 24px monospace';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText('✦', x, y);
+        ctx.fillText(`[ QR: ${qrData} ]`, W / 2, qrBoxY + qrBoxSize / 2);
       }
+    }
 
-      function drawCornerOrnament(ctx, x, y, size) {
-        ctx.strokeStyle = '#ffffff';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        const sX = x < 500 ? 1 : -1;
-        const sY = y < 900 ? 1 : -1;
-        ctx.moveTo(x, y + sY * size);
-        ctx.lineTo(x, y);
-        ctx.lineTo(x + sX * size, y);
-        ctx.stroke();
-      }
+    function drawDivider(ctx, x, y, width) {
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(x - width / 2, y);
+      ctx.lineTo(x + width / 2, y);
+      ctx.stroke();
 
-      // Helper para sanitizar nombres de archivo (reemplaza vocales con tildes, convierte a minúsculas y caracteres seguros)
-      function sanitizeGuestFileName(str) {
-        if (!str) return 'invitado';
-        return str
-          .normalize('NFD')
-          .replace(/[\u0300-\u036f]/g, '') // Elimina tildes y diacríticos (ej. á->a, é->e, í->i, ó->o, ú->u)
-          .toLowerCase()                   // Convierte a minúsculas ("María" -> "maria")
-          .replace(/[^a-z0-9]/g, '_')     // Reemplaza caracteres no alfanuméricos por _
-          .replace(/_+/g, '_')            // Colapsa múltiples _
-          .replace(/^_+|_+$/g, '') || 'invitado'; // Quita _ en los bordes
-      }
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '16px serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('✦', x, y);
+    }
 
-      // Configuración de exportación
-      function setupExportButtons() {
-        const btnDownload = document.getElementById('btnDownloadSingle');
-        const btnCopy = document.getElementById('btnCopySingle');
-        const btnAllZip = document.getElementById('btnDownloadAllZip');
+    function drawCornerOrnament(ctx, x, y, size) {
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      const sX = x < 500 ? 1 : -1;
+      const sY = y < 900 ? 1 : -1;
+      ctx.moveTo(x, y + sY * size);
+      ctx.lineTo(x, y);
+      ctx.lineTo(x + sX * size, y);
+      ctx.stroke();
+    }
 
-        btnDownload.addEventListener('click', () => {
-          const rawName = document.getElementById('txtGuest').value || 'Invitado';
-          const guestName = sanitizeGuestFileName(rawName);
-          const link = document.createElement('a');
-          link.download = `Cata15_Tarjeta_${guestName}.png`;
-          link.href = canvas.toDataURL('image/png', 0.95);
-          link.click();
-          notify('Tarjeta descargada correctamente');
-        });
+    // Helper para sanitizar nombres de archivo (reemplaza vocales con tildes, convierte a minúsculas y caracteres seguros)
+    function sanitizeGuestFileName(str) {
+      if (!str) return 'invitado';
+      return str
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '') // Elimina tildes y diacríticos (ej. á->a, é->e, í->i, ó->o, ú->u)
+        .toLowerCase()                   // Convierte a minúsculas ("María" -> "maria")
+        .replace(/[^a-z0-9]/g, '_')     // Reemplaza caracteres no alfanuméricos por _
+        .replace(/_+/g, '_')            // Colapsa múltiples _
+        .replace(/^_+|_+$/g, '') || 'invitado'; // Quita _ en los bordes
+    }
 
-        btnCopy.addEventListener('click', async () => {
-          try {
-            canvas.toBlob(async (blob) => {
-              await navigator.clipboard.write([
-                new ClipboardItem({ 'image/png': blob })
-              ]);
-              notify('¡Imagen copiada al portapapeles!');
-            });
-          } catch (err) {
-            notify('No se pudo copiar directamente. Usá Descargar', true);
-          }
-        });
+    // Configuración de exportación
+    function setupExportButtons() {
+      const btnDownload = document.getElementById('btnDownloadSingle');
+      const btnCopy = document.getElementById('btnCopySingle');
+      const btnAllZip = document.getElementById('btnDownloadAllZip');
 
-        btnAllZip.addEventListener('click', generateAllZip);
-      }
-
-      async function generateAllZip() {
-        if (!guests || guests.length === 0) {
-          notify('Primero cargá un archivo CSV con invitados', true);
-          return;
-        }
-
-        const zip = new JSZip();
-        const folder = zip.folder("Tarjetas_Cata15");
-
-        const progressBarContainer = document.getElementById('progressBarContainer');
-        const progressBar = document.getElementById('progressBar');
-        const progressText = document.getElementById('progressText');
-
-        progressBarContainer.style.display = 'block';
-        progressText.style.display = 'block';
-
-        for (let i = 0; i < guests.length; i++) {
-          selectGuest(i);
-          updatePreview();
-
-          const dataUrl = canvas.toDataURL('image/png', 0.92);
-          const base64Data = dataUrl.replace(/^data:image\/png;base64,/, "");
-
-          const safeName = sanitizeGuestFileName(guests[i].name);
-          const fileName = `${String(i + 1).padStart(2, '0')}_${safeName}_${guests[i].hash}.png`;
-          folder.file(fileName, base64Data, { base64: true });
-
-          const pct = Math.round(((i + 1) / guests.length) * 100);
-          progressBar.style.width = pct + '%';
-          progressText.textContent = `Generando tarjeta ${i + 1} de ${guests.length} (${pct}%)...`;
-
-          await new Promise(r => setTimeout(r, 30));
-        }
-
-        progressText.textContent = 'Comprimiendo archivo ZIP...';
-
-        const zipBlob = await zip.generateAsync({ type: "blob" });
+      btnDownload.addEventListener('click', () => {
+        const rawName = document.getElementById('txtGuest').value || 'Invitado';
+        const guestName = sanitizeGuestFileName(rawName);
         const link = document.createElement('a');
-        link.href = URL.createObjectURL(zipBlob);
-        link.download = "Tarjetas_Cata15_Lote_Completo.zip";
+        link.download = `Cata15_Tarjeta_${guestName}.png`;
+        link.href = canvas.toDataURL('image/png', 0.95);
         link.click();
+        notify('Tarjeta descargada correctamente');
+      });
 
-        progressBarContainer.style.display = 'none';
-        progressText.style.display = 'none';
-        notify(`¡Lote completo generado! (${guests.length} tarjetas descargadas)`);
+      btnCopy.addEventListener('click', async () => {
+        try {
+          canvas.toBlob(async (blob) => {
+            await navigator.clipboard.write([
+              new ClipboardItem({ 'image/png': blob })
+            ]);
+            notify('¡Imagen copiada al portapapeles!');
+          });
+        } catch (err) {
+          notify('No se pudo copiar directamente. Usá Descargar', true);
+        }
+      });
+
+      btnAllZip.addEventListener('click', generateAllZip);
+    }
+
+    async function generateAllZip() {
+      if (!guests || guests.length === 0) {
+        notify('Primero cargá un archivo CSV con invitados', true);
+        return;
       }
 
-      function notify(msg, isError = false) {
-        const el = document.getElementById('notification');
-        document.getElementById('notifMessage').textContent = msg;
-        document.getElementById('notifIcon').textContent = isError ? '⚠️' : '✓';
-        el.style.background = isError ? '#ef4444' : '#ffffff';
-        el.style.color = isError ? '#ffffff' : '#000000';
-        el.classList.add('show');
-        setTimeout(() => el.classList.remove('show'), 3000);
+      const zip = new JSZip();
+      const folder = zip.folder("Tarjetas_Cata15");
+
+      const progressBarContainer = document.getElementById('progressBarContainer');
+      const progressBar = document.getElementById('progressBar');
+      const progressText = document.getElementById('progressText');
+
+      progressBarContainer.style.display = 'block';
+      progressText.style.display = 'block';
+
+      for (let i = 0; i < guests.length; i++) {
+        selectGuest(i);
+        updatePreview();
+
+        const dataUrl = canvas.toDataURL('image/png', 0.92);
+        const base64Data = dataUrl.replace(/^data:image\/png;base64,/, "");
+
+        const safeName = sanitizeGuestFileName(guests[i].name);
+        const fileName = `${String(i + 1).padStart(2, '0')}_${safeName}_${guests[i].hash}.png`;
+        folder.file(fileName, base64Data, { base64: true });
+
+        const pct = Math.round(((i + 1) / guests.length) * 100);
+        progressBar.style.width = pct + '%';
+        progressText.textContent = `Generando tarjeta ${i + 1} de ${guests.length} (${pct}%)...`;
+
+        await new Promise(r => setTimeout(r, 30));
       }
-    </script>
+
+      progressText.textContent = 'Comprimiendo archivo ZIP...';
+
+      const zipBlob = await zip.generateAsync({ type: "blob" });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(zipBlob);
+      link.download = "Tarjetas_Cata15_Lote_Completo.zip";
+      link.click();
+
+      progressBarContainer.style.display = 'none';
+      progressText.style.display = 'none';
+      notify(`¡Lote completo generado! (${guests.length} tarjetas descargadas)`);
+    }
+
+    function notify(msg, isError = false) {
+      const el = document.getElementById('notification');
+      document.getElementById('notifMessage').textContent = msg;
+      document.getElementById('notifIcon').textContent = isError ? '⚠️' : '✓';
+      el.style.background = isError ? '#ef4444' : '#ffffff';
+      el.style.color = isError ? '#ffffff' : '#000000';
+      el.classList.add('show');
+      setTimeout(() => el.classList.remove('show'), 3000);
+    }
+  </script>
 </body>
 
 </html>
