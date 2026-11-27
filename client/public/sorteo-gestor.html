@@ -738,39 +738,128 @@
       }
     }
 
+    const SAMPLE_CSV_DATA = `nombre_apellido;premio;hash
+Melina Miranda;Kit Skin Hair;CATA15-MM754
+Lucio Pugliese;Kit Tecnología;CATA15-LP214
+Agustín Rago;Kit Tecnología;CATA15-AR125
+Juana Martignone;Kit Verano;CATA15-JM859
+Jazmín Vicchio;Kit Verano;CATA15-JV381
+Manuel Pire;Kit Tecnología;CATA15-MP350
+Tiziano Robles;Kit Tecnología;CATA15-TR328
+Timoteo Porterie;Kit de Viaje;CATA15-TP242
+Bautista Nieto;Kit de Viaje;CATA15-BN854
+Nino Frassa;Kit Runner;CATA15-NF204
+Eugenio Quiroga;Kit Tecnología;CATA15-EQ792
+Benicio Chappero;Kit Tecnología;CATA15-BC858
+Nicolás Molli;Kit Tecnología;CATA15-NM658
+Sebastián Torsiglieri;Kit de Viaje;CATA15-ST189
+Catalina Panelo;Set Beauty VIP;CATA15-VIP01
+Agustina Fernández;Kit Skin Hair;CATA15-AF812
+Bautista Gómez;Kit Tecnología;CATA15-BG394
+Camila Rodríguez;Kit Verano;CATA15-CR720
+Delfina Martínez;Kit Runner;CATA15-DM551
+Emiliano Díaz;Kit de Viaje;CATA15-ED119`;
+
     async function loadSampleCsv() {
       try {
-        const res = await fetch('/invitados_premios_ejemplo.csv');
-        const text = await res.text();
-        parseCsvText(text);
+        let text = null;
+        const urls = ['/invitados_premios_formateado.csv', '/invitados_premios_ejemplo.csv'];
+        for (const url of urls) {
+          try {
+            const res = await fetch(url);
+            if (res.ok) {
+              const t = await res.text();
+              if (t && !t.trim().toLowerCase().startsWith('<!doctype') && !t.trim().startsWith('<html')) {
+                text = t;
+                break;
+              }
+            }
+          } catch (_) {}
+        }
+        parseCsvText(text || SAMPLE_CSV_DATA);
       } catch (err) {
         console.error('Error al cargar ejemplo:', err);
+        parseCsvText(SAMPLE_CSV_DATA);
       }
     }
 
     function parseCsvText(csvText) {
-      const lines = csvText.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
-      if (lines.length <= 1) return;
+      if (!csvText || typeof csvText !== 'string') return;
+      const clean = csvText.replace(/^\uFEFF/, '').trim();
+      if (!clean) return;
+
+      const lines = clean.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
+      if (lines.length === 0) return;
+
+      // Auto-detectar delimitador
+      const sample = lines.slice(0, Math.min(6, lines.length)).join('\n');
+      const countSemicolon = (sample.match(/;/g) || []).length;
+      const countComma = (sample.match(/,/g) || []).length;
+      const countTab = (sample.match(/\t/g) || []).length;
+
+      let delimiter = ';';
+      if (countTab > countSemicolon && countTab > countComma) delimiter = '\t';
+      else if (countComma > countSemicolon) delimiter = ',';
+
+      const parseLine = (line) => {
+        if (!line.includes('"')) return line.split(delimiter).map(c => c.trim());
+        const cols = [];
+        let cur = '';
+        let inQuotes = false;
+        for (let i = 0; i < line.length; i++) {
+          const ch = line[i];
+          if (ch === '"') {
+            if (inQuotes && line[i + 1] === '"') { cur += '"'; i++; }
+            else { inQuotes = !inQuotes; }
+          } else if (ch === delimiter && !inQuotes) {
+            cols.push(cur.trim());
+            cur = '';
+          } else {
+            cur += ch;
+          }
+        }
+        cols.push(cur.trim());
+        return cols.map(c => c.replace(/^"(.*)"$/, '$1').trim());
+      };
+
+      const parsedRows = lines.map(parseLine);
+      const firstRowStr = parsedRows[0].join(' ').toLowerCase();
+      const isHeader = firstRowStr.includes('hash') || firstRowStr.includes('cod') ||
+                       firstRowStr.includes('premio') || firstRowStr.includes('nombre') ||
+                       firstRowStr.includes('name') || firstRowStr.includes('prize');
+
+      const dataRows = isHeader ? parsedRows.slice(1) : parsedRows;
 
       guests = [];
-      const startIdx = lines[0].toLowerCase().includes('hash') ? 1 : 0;
-
-      for (let i = startIdx; i < lines.length; i++) {
-        const parts = lines[i].split(';').map(p => p.trim());
-        if (parts.length >= 3) {
+      dataRows.forEach((cols, idx) => {
+        if (cols.length >= 3 && cols[0]) {
           guests.push({
-            id: i,
-            name: parts[0],
-            prize: parts[1],
-            hash: parts[2],
+            id: idx,
+            name: cols[0],
+            prize: cols[1] || 'Premio Sorpresa',
+            hash: cols[2] || `CATA15-${String(idx + 1).padStart(3, '0')}`,
+            claimed: false,
+            claimedAt: null
+          });
+        } else if (cols.length === 2 && cols[0]) {
+          const isSecondColHash = /^CATA15|\d|[A-Z0-9-]{4,}/i.test(cols[1]);
+          guests.push({
+            id: idx,
+            name: cols[0],
+            prize: isSecondColHash ? 'Kit Exclusivo' : cols[1],
+            hash: isSecondColHash ? cols[1] : `CATA15-${String(idx + 1).padStart(3, '0')}`,
             claimed: false,
             claimedAt: null
           });
         }
-      }
+      });
 
-      saveGuestsToStorage();
-      notify(`Padrón cargado (${guests.length} invitados)`);
+      if (guests.length > 0) {
+        saveGuestsToStorage();
+        notify(`Padrón cargado (${guests.length} invitados)`);
+      } else {
+        notify('No se pudieron extraer invitados del CSV', true);
+      }
     }
 
     // 3. Renderizado y Filtros de Tabla

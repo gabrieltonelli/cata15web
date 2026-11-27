@@ -777,9 +777,9 @@
       <div class="csv-dropzone" id="csvDropzone">
         <p style="font-size: 14px; font-weight: 600; margin-bottom: 6px;">📂 Arrastrá tu archivo CSV aquí</p>
         <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">Formato:
-          <code>nombre_apellido;premio;hash</code>
+          <code>Nombre;Premio;Hash</code> (o separado por comas <code>,</code>)
         </p>
-        <input type="file" id="csvFileInput" accept=".csv" style="display: none;">
+        <input type="file" id="csvFileInput" accept=".csv,.txt,text/csv,text/plain" style="display: none;">
         <button class="btn btn-secondary" onclick="document.getElementById('csvFileInput').click()">
           Seleccionar Archivo
         </button>
@@ -787,7 +787,7 @@
 
       <div style="display: flex; gap: 8px;">
         <button class="btn btn-secondary" style="flex: 1; font-size: 11px;" id="btnLoadSampleCsv">
-          ⚡ Cargar CSV de Prueba (20 Invitados)
+          ⚡ Cargar Padrón de Prueba (Ejemplo)
         </button>
       </div>
 
@@ -1016,6 +1016,120 @@
       }
     }
 
+    // Fallback integrado de muestra por si no hay red o fetch
+    const SAMPLE_CSV_DATA = `nombre_apellido;premio;hash
+Melina Miranda;Kit Skin Hair;CATA15-MM754
+Lucio Pugliese;Kit Tecnología;CATA15-LP214
+Agustín Rago;Kit Tecnología;CATA15-AR125
+Juana Martignone;Kit Verano;CATA15-JM859
+Jazmín Vicchio;Kit Verano;CATA15-JV381
+Manuel Pire;Kit Tecnología;CATA15-MP350
+Tiziano Robles;Kit Tecnología;CATA15-TR328
+Timoteo Porterie;Kit de Viaje;CATA15-TP242
+Bautista Nieto;Kit de Viaje;CATA15-BN854
+Nino Frassa;Kit Runner;CATA15-NF204
+Eugenio Quiroga;Kit Tecnología;CATA15-EQ792
+Benicio Chappero;Kit Tecnología;CATA15-BC858
+Nicolás Molli;Kit Tecnología;CATA15-NM658
+Sebastián Torsiglieri;Kit de Viaje;CATA15-ST189
+Catalina Panelo;Set Beauty VIP;CATA15-VIP01
+Agustina Fernández;Kit Skin Hair;CATA15-AF812
+Bautista Gómez;Kit Tecnología;CATA15-BG394
+Camila Rodríguez;Kit Verano;CATA15-CR720
+Delfina Martínez;Kit Runner;CATA15-DM551
+Emiliano Díaz;Kit de Viaje;CATA15-ED119`;
+
+    // Parser CSV universal con tolerancia a delimitadores (; , \t), comillas y BOM UTF-8
+    function parseCsvRows(csvText) {
+      if (!csvText || typeof csvText !== 'string') return [];
+      // 1. Quitar BOM UTF-8 (\uFEFF)
+      const clean = csvText.replace(/^\uFEFF/, '').trim();
+      if (!clean) return [];
+
+      const rawLines = clean.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
+      if (rawLines.length === 0) return [];
+
+      // 2. Detección automática del delimitador analizando las primeras filas
+      const sample = rawLines.slice(0, Math.min(6, rawLines.length)).join('\n');
+      const countSemicolon = (sample.match(/;/g) || []).length;
+      const countComma = (sample.match(/,/g) || []).length;
+      const countTab = (sample.match(/\t/g) || []).length;
+
+      let delimiter = ';';
+      if (countTab > countSemicolon && countTab > countComma) {
+        delimiter = '\t';
+      } else if (countComma > countSemicolon) {
+        delimiter = ',';
+      }
+
+      // 3. Parser por fila con soporte de comillas dobles
+      const parseLine = (line) => {
+        if (!line.includes('"')) {
+          return line.split(delimiter).map(c => c.trim());
+        }
+        const cols = [];
+        let cur = '';
+        let inQuotes = false;
+        for (let i = 0; i < line.length; i++) {
+          const ch = line[i];
+          if (ch === '"') {
+            if (inQuotes && line[i + 1] === '"') {
+              cur += '"';
+              i++;
+            } else {
+              inQuotes = !inQuotes;
+            }
+          } else if (ch === delimiter && !inQuotes) {
+            cols.push(cur.trim());
+            cur = '';
+          } else {
+            cur += ch;
+          }
+        }
+        cols.push(cur.trim());
+        return cols.map(c => c.replace(/^"(.*)"$/, '$1').trim());
+      };
+
+      const parsedRows = rawLines.map(parseLine);
+      if (parsedRows.length === 0) return [];
+
+      // 4. Identificar si la fila 0 es encabezado
+      const firstRowStr = parsedRows[0].join(' ').toLowerCase();
+      const isHeader = firstRowStr.includes('hash') ||
+                       firstRowStr.includes('cod') ||
+                       firstRowStr.includes('premio') ||
+                       firstRowStr.includes('nombre') ||
+                       firstRowStr.includes('invitado') ||
+                       firstRowStr.includes('name') ||
+                       firstRowStr.includes('prize');
+
+      const dataRows = isHeader ? parsedRows.slice(1) : parsedRows;
+
+      // 5. Construir array de invitados
+      const result = [];
+      dataRows.forEach((cols, idx) => {
+        if (cols.length >= 3 && cols[0]) {
+          result.push({
+            id: idx,
+            name: cols[0],
+            prize: cols[1] || 'Premio Sorpresa',
+            hash: cols[2] || `CATA15-${String(idx + 1).padStart(3, '0')}`
+          });
+        } else if (cols.length === 2 && cols[0]) {
+          // Si solo hay 2 columnas (ej: Nombre y Código QR)
+          const isSecondColHash = /^CATA15|\d|[A-Z0-9-]{4,}/i.test(cols[1]);
+          result.push({
+            id: idx,
+            name: cols[0],
+            prize: isSecondColHash ? 'Kit Exclusivo' : cols[1],
+            hash: isSecondColHash ? cols[1] : `CATA15-${String(idx + 1).padStart(3, '0')}`
+          });
+        }
+      });
+
+      return result;
+    }
+
     // Manejo de CSV
     function setupCsvHandlers() {
       const dropzone = document.getElementById('csvDropzone');
@@ -1032,71 +1146,100 @@
       dropzone.addEventListener('drop', (e) => {
         e.preventDefault();
         dropzone.classList.remove('dragover');
-        if (e.dataTransfer.files.length) {
+        if (e.dataTransfer.files && e.dataTransfer.files.length) {
           parseCsvFile(e.dataTransfer.files[0]);
         }
       });
 
       fileInput.addEventListener('change', () => {
-        if (fileInput.files.length) {
+        if (fileInput.files && fileInput.files.length) {
           parseCsvFile(fileInput.files[0]);
+          fileInput.value = ''; // Permite volver a seleccionar el mismo archivo si se desea
         }
       });
 
       btnLoadSample.addEventListener('click', async () => {
         try {
-          const res = await fetch('/invitados_premios_ejemplo.csv');
-          const text = await res.text();
-          processCsvText(text);
-          notify('CSV de prueba cargado (20 invitados)');
+          // Intenta cargar el archivo de ejemplo o el formateado del proyecto
+          let text = null;
+          const urls = ['/invitados_premios_formateado.csv', '/invitados_premios_ejemplo.csv'];
+          for (const url of urls) {
+            try {
+              const res = await fetch(url);
+              if (res.ok) {
+                const t = await res.text();
+                // Validar que no sea el HTML del index por fallback SPA
+                if (t && !t.trim().toLowerCase().startsWith('<!doctype') && !t.trim().startsWith('<html')) {
+                  text = t;
+                  break;
+                }
+              }
+            } catch (_) {}
+          }
+
+          // Si por alguna razón de red/hosting falló el fetch, usa el fallback seguro integrado
+          if (!text) {
+            text = SAMPLE_CSV_DATA;
+          }
+
+          processCsvText(text, 'Padrón de Ejemplo');
         } catch (err) {
-          notify('Error al cargar archivo de ejemplo', true);
+          console.error(err);
+          processCsvText(SAMPLE_CSV_DATA, 'Padrón de Ejemplo');
         }
       });
     }
 
     function parseCsvFile(file) {
+      if (!file) return;
       const reader = new FileReader();
       reader.onload = (e) => {
-        processCsvText(e.target.result);
-        notify(`Archivo cargado: ${file.name}`);
+        const text = e.target.result;
+        processCsvText(text, file.name);
       };
-      reader.readAsText(file);
+      reader.onerror = () => {
+        notify('Error al leer el archivo en el navegador', true);
+      };
+      reader.readAsText(file, 'UTF-8');
     }
 
-    function processCsvText(csvText) {
-      const lines = csvText.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
-      if (lines.length <= 1) {
-        notify('El archivo CSV parece estar vacío', true);
+    function processCsvText(csvText, sourceName = 'CSV') {
+      const loaded = parseCsvRows(csvText);
+
+      if (!loaded || loaded.length === 0) {
+        notify('✕ No se encontraron invitados. Revisá que tenga: Nombre, Premio, Código', true);
+        guests = [];
+        currentGuestIndex = -1;
+        document.getElementById('guestCountBadge').textContent = '0';
+        renderGuestTable();
         return;
       }
 
-      guests = [];
-      const startIdx = lines[0].toLowerCase().includes('hash') ? 1 : 0;
-
-      for (let i = startIdx; i < lines.length; i++) {
-        const parts = lines[i].split(';').map(p => p.trim());
-        if (parts.length >= 3) {
-          guests.push({
-            id: i,
-            name: parts[0],
-            prize: parts[1],
-            hash: parts[2]
-          });
-        }
-      }
-
+      guests = loaded;
       document.getElementById('guestCountBadge').textContent = guests.length;
       renderGuestTable();
 
       if (guests.length > 0) {
         selectGuest(0);
       }
+      notify(`✓ Se cargaron ${guests.length} invitados (${sourceName})`);
     }
 
     function renderGuestTable() {
       const tbody = document.getElementById('guestTableBody');
       tbody.innerHTML = '';
+
+      if (!guests || guests.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="4" style="text-align: center; color: var(--text-muted); padding: 24px 8px; font-size: 12px;">
+              Ningún invitado cargado.<br>
+              <span style="font-size: 11px; opacity: 0.8;">Cargá un archivo .csv (separado por comas, punto y coma o tabulaciones) o usá el botón de prueba.</span>
+            </td>
+          </tr>
+        `;
+        return;
+      }
 
       guests.forEach((g, idx) => {
         const tr = document.createElement('tr');
